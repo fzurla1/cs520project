@@ -6,14 +6,14 @@ Decode::Decode()
 {
 }
 
-
 Decode::~Decode()
 {
 }
 
-void Decode::run()
+Global::apexStruct Decode::run(Global::apexStruct input_struct, Global::Register_Info * register_file)
 {
-
+	Global::apexStruct output_struct = input_struct;
+	return output_struct;
 }
 
 void Decode::display()

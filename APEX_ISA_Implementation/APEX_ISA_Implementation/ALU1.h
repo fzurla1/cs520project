@@ -1,4 +1,5 @@
-#pragma once
+#ifndef ALU1_H
+#define ALU1_H
 
 #include "Global.h"
 
@@ -18,9 +19,14 @@ public:
 	/// <summary>
 	///	This function will:\n
 	///	1) Read the forward bus for missing register values\n
-	///	2) update the apexStruct for the ALU2 phase\n
+	///	2) update the Global::apexStruct for the ALU2 phase\n
 	/// </summary>
-	apexStruct run(apexStruct input_struct);
+	Global::apexStruct run(Global::apexStruct input_struct, Global::Register_Info * forward_bus);
+
+	/// <summary>
+	///	identifies if this stage is stalled
+	/// </summary>
+	bool isStalled();
 
 	/// <summary>
 	///	displays current status of pipeline stage
@@ -28,5 +34,9 @@ public:
 	void display();
 
 private:
+	bool stalled = false;
+	Global::apexStruct snapshot_before;
+	Global::apexStruct snapshot_after;
 };
 
+#endif //ALU1_H

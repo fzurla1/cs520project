@@ -1,4 +1,5 @@
-#pragma once
+#ifndef ALU2_H
+#define ALU2_H
 
 #include "Global.h"
 
@@ -22,7 +23,7 @@ public:
 	/// 3) forwards data to the forwarding bus\n
 	/// 4) updates the flags (zero, overflow, underflow, etc)
 	/// </summary>
-	apexStruct run(apexStruct input_struct);
+	Global::apexStruct run(Global::apexStruct input_struct, Global::Register_Info * forward_bus, bool * flags);
 
 	/// <summary>
 	///	displays current status of pipeline stage
@@ -30,5 +31,9 @@ public:
 	void display();
 
 private:
+	bool stalled = false;
+	Global::apexStruct snapshot_before;
+	Global::apexStruct snapshot_after;
 };
 
+#endif //ALU2_H

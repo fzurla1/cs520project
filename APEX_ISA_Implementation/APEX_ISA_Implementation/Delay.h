@@ -1,4 +1,5 @@
-#pragma once
+#ifndef DELAY_H
+#define DELAY_H
 
 #include "Global.h"
 
@@ -7,7 +8,12 @@ class Delay
 public:
 	Delay();
 	~Delay();
-	apexStruct run(apexStruct input_struct);
+	Global::apexStruct run(Global::apexStruct input_struct);
+
+	/// <summary>
+	///	identifies if this stage is stalled
+	/// </summary>
+	bool isStalled();
 
 	/// <summary>
 	///	displays current status of pipeline stage
@@ -15,5 +21,7 @@ public:
 	void display();
 
 private:
+	bool stalled = false;
 };
 
+#endif //DELAY_H

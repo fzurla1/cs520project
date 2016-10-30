@@ -1,0 +1,43 @@
+﻿Build started 10/30/2016 1:47:51 PM.
+     1>Project "C:\Users\Frank\Documents\GitHub\cs520project\APEX_ISA_Implementation\APEX_ISA_Implementation\APEX_ISA_Implementation.vcxproj" on node 2 (Build target(s)).
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _LIB /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Yu"stdafx.h" /Fp"Debug\APEX_ISA_Implementation.pch" /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt ALU1.cpp ALU2.cpp APEX_ISA_Implementation.cpp Branch.cpp Decode.cpp Delay.cpp Fetch.cpp Memory.cpp WriteBack.cpp
+         ALU2.cpp
+     1>c:\users\frank\documents\github\cs520project\apex_isa_implementation\apex_isa_implementation\alu2.cpp(48): warning C4018: '>' : signed/unsigned mismatch
+     1>c:\users\frank\documents\github\cs520project\apex_isa_implementation\apex_isa_implementation\alu2.cpp(55): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\frank\documents\github\cs520project\apex_isa_implementation\apex_isa_implementation\alu2.cpp(94): warning C4018: '>' : signed/unsigned mismatch
+     1>c:\users\frank\documents\github\cs520project\apex_isa_implementation\apex_isa_implementation\alu2.cpp(102): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\frank\documents\github\cs520project\apex_isa_implementation\apex_isa_implementation\alu2.cpp(140): warning C4018: '>' : signed/unsigned mismatch
+     1>c:\users\frank\documents\github\cs520project\apex_isa_implementation\apex_isa_implementation\alu2.cpp(148): warning C4018: '<' : signed/unsigned mismatch
+         ALU1.cpp
+         Generating Code...
+         Compiling...
+         WriteBack.cpp
+         Memory.cpp
+         Fetch.cpp
+         Delay.cpp
+         Decode.cpp
+         Branch.cpp
+         APEX_ISA_Implementation.cpp
+     1>c:\users\frank\documents\github\cs520project\apex_isa_implementation\apex_isa_implementation\apex_isa_implementation.cpp(13): warning C4627: '#include "APEX_ISA_Implementation.h"': skipped when looking for precompiled header use
+                 Add directive to 'stdafx.h' or rebuild precompiled header
+     1>c:\users\frank\documents\github\cs520project\apex_isa_implementation\apex_isa_implementation\apex_isa_implementation.cpp(51): warning C4101: 'register_file' : unreferenced local variable
+         Generating Code...
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Frank\Documents\GitHub\cs520project\APEX_ISA_Implementation\Debug\APEX_ISA_Implementation.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\Frank\Documents\GitHub\cs520project\APEX_ISA_Implementation\Debug\APEX_ISA_Implementation.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Frank\Documents\GitHub\cs520project\APEX_ISA_Implementation\Debug\APEX_ISA_Implementation.lib" /MACHINE:X86 Debug\APEX_ISA_Implementation.res
+         Debug\ALU1.obj
+         Debug\ALU2.obj
+         Debug\APEX_ISA_Implementation.obj
+         Debug\Branch.obj
+         Debug\Decode.obj
+         Debug\Delay.obj
+         Debug\Fetch.obj
+         Debug\Memory.obj
+         Debug\stdafx.obj
+         Debug\WriteBack.obj
+         APEX_ISA_Implementation.vcxproj -> C:\Users\Frank\Documents\GitHub\cs520project\APEX_ISA_Implementation\Debug\APEX_ISA_Implementation.exe
+     1>Done Building Project "C:\Users\Frank\Documents\GitHub\cs520project\APEX_ISA_Implementation\APEX_ISA_Implementation\APEX_ISA_Implementation.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:04.65

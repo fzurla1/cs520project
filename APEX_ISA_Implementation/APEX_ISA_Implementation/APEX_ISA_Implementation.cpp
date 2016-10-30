@@ -17,6 +17,7 @@
 #include <string>
 #include <iostream>
 
+#include "Global.h"
 #include "Fetch.h"
 #include "Decode.h"
 #include "ALU1.h"
@@ -25,16 +26,12 @@
 #include "Delay.h"
 #include "Memory.h"
 #include "WriteBack.h"
-#include "Global.h"
 
 using namespace std;
 
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-	float * registers;
-	string line;
-
 	Fetch * fetch = new Fetch();
 	Decode * decode = new Decode();
 	ALU1 * alu1 = new ALU1();
@@ -44,19 +41,33 @@ int _tmain(int argc, _TCHAR* argv[])
 	Memory * memory = new Memory();
 	WriteBack * writeBack = new WriteBack();
 
+	//program counter
+	int PC = 4000;
+
+	//flags from ALU
+	bool alu_flags[Global::ALU_FLAG_COUNT];
+
+	//Register file
+	Global::Register_Info register_file[Global::ARCH_REGISTER_COUNT];
+
+	//forwarding bus
+	Global::Register_Info forward_bus[Global::FORWARDING_BUSES];
+
+	bool alu1_stalled = false,
+		 branch_stalled = false,
+		 memory_stalled = false;
+
 	while (1)
 	{
-		//do something
-		fetch->run();
-		decode->run();
-		/*
-		alu1->run(pipeline_struct);
-		alu2->run(pipeline_struct);
-		branch->run(pipeline_struct);
+		//start pipeline
+		Global::apexStruct pipeline_struct = fetch->run(PC);
+		decode->run(pipeline_struct, register_file);
+		alu1->run(pipeline_struct, forward_bus);
+		alu2->run(pipeline_struct, forward_bus, alu_flags);
+		branch->run(pipeline_struct, forward_bus, alu_flags);
 		delay->run(pipeline_struct);
-		memory->run(pipeline_struct);
-		writeBack->run(pipeline_struct);
-		*/
+		memory->run(pipeline_struct, forward_bus);
+		writeBack->run(pipeline_struct, forward_bus, register_file);
 	}
 
 	//destruct
