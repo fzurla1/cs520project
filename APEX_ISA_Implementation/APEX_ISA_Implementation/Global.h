@@ -13,9 +13,7 @@ public:
 	static const int ALU_FLAG_COUNT = 3;
 	static const int FORWARDING_BUSES = 4;
 	static const int ARCH_REGISTER_COUNT = 16;
-
-	//Memory - 4 bytes wide, 0 to 3999
-	static unsigned int MEMORY[4000];
+	static const int MEMORY_SIZE = 4000;
 
 	enum TYPE_INSTRUCTION{
 		//ALU Instructions
@@ -52,7 +50,8 @@ public:
 		R0, R1, R2, R3,
 		R4, R5, R6, R7,
 		R8, R9, R10, R11,
-		R12, R13, R14, R15
+		R12, R13, R14, R15,
+		NA
 	};
 
 	enum FORWARD_TYPE{
@@ -74,17 +73,17 @@ public:
 			TYPE_INSTRUCTION op_code;
 
 			//destination register information
-			//bool destination_staus = false;
-			ARCH_REGISTERS destination_reg;
+			bool destination_staus = 0;
+			ARCH_REGISTERS destination_tag;
 			unsigned int destination_value;
 
 			//source 1 register information
-			bool src1_valid = false;
+			bool src1_valid = 0;
 			ARCH_REGISTERS src1_tag;
 			unsigned int src1_value;
 
 			//source 2 register information
-			bool src2_valid = false;
+			bool src2_valid = 0;
 			ARCH_REGISTERS src2_tag;
 			unsigned int src2_value;
 

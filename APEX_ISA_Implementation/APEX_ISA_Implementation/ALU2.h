@@ -17,10 +17,10 @@ public:
 	~ALU2();
 
 	/// <summary>
-	/// This stage performs the following:\n
-	/// 1) operates on the instruction\n
-	/// 2) updates the apex struct\n
-	/// 3) forwards data to the forwarding bus\n
+	/// This stage performs the following:
+	/// 1) operates on the instruction
+	/// 2) updates the apex struct
+	/// 3) forwards data to the forwarding bus
 	/// 4) updates the flags (zero, overflow, underflow, etc)
 	/// </summary>
 	Global::apexStruct run(Global::apexStruct input_struct, Global::Register_Info * forward_bus, bool * flags);

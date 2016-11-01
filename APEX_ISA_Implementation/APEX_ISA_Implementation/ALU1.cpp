@@ -43,7 +43,9 @@ Global::apexStruct ALU1::run(Global::apexStruct input_struct, Global::Register_I
 		}
 
 		else
+		{
 			output_struct.instruction.src1_valid = false;
+		}
 	}
 
 	if (output_struct.instruction.src2_valid == false)
@@ -67,17 +69,23 @@ Global::apexStruct ALU1::run(Global::apexStruct input_struct, Global::Register_I
 		}
 
 		else
+		{
 			output_struct.instruction.src2_valid = false;
+		}
 	}
 
 	//verify source registers are valid to proceed
 	if ((output_struct.instruction.src1_valid == true)
 		&& (output_struct.instruction.src2_valid == true))
+	{
 		stalled = false;
+	}
 
 	//need to wait 
 	else
+	{
 		stalled = true;
+	}
 
 	snapshot_after = output_struct;
 
@@ -96,7 +104,7 @@ void ALU1::display()
 		<< " - ENTERING STAGE -" << endl
 		<< "pc                  : " << snapshot_before.pc_value << endl
 		<< "op code             : " << snapshot_before.instruction.op_code << endl
-		<< "destination reg tag : " << snapshot_before.instruction.destination_reg << endl
+		<< "destination reg tag : " << snapshot_before.instruction.destination_tag << endl
 		<< "destination value   : not ready" << endl
 		<< "source 1 reg tag    : " << snapshot_before.instruction.src1_tag << endl
 		<< "source 1 reg valid  : " << snapshot_before.instruction.src1_valid << endl
@@ -121,7 +129,7 @@ void ALU1::display()
 		<< " - EXITING STAGE -" << endl
 		<< "pc                  : " << snapshot_before.pc_value << endl
 		<< "op code             : " << snapshot_before.instruction.op_code << endl
-		<< "destination reg tag : " << snapshot_before.instruction.destination_reg << endl
+		<< "destination reg tag : " << snapshot_before.instruction.destination_tag << endl
 		<< "destination value   : not ready" << endl
 		<< "source 1 reg tag    : " << snapshot_before.instruction.src1_tag << endl
 		<< "source 1 reg valid  : " << snapshot_before.instruction.src1_valid << endl

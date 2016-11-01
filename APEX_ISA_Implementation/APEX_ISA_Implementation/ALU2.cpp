@@ -17,6 +17,10 @@ Global::apexStruct ALU2::run(Global::apexStruct input_struct, Global::Register_I
 	Global::apexStruct output_struct = input_struct;
 	snapshot_before = input_struct;
 
+	//initialize flags
+	flags[Global::FLAGS::OVER_FLOW] = true;
+	flags[Global::FLAGS::UNDER_FLOW] = true;
+
 	switch (input_struct.instruction.op_code)
 	{
 #pragma region "ADD"
@@ -206,26 +210,35 @@ Global::apexStruct ALU2::run(Global::apexStruct input_struct, Global::Register_I
 	//forward data
 	switch (output_struct.instruction.op_code)
 	{
-	case Global::TYPE_INSTRUCTION::ADD:
-	case Global::TYPE_INSTRUCTION::ADDL:
-	case Global::TYPE_INSTRUCTION::SUB:
-	case Global::TYPE_INSTRUCTION::SUBL:
-	case Global::TYPE_INSTRUCTION::MUL:
-	case Global::TYPE_INSTRUCTION::MULL:
-	case Global::TYPE_INSTRUCTION::OR:
-	case Global::TYPE_INSTRUCTION::ORL:
-	case Global::TYPE_INSTRUCTION::AND:
-	case Global::TYPE_INSTRUCTION::ANDL:
-	case Global::TYPE_INSTRUCTION::EX_OR:
-	case Global::TYPE_INSTRUCTION::EX_ORL:
-	case Global::TYPE_INSTRUCTION::MOVC:
-		forward_bus[Global::FORWARD_TYPE::FROM_ALU2].reg_tag = output_struct.instruction.destination_reg;
-		forward_bus[Global::FORWARD_TYPE::FROM_ALU2].reg_value = output_struct.instruction.destination_value;
-		break;
-	case Global::TYPE_INSTRUCTION::LOAD:
-	case Global::TYPE_INSTRUCTION::STORE:
-	default:
-		break;
+		//forward everything except LOAD and STORE data
+		case Global::TYPE_INSTRUCTION::ADD:
+		case Global::TYPE_INSTRUCTION::ADDL:
+		case Global::TYPE_INSTRUCTION::SUB:
+		case Global::TYPE_INSTRUCTION::SUBL:
+		case Global::TYPE_INSTRUCTION::MUL:
+		case Global::TYPE_INSTRUCTION::MULL:
+		case Global::TYPE_INSTRUCTION::OR:
+		case Global::TYPE_INSTRUCTION::ORL:
+		case Global::TYPE_INSTRUCTION::AND:
+		case Global::TYPE_INSTRUCTION::ANDL:
+		case Global::TYPE_INSTRUCTION::EX_OR:
+		case Global::TYPE_INSTRUCTION::EX_ORL:
+		case Global::TYPE_INSTRUCTION::MOVC:
+			if (!flags[Global::FLAGS::OVER_FLOW]
+				&& !flags[Global::FLAGS::UNDER_FLOW])
+			{
+				output_struct.instruction.destination_staus = 1;
+				forward_bus[Global::FORWARD_TYPE::FROM_ALU2].reg_tag = output_struct.instruction.destination_tag;
+				forward_bus[Global::FORWARD_TYPE::FROM_ALU2].reg_value = output_struct.instruction.destination_value;
+			}
+
+			break;
+
+		//No need to forward anything from the LOAD or STORE instruction at this point
+		case Global::TYPE_INSTRUCTION::LOAD:
+		case Global::TYPE_INSTRUCTION::STORE:
+		default:
+			break;
 	}
 
 	if (output_struct.instruction.destination_value == 0)
@@ -244,7 +257,7 @@ void ALU2::display()
 		<< " - Entering stage - " << endl
 		<< "pc                  : " << snapshot_before.pc_value << endl
 		<< "op code             : " << snapshot_before.instruction.op_code << endl
-		<< "destination reg tag : " << snapshot_before.instruction.destination_reg << endl
+		<< "destination reg tag : " << snapshot_before.instruction.destination_tag << endl
 		<< "destination value   : N/A" << endl
 		<< "source 1 reg tag    : " << snapshot_before.instruction.src1_tag << endl
 		<< "source 1 reg valid  : " << snapshot_before.instruction.src1_valid << endl
@@ -257,7 +270,7 @@ void ALU2::display()
 		<< " - Exiting stage - " << endl
 		<< "pc                  : " << snapshot_after.pc_value << endl
 		<< "op code             : " << snapshot_after.instruction.op_code << endl
-		<< "destination reg tag : " << snapshot_after.instruction.destination_reg << endl
+		<< "destination reg tag : " << snapshot_after.instruction.destination_tag << endl
 		<< "destination value   : " << snapshot_after.instruction.destination_value << endl
 		<< "source 1 reg tag    : " << snapshot_after.instruction.src1_tag << endl
 		<< "source 1 reg valid  : " << snapshot_after.instruction.src1_valid << endl

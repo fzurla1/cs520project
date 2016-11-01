@@ -29,6 +29,36 @@
 
 using namespace std;
 
+//--------VARIABLES--------//
+
+//program counter
+int PC = 4000;
+
+//flags from ALU
+bool alu_flags[Global::ALU_FLAG_COUNT];
+
+//Register file
+Global::Register_Info register_file[Global::ARCH_REGISTER_COUNT];
+
+//forwarding bus
+Global::Register_Info forward_bus[Global::FORWARDING_BUSES];
+
+bool alu1_stalled = false,
+branch_stalled = false,
+memory_stalled = false;
+
+//Memory - 4 bytes wide, 0 to 3999
+int memory_array[Global::MEMORY_SIZE];
+
+//-----------FUNCTIONS---------//
+
+void initialize_memory()
+{
+	for (int x = 0; x < Global::MEMORY_SIZE; x++)
+	{
+		memory_array[x] = 0;
+	}
+}
 
 int _tmain(int argc, _TCHAR* argv[])
 {
@@ -41,22 +71,6 @@ int _tmain(int argc, _TCHAR* argv[])
 	Memory * memory = new Memory();
 	WriteBack * writeBack = new WriteBack();
 
-	//program counter
-	int PC = 4000;
-
-	//flags from ALU
-	bool alu_flags[Global::ALU_FLAG_COUNT];
-
-	//Register file
-	Global::Register_Info register_file[Global::ARCH_REGISTER_COUNT];
-
-	//forwarding bus
-	Global::Register_Info forward_bus[Global::FORWARDING_BUSES];
-
-	bool alu1_stalled = false,
-		 branch_stalled = false,
-		 memory_stalled = false;
-
 	while (1)
 	{
 		//start pipeline
@@ -66,7 +80,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		alu2->run(pipeline_struct, forward_bus, alu_flags);
 		branch->run(pipeline_struct, forward_bus, alu_flags);
 		delay->run(pipeline_struct);
-		memory->run(pipeline_struct, forward_bus);
+		memory->run(pipeline_struct, forward_bus, memory_array);
 		writeBack->run(pipeline_struct, forward_bus, register_file);
 	}
 
