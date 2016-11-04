@@ -15,7 +15,7 @@ public:
 	static const int ARCH_REGISTER_COUNT = 16;
 	static const int MEMORY_SIZE = 4000;
 
-	enum TYPE_INSTRUCTION{
+	enum OPCODE{
 		//ALU Instructions
 		ADD,
 		ADDL, //literal
@@ -37,13 +37,15 @@ public:
 		BNZ,
 		JUMP,
 		BAL,
-		HALT
+		HALT,
+		NA
 	};
 
 	enum FLAGS{
 		ZERO,
 		OVER_FLOW,
-		UNDER_FLOW
+		UNDER_FLOW,
+		NA
 	};
 
 	enum ARCH_REGISTERS{
@@ -67,31 +69,31 @@ public:
 	};
 
 	struct apexStruct{
-		unsigned int pc_value;
+		unsigned int pc_value = -1;
 		struct instruction{
 			//instruction operation code
-			TYPE_INSTRUCTION op_code;
+			OPCODE op_code = OPCODE::NA;
 
 			//destination register information
 			bool destination_staus = 0;
-			ARCH_REGISTERS destination_tag;
-			unsigned int destination_value;
+			ARCH_REGISTERS destination_tag = ARCH_REGISTERS::NA;
+			unsigned int destination_value = -1;
 
 			//source 1 register information
 			bool src1_valid = 0;
-			ARCH_REGISTERS src1_tag;
-			unsigned int src1_value;
+			ARCH_REGISTERS src1_tag = ARCH_REGISTERS::NA;
+			unsigned int src1_value = -1;
 
 			//source 2 register information
 			bool src2_valid = 0;
-			ARCH_REGISTERS src2_tag;
-			unsigned int src2_value;
+			ARCH_REGISTERS src2_tag = ARCH_REGISTERS::NA;
+			unsigned int src2_value = -1;
 
 			//literal value information
-			int literal_value;
+			int literal_value = 0;
 
 			//memory location for load / store
-			unsigned int memory_location;
+			unsigned int memory_location = 0;
 		}instruction;
 	};
 

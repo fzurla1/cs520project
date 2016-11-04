@@ -8,7 +8,7 @@ class Decode
 public:
 	Decode();
 	~Decode();
-	Global::apexStruct run(Global::apexStruct input_struct, Global::Register_Info * register_file);
+	Global::apexStruct run(Global::apexStruct input_struct, Global::Register_Info * register_file, int * HALT);
 
 	/// <summary>
 	///	identifies if this stage is stalled

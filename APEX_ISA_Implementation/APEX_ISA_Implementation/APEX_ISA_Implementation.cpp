@@ -52,14 +52,58 @@ int memory_array[Global::MEMORY_SIZE];
 
 //-----------FUNCTIONS---------//
 
+#pragma region "INITIALIZE FUNCTIONS" 
+void initialize_flags()
+{
+	for each (bool b in alu_flags)
+	{
+		alu_flags[b] = Global::FLAGS::NA;
+	}
+
+}
+
+void initialize_forwarding_bus()
+{
+	Global::Register_Info init;
+	init.reg_tag = Global::ARCH_REGISTERS::NA;
+	init.reg_value = 0;
+
+	for (int x = 0; x < Global::FORWARDING_BUSES; x++)
+	{
+		forward_bus[x] = init;
+	}
+}
+
 void initialize_memory()
 {
-	for (int x = 0; x < Global::MEMORY_SIZE; x++)
+	for each (int x in memory_array)
 	{
 		memory_array[x] = 0;
 	}
 }
 
+void initialize_register_file()
+{
+	Global::Register_Info init;
+	init.reg_tag = Global::ARCH_REGISTERS::NA;
+	init.reg_value = 0;
+
+	for (int x = 0; x < Global::ARCH_REGISTER_COUNT; x++)
+	{
+		register_file[x] = init;
+	}
+}
+
+void initialize_pipeline()
+{
+	initialize_flags();
+	initialize_forwarding_bus();
+	initialize_register_file();
+	initialize_memory();
+}
+#pragma endregion
+
+//MAIN PROGRAM
 int _tmain(int argc, _TCHAR* argv[])
 {
 	Fetch * fetch = new Fetch();
@@ -71,17 +115,25 @@ int _tmain(int argc, _TCHAR* argv[])
 	Memory * memory = new Memory();
 	WriteBack * writeBack = new WriteBack();
 
-	while (1)
+	int HALT = 0;
+
+	initialize_pipeline();
+
+	while (1 && !HALT)
 	{
 		//start pipeline
 		Global::apexStruct pipeline_struct = fetch->run(PC);
-		decode->run(pipeline_struct, register_file);
-		alu1->run(pipeline_struct, forward_bus);
-		alu2->run(pipeline_struct, forward_bus, alu_flags);
-		branch->run(pipeline_struct, forward_bus, alu_flags);
-		delay->run(pipeline_struct);
-		memory->run(pipeline_struct, forward_bus, memory_array);
-		writeBack->run(pipeline_struct, forward_bus, register_file);
+		decode->run(pipeline_struct, register_file, &HALT);
+
+		if (HALT == 0) //HALT has not occured
+		{
+			alu1->run(pipeline_struct, forward_bus);
+			alu2->run(pipeline_struct, forward_bus, alu_flags);
+			branch->run(pipeline_struct, forward_bus, alu_flags);
+			delay->run(pipeline_struct);
+			memory->run(pipeline_struct, forward_bus, memory_array);
+			writeBack->run(pipeline_struct, forward_bus, register_file);
+		}
 	}
 
 	//destruct
