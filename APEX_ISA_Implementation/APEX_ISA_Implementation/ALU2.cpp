@@ -24,7 +24,7 @@ Global::apexStruct ALU2::run(Global::apexStruct input_struct, Global::Register_I
 	switch (input_struct.instruction.op_code)
 	{
 #pragma region "ADD"
-		case Global::TYPE_INSTRUCTION::ADD:
+		case Global::OPCODE::ADD:
 			/* overflow */;
 			if ((output_struct.instruction.src2_value > 0)
 				&& (input_struct.instruction.src1_value > INT_MAX - input_struct.instruction.src2_value))
@@ -46,7 +46,7 @@ Global::apexStruct ALU2::run(Global::apexStruct input_struct, Global::Register_I
 #pragma endregion
 
 #pragma region "ADD w/ literal"
-		case Global::TYPE_INSTRUCTION::ADDL:
+		case Global::OPCODE::ADDL:
 			/* overflow */;
 			if ((output_struct.instruction.literal_value > 0)
 				&& (input_struct.instruction.src1_value > INT_MAX - input_struct.instruction.literal_value))
@@ -68,7 +68,7 @@ Global::apexStruct ALU2::run(Global::apexStruct input_struct, Global::Register_I
 #pragma endregion
 
 #pragma region "SUB"
-		case Global::TYPE_INSTRUCTION::SUB:
+		case Global::OPCODE::SUB:
 			/* overflow */
 			if (    (input_struct.instruction.src2_value < 0) 
 				 && (input_struct.instruction.src1_value > INT_MAX + input_struct.instruction.src2_value))
@@ -92,7 +92,7 @@ Global::apexStruct ALU2::run(Global::apexStruct input_struct, Global::Register_I
 #pragma endregion
 
 #pragma region "SUB w/ lieral"
-		case Global::TYPE_INSTRUCTION::SUBL:
+		case Global::OPCODE::SUBL:
 			/* overflow */
 			if ((input_struct.instruction.literal_value < 0)
 				&& (input_struct.instruction.src1_value > INT_MAX + input_struct.instruction.literal_value))
@@ -116,7 +116,7 @@ Global::apexStruct ALU2::run(Global::apexStruct input_struct, Global::Register_I
 #pragma endregion 
 
 #pragma region "MUL"
-		case Global::TYPE_INSTRUCTION::MUL:
+		case Global::OPCODE::MUL:
 			/* overflow */
 			if ((input_struct.instruction.src1_value > INT_MAX / input_struct.instruction.src2_value)
 				|| ((input_struct.instruction.src1_value == -1) && (input_struct.instruction.src2_value == INT_MIN)) //2's comp
@@ -139,7 +139,7 @@ Global::apexStruct ALU2::run(Global::apexStruct input_struct, Global::Register_I
 #pragma endregion
 
 #pragma region "MUL w/ literal"
-		case Global::TYPE_INSTRUCTION::MULL:
+		case Global::OPCODE::MULL:
 			/* overflow */
 			if ((input_struct.instruction.src1_value > INT_MAX / input_struct.instruction.literal_value)
 				|| ((input_struct.instruction.src1_value == -1) && (input_struct.instruction.literal_value == INT_MIN)) //2's comp
@@ -162,43 +162,43 @@ Global::apexStruct ALU2::run(Global::apexStruct input_struct, Global::Register_I
 #pragma endregion
 
 #pragma region"ORs"
-		case Global::TYPE_INSTRUCTION::OR:
+		case Global::OPCODE::OR:
 			output_struct.instruction.destination_value = 
 				input_struct.instruction.src1_value | input_struct.instruction.src2_value;
 			break;
-		case Global::TYPE_INSTRUCTION::ORL:
+		case Global::OPCODE::ORL:
 			output_struct.instruction.destination_value =
 				input_struct.instruction.src1_value | input_struct.instruction.literal_value;
 			break;
 #pragma endregion
 #pragma region "ANDs"
-		case Global::TYPE_INSTRUCTION::AND:
+		case Global::OPCODE::AND:
 			output_struct.instruction.destination_value =
 				input_struct.instruction.src1_value & input_struct.instruction.src2_value;
 			break;
-		case Global::TYPE_INSTRUCTION::ANDL:
+		case Global::OPCODE::ANDL:
 			output_struct.instruction.destination_value =
 				input_struct.instruction.src1_value & input_struct.instruction.literal_value;
 			break;
 #pragma endregion
 #pragma region "XORs"
-		case Global::TYPE_INSTRUCTION::EX_OR:
+		case Global::OPCODE::EX_OR:
 			output_struct.instruction.destination_value =
 				input_struct.instruction.src1_value ^ input_struct.instruction.src2_value;
 			break;
-		case Global::TYPE_INSTRUCTION::EX_ORL:
+		case Global::OPCODE::EX_ORL:
 			output_struct.instruction.destination_value =
 				input_struct.instruction.src1_value ^ input_struct.instruction.literal_value;
 			break;
 #pragma endregion
 
 #pragma region "OTHERS"
-		case Global::TYPE_INSTRUCTION::LOAD:
-		case Global::TYPE_INSTRUCTION::STORE:
+		case Global::OPCODE::LOAD:
+		case Global::OPCODE::STORE:
 			output_struct.instruction.memory_location =
 				input_struct.instruction.src1_value + input_struct.instruction.literal_value;
 			break;
-		case Global::TYPE_INSTRUCTION::MOVC:
+		case Global::OPCODE::MOVC:
 			output_struct.instruction.destination_value = input_struct.instruction.literal_value;
 			break;
 #pragma endregion
@@ -211,23 +211,23 @@ Global::apexStruct ALU2::run(Global::apexStruct input_struct, Global::Register_I
 	switch (output_struct.instruction.op_code)
 	{
 		//forward everything except LOAD and STORE data
-		case Global::TYPE_INSTRUCTION::ADD:
-		case Global::TYPE_INSTRUCTION::ADDL:
-		case Global::TYPE_INSTRUCTION::SUB:
-		case Global::TYPE_INSTRUCTION::SUBL:
-		case Global::TYPE_INSTRUCTION::MUL:
-		case Global::TYPE_INSTRUCTION::MULL:
-		case Global::TYPE_INSTRUCTION::OR:
-		case Global::TYPE_INSTRUCTION::ORL:
-		case Global::TYPE_INSTRUCTION::AND:
-		case Global::TYPE_INSTRUCTION::ANDL:
-		case Global::TYPE_INSTRUCTION::EX_OR:
-		case Global::TYPE_INSTRUCTION::EX_ORL:
-		case Global::TYPE_INSTRUCTION::MOVC:
+		case Global::OPCODE::ADD:
+		case Global::OPCODE::ADDL:
+		case Global::OPCODE::SUB:
+		case Global::OPCODE::SUBL:
+		case Global::OPCODE::MUL:
+		case Global::OPCODE::MULL:
+		case Global::OPCODE::OR:
+		case Global::OPCODE::ORL:
+		case Global::OPCODE::AND:
+		case Global::OPCODE::ANDL:
+		case Global::OPCODE::EX_OR:
+		case Global::OPCODE::EX_ORL:
+		case Global::OPCODE::MOVC:
 			if (!flags[Global::FLAGS::OVER_FLOW]
 				&& !flags[Global::FLAGS::UNDER_FLOW])
 			{
-				output_struct.instruction.destination_staus = 1;
+				output_struct.instruction.destination_staus = Global::STATUS::VALID;
 				forward_bus[Global::FORWARD_TYPE::FROM_ALU2].reg_tag = output_struct.instruction.destination_tag;
 				forward_bus[Global::FORWARD_TYPE::FROM_ALU2].reg_value = output_struct.instruction.destination_value;
 			}
@@ -235,8 +235,8 @@ Global::apexStruct ALU2::run(Global::apexStruct input_struct, Global::Register_I
 			break;
 
 		//No need to forward anything from the LOAD or STORE instruction at this point
-		case Global::TYPE_INSTRUCTION::LOAD:
-		case Global::TYPE_INSTRUCTION::STORE:
+		case Global::OPCODE::LOAD:
+		case Global::OPCODE::STORE:
 		default:
 			break;
 	}

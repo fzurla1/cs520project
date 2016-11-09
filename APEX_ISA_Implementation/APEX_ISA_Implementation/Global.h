@@ -15,6 +15,11 @@ public:
 	static const int ARCH_REGISTER_COUNT = 16;
 	static const int MEMORY_SIZE = 4000;
 
+	enum STATUS{
+		INVALID,
+		VALID
+	};
+
 	enum OPCODE{
 		//ALU Instructions
 		ADD,
@@ -64,8 +69,8 @@ public:
 	};
 
 	struct Register_Info{
-		ARCH_REGISTERS reg_tag;
-		unsigned int reg_value;
+		ARCH_REGISTERS reg_tag = ARCH_REGISTERS::NA;
+		unsigned int reg_value = -1;
 	};
 
 	struct apexStruct{
@@ -75,17 +80,17 @@ public:
 			OPCODE op_code = OPCODE::NA;
 
 			//destination register information
-			bool destination_staus = 0;
+			Global::STATUS destination_staus = STATUS::INVALID;
 			ARCH_REGISTERS destination_tag = ARCH_REGISTERS::NA;
 			unsigned int destination_value = -1;
 
 			//source 1 register information
-			bool src1_valid = 0;
+			Global::STATUS src1_valid = STATUS::INVALID;
 			ARCH_REGISTERS src1_tag = ARCH_REGISTERS::NA;
 			unsigned int src1_value = -1;
 
 			//source 2 register information
-			bool src2_valid = 0;
+			Global::STATUS src2_valid = STATUS::INVALID;
 			ARCH_REGISTERS src2_tag = ARCH_REGISTERS::NA;
 			unsigned int src2_value = -1;
 

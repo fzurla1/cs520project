@@ -22,12 +22,12 @@ Global::apexStruct ALU1::run(Global::apexStruct input_struct, Global::Register_I
 	snapshot_before = input_struct;
 
 	//check source registers
-	if (output_struct.instruction.src1_valid == false)
+	if (output_struct.instruction.src1_valid == Global::STATUS::INVALID)
 	{
 		if (forward_bus[Global::FROM_ALU2].reg_tag = output_struct.instruction.src1_tag)
 		{
 			forward_bus[Global::FROM_ALU2].reg_value = output_struct.instruction.src1_value;
-			output_struct.instruction.src1_valid = true;
+			output_struct.instruction.src1_valid = Global::STATUS::VALID;
 		}
 
 		else if (forward_bus[Global::FROM_MEMORY].reg_tag = output_struct.instruction.src1_tag)

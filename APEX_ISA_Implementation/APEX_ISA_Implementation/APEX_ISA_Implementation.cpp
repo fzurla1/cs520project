@@ -59,7 +59,6 @@ void initialize_flags()
 	{
 		alu_flags[b] = Global::FLAGS::NA;
 	}
-
 }
 
 void initialize_forwarding_bus()

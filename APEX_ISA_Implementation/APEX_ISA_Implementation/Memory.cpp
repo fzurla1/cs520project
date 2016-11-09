@@ -24,24 +24,24 @@ Global::apexStruct Memory::run(Global::apexStruct input_struct, Global::Register
 		if (forward_bus[Global::FORWARD_TYPE::FROM_WRITEBACK].reg_tag == input_struct.instruction.destination_tag)
 		{
 			output_struct.instruction.destination_value = forward_bus[Global::FORWARD_TYPE::FROM_WRITEBACK].reg_value;
-			output_struct.instruction.destination_staus = 1;
+			output_struct.instruction.destination_staus = Global::STATUS::VALID;
 		}
 	}
 
-	if (output_struct.instruction.destination_staus == 0)
+	if (output_struct.instruction.destination_staus == Global::STATUS::INVALID)
 	{
 		stalled = true;
 	}
 	else
 	{
-		if (output_struct.instruction.op_code == Global::TYPE_INSTRUCTION::LOAD)
+		if (output_struct.instruction.op_code == Global::OPCODE::LOAD)
 		{
 			output_struct.instruction.destination_value = memory_array[input_struct.instruction.memory_location];
 			output_struct.instruction.destination_staus = 1;
 			forward_bus[Global::FROM_MEMORY].reg_tag = output_struct.instruction.destination_tag;
 			forward_bus[Global::FROM_MEMORY].reg_value = output_struct.instruction.destination_value;
 		}
-		else if (output_struct.instruction.op_code == Global::TYPE_INSTRUCTION::STORE)
+		else if (output_struct.instruction.op_code == Global::OPCODE::STORE)
 		{
 			memory_array[input_struct.instruction.memory_location] = output_struct.instruction.destination_value;
 
