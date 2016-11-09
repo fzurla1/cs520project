@@ -33,44 +33,44 @@ Global::apexStruct ALU1::run(Global::apexStruct input_struct, Global::Register_I
 		else if (forward_bus[Global::FROM_MEMORY].reg_tag = output_struct.instruction.src1_tag)
 		{
 			forward_bus[Global::FROM_MEMORY].reg_value = output_struct.instruction.src1_value;
-			output_struct.instruction.src1_valid = true;
+			output_struct.instruction.src1_valid = Global::STATUS::VALID;
 		}
 
 		else if (forward_bus[Global::FROM_WRITEBACK].reg_tag = output_struct.instruction.src1_tag)
 		{
 			forward_bus[Global::FROM_WRITEBACK].reg_value = output_struct.instruction.src1_value;
-			output_struct.instruction.src1_valid = true;
+			output_struct.instruction.src1_valid = Global::STATUS::VALID;
 		}
 
 		else
 		{
-			output_struct.instruction.src1_valid = false;
+			output_struct.instruction.src1_valid = Global::STATUS::INVALID;
 		}
 	}
 
-	if (output_struct.instruction.src2_valid == false)
+	if (output_struct.instruction.src2_valid == Global::STATUS::INVALID)
 	{
 		if (forward_bus[Global::FROM_ALU2].reg_tag = output_struct.instruction.src2_tag)
 		{
 			forward_bus[Global::FROM_ALU2].reg_value = output_struct.instruction.src2_value;
-			output_struct.instruction.src2_valid = true;
+			output_struct.instruction.src2_valid = Global::STATUS::VALID;
 		}
 
 		else if (forward_bus[Global::FROM_MEMORY].reg_tag = output_struct.instruction.src2_tag)
 		{
 			forward_bus[Global::FROM_MEMORY].reg_value = output_struct.instruction.src2_value;
-			output_struct.instruction.src2_valid = true;
+			output_struct.instruction.src2_valid = Global::STATUS::VALID;
 		}
 
 		else if (forward_bus[Global::FROM_WRITEBACK].reg_tag = output_struct.instruction.src2_tag)
 		{
 			forward_bus[Global::FROM_WRITEBACK].reg_value = output_struct.instruction.src2_value;
-			output_struct.instruction.src2_valid = true;
+			output_struct.instruction.src2_valid = Global::STATUS::VALID;
 		}
 
 		else
 		{
-			output_struct.instruction.src2_valid = false;
+			output_struct.instruction.src2_valid = Global::STATUS::INVALID;
 		}
 	}
 
