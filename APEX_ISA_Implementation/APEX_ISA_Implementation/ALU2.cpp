@@ -18,8 +18,9 @@ Global::apexStruct ALU2::run(Global::apexStruct input_struct, Global::Register_I
 	snapshot_before = input_struct;
 
 	//initialize flags
-	flags[Global::FLAGS::OVER_FLOW] = true;
-	flags[Global::FLAGS::UNDER_FLOW] = true;
+	flags[Global::FLAGS::OVER_FLOW] = false;
+	flags[Global::FLAGS::UNDER_FLOW] = false;
+	flags[Global::FLAGS::ZERO] = false;
 
 	switch (input_struct.instruction.op_code)
 	{
@@ -242,9 +243,24 @@ Global::apexStruct ALU2::run(Global::apexStruct input_struct, Global::Register_I
 	}
 
 	if (output_struct.instruction.destination_value == 0)
+	{
 		flags[Global::FLAGS::ZERO] = true;
+	}
 	else
+	{
 		flags[Global::FLAGS::ZERO] = false;
+	}
+
+	if (!flags[Global::FLAGS::OVER_FLOW]
+		&& !flags[Global::FLAGS::UNDER_FLOW]
+		&& !flags[Global::FLAGS::ZERO])
+	{
+		flags[Global::FLAGS::CLEAR] = true;
+	}
+	else
+	{
+		flags[Global::FLAGS::CLEAR] = false;
+	}
 
 	snapshot_after = output_struct;
 	return output_struct;
@@ -252,33 +268,30 @@ Global::apexStruct ALU2::run(Global::apexStruct input_struct, Global::Register_I
 
 void ALU2::display()
 {
-	cout << endl
-		<< "--- ALU2 stage display ---" << endl
-		<< " - Entering stage - " << endl
-		<< "pc                  : " << snapshot_before.pc_value << endl
-		<< "op code             : " << snapshot_before.instruction.op_code << endl
-		<< "destination reg tag : " << snapshot_before.instruction.destination_tag << endl
-		<< "destination value   : N/A" << endl
-		<< "source 1 reg tag    : " << snapshot_before.instruction.src1_tag << endl
-		<< "source 1 reg valid  : " << snapshot_before.instruction.src1_valid << endl
-		<< "source 1 reg value  : " << snapshot_before.instruction.src1_value << endl
-		<< "source 2 reg tag    : " << snapshot_before.instruction.src2_tag << endl
-		<< "source 2 reg valid  : " << snapshot_before.instruction.src2_valid << endl
-		<< "source 2 reg value  : " << snapshot_before.instruction.src2_value << endl
-		<< "literal             : " << snapshot_before.instruction.literal_value << endl
-		<< "...................." << endl
-		<< " - Exiting stage - " << endl
-		<< "pc                  : " << snapshot_after.pc_value << endl
-		<< "op code             : " << snapshot_after.instruction.op_code << endl
-		<< "destination reg tag : " << snapshot_after.instruction.destination_tag << endl
-		<< "destination value   : " << snapshot_after.instruction.destination_value << endl
-		<< "source 1 reg tag    : " << snapshot_after.instruction.src1_tag << endl
-		<< "source 1 reg valid  : " << snapshot_after.instruction.src1_valid << endl
-		<< "source 1 reg value  : " << snapshot_after.instruction.src1_value << endl
-		<< "source 2 reg tag    : " << snapshot_after.instruction.src2_tag << endl
-		<< "source 2 reg valid  : " << snapshot_after.instruction.src2_valid << endl
-		<< "source 2 reg value  : " << snapshot_after.instruction.src2_value << endl
-		<< "literal             : " << snapshot_after.instruction.literal_value << endl
-		<< "memory location     : " << snapshot_after.instruction.memory_location << endl
-		<< "--- END ALU2 stage display ---" << endl;
+	Global::Debug("\n--- ALU1 stage display ---\n - ENTERING STAGE -");
+	Global::Debug("pc                  : " + snapshot_before.pc_value);
+	Global::Debug("op code             : " + Global::toString(snapshot_before.instruction.op_code));
+	Global::Debug("destination reg tag : R" + Global::toString(snapshot_before.instruction.destination_tag));
+	Global::Debug("destination value   : not ready");
+	Global::Debug("source 1 reg tag    : " + Global::toString(snapshot_before.instruction.src1_tag));
+	Global::Debug("source 1 reg valid  : " + Global::toString(snapshot_before.instruction.src1_valid));
+	Global::Debug("source 1 reg value  : " + snapshot_before.instruction.src1_value);
+	Global::Debug("source 2 reg tag    : " + Global::toString(snapshot_before.instruction.src2_tag));
+	Global::Debug("source 2 reg valid  : " + Global::toString(snapshot_before.instruction.src2_valid));
+	Global::Debug("source 2 reg value  : " + snapshot_before.instruction.src2_value);
+	Global::Debug("literal             : " + snapshot_before.instruction.literal_value);
+	Global::Debug(".....................");
+	Global::Debug(" - EXITING STAGE -");
+	Global::Debug("pc                  : " + snapshot_after.pc_value);
+	Global::Debug("op code             : " + Global::toString(snapshot_after.instruction.op_code));
+	Global::Debug("destination reg tag : " + Global::toString(snapshot_after.instruction.destination_tag));
+	Global::Debug("destination value   : " + snapshot_after.instruction.destination_value);
+	Global::Debug("source 1 reg tag    : " + Global::toString(snapshot_after.instruction.src1_tag));
+	Global::Debug("source 1 reg valid  : " + Global::toString(snapshot_after.instruction.src1_valid));
+	Global::Debug("source 1 reg value  : " + snapshot_after.instruction.src1_value);
+	Global::Debug("source 2 reg tag    : " + Global::toString(snapshot_after.instruction.src2_tag));
+	Global::Debug("source 2 reg valid  : " + Global::toString(snapshot_after.instruction.src2_valid));
+	Global::Debug("source 2 reg value  : " + snapshot_after.instruction.src2_value);
+	Global::Debug("literal             : " + snapshot_after.instruction.literal_value);
+	Global::Debug("--- END ALU1 stage display ---");
 }

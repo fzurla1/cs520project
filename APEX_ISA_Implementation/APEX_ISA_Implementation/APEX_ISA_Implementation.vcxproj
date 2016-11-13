@@ -101,6 +101,7 @@
     <ClCompile Include="Decode.cpp" />
     <ClCompile Include="Delay.cpp" />
     <ClCompile Include="Fetch.cpp" />
+    <ClCompile Include="Global.cpp" />
     <ClCompile Include="Memory.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

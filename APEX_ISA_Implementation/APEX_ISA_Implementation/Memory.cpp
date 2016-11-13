@@ -37,7 +37,7 @@ Global::apexStruct Memory::run(Global::apexStruct input_struct, Global::Register
 		if (output_struct.instruction.op_code == Global::OPCODE::LOAD)
 		{
 			output_struct.instruction.destination_value = memory_array[input_struct.instruction.memory_location];
-			output_struct.instruction.destination_staus = 1;
+			output_struct.instruction.destination_staus = Global::STATUS::VALID;
 			forward_bus[Global::FROM_MEMORY].reg_tag = output_struct.instruction.destination_tag;
 			forward_bus[Global::FROM_MEMORY].reg_value = output_struct.instruction.destination_value;
 		}

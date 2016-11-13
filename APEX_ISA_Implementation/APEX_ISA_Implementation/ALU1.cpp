@@ -75,8 +75,8 @@ Global::apexStruct ALU1::run(Global::apexStruct input_struct, Global::Register_I
 	}
 
 	//verify source registers are valid to proceed
-	if ((output_struct.instruction.src1_valid == true)
-		&& (output_struct.instruction.src2_valid == true))
+	if ((output_struct.instruction.src1_valid == Global::STATUS::VALID)
+		&& (output_struct.instruction.src2_valid == Global::STATUS::VALID))
 	{
 		stalled = false;
 	}
@@ -99,56 +99,60 @@ bool ALU1::isStalled()
 
 void ALU1::display()
 {
-	cout << endl
-		<< "--- ALU1 stage display ---" << endl
-		<< " - ENTERING STAGE -" << endl
-		<< "pc                  : " << snapshot_before.pc_value << endl
-		<< "op code             : " << snapshot_before.instruction.op_code << endl
-		<< "destination reg tag : " << snapshot_before.instruction.destination_tag << endl
-		<< "destination value   : not ready" << endl
-		<< "source 1 reg tag    : " << snapshot_before.instruction.src1_tag << endl
-		<< "source 1 reg valid  : " << snapshot_before.instruction.src1_valid << endl
-		<< "source 1 reg value  : ";
+	Global::Debug("\n--- ALU1 stage display ---\n - ENTERING STAGE -");
+	Global::Debug("pc                  : " + snapshot_before.pc_value);
+	Global::Debug("op code             : " + Global::toString(snapshot_before.instruction.op_code));
+	Global::Debug("destination reg tag : R" + Global::toString(snapshot_before.instruction.destination_tag));
+	Global::Debug("destination value   : not ready");
+	Global::Debug("source 1 reg tag    : " + Global::toString(snapshot_before.instruction.src1_tag));
+	Global::Debug("source 1 reg valid  : " + Global::toString(snapshot_before.instruction.src1_valid));
 
-	if (!snapshot_before.instruction.src1_valid)
-		cout << "invalid!" << endl;
+	if (snapshot_before.instruction.src1_valid == Global::STATUS::INVALID)
+		Global::Debug("source 1 reg value  : invalid!");
 	else
-		cout << snapshot_before.instruction.src1_value << endl;
+		Global::Debug("source 1 reg value  : " + snapshot_before.instruction.src1_value);
 
-	cout << "source 2 reg tag    : " << snapshot_before.instruction.src2_tag << endl
-		<< "source 2 reg valid  : " << snapshot_before.instruction.src2_valid << endl
-		<< "source 2 reg value  : ";
+	Global::Debug("source 2 reg tag    : " + Global::toString(snapshot_before.instruction.src2_tag));
+	Global::Debug("source 2 reg valid  : " + Global::toString(snapshot_before.instruction.src2_valid));
 
 	if (!snapshot_before.instruction.src2_valid)
-		cout << "invalid!" << endl;
+		Global::Debug("source 2 reg value  : invalid!");
 	else
-		cout << snapshot_before.instruction.src2_value << endl;
+		Global::Debug("source 2 reg value  : " + snapshot_before.instruction.src2_value);
 
-	cout << "literal             : " << snapshot_before.instruction.literal_value << endl
-		<< "....................." << endl
-		<< " - EXITING STAGE -" << endl
-		<< "pc                  : " << snapshot_before.pc_value << endl
-		<< "op code             : " << snapshot_before.instruction.op_code << endl
-		<< "destination reg tag : " << snapshot_before.instruction.destination_tag << endl
-		<< "destination value   : not ready" << endl
-		<< "source 1 reg tag    : " << snapshot_before.instruction.src1_tag << endl
-		<< "source 1 reg valid  : " << snapshot_before.instruction.src1_valid << endl
-		<< "source 1 reg value  : ";
+	Global::Debug("literal             : " + snapshot_before.instruction.literal_value);
+	Global::Debug(".....................");
 
-	if (!snapshot_before.instruction.src1_valid)
-		cout << "invalid!" << endl;
+	if (!stalled)
+	{
+		Global::Debug(" - EXITING STAGE -");
+		Global::Debug("pc                  : " + snapshot_after.pc_value);
+		Global::Debug("op code             : " + Global::toString(snapshot_after.instruction.op_code));
+		Global::Debug("destination reg tag : " + Global::toString(snapshot_after.instruction.destination_tag));
+		Global::Debug("destination value   : not ready");
+		Global::Debug("source 1 reg tag    : " + Global::toString(snapshot_after.instruction.src1_tag));
+		Global::Debug("source 1 reg valid  : " + Global::toString(snapshot_after.instruction.src1_valid));
+
+		if (!snapshot_after.instruction.src1_valid)
+			Global::Debug("source 1 reg value  : invalid!");
+		else
+			Global::Debug("source 1 reg value  : " + snapshot_after.instruction.src1_value);
+
+		Global::Debug("source 2 reg tag    : " + Global::toString(snapshot_after.instruction.src2_tag));
+		Global::Debug("source 2 reg valid  : " + Global::toString(snapshot_after.instruction.src2_valid));
+
+		if (!snapshot_after.instruction.src2_valid)
+			Global::Debug("source 2 reg value  : invalid!");
+		else
+			Global::Debug("source 2 reg value  : " + snapshot_after.instruction.src2_value);
+
+		Global::Debug("literal             : " + snapshot_after.instruction.literal_value);
+	}
 	else
-		cout << snapshot_before.instruction.src1_value << endl;
-
-	cout << "source 2 reg tag    : " << snapshot_before.instruction.src2_tag << endl
-		<< "source 2 reg valid  : " << snapshot_before.instruction.src2_valid << endl
-		<< "source 2 reg value  : ";
-
-	if (!snapshot_before.instruction.src2_valid)
-		cout << "invalid!" << endl;
-	else
-		cout << snapshot_before.instruction.src2_value << endl;
-
-	cout << "literal             : " << snapshot_before.instruction.literal_value << endl
-		<< "--- END ALU1 stage display ---" << endl;
+	{
+		Global::Debug("**********************");
+		Global::Debug("**  STAGE STALLED!  **");
+		Global::Debug("**********************");
+	}
+	Global::Debug("--- END ALU1 stage display ---");
 }

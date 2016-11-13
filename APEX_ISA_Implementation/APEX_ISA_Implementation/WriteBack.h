@@ -8,7 +8,7 @@ class WriteBack
 public:
 	WriteBack();
 	~WriteBack();
-	void run(Global::apexStruct input_struct, Global::Register_Info * forward_bus, Global::Register_Info * register_file);
+	void run(Global::apexStruct input_struct, Global::Register_Info * forward_bus, Global::Register_Info * register_file, int * HALT);
 
 	/// <summary>
 	///	identifies if this stage is stalled
