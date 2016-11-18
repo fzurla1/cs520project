@@ -13,41 +13,51 @@ Memory::~Memory()
 
 //at this point, memory location must already be computed, therefore, src1 value must be known.
 //this mean that we could potentially still require the 1st operand for a store command
-Global::apexStruct Memory::run(Global::apexStruct input_struct, Global::Register_Info * forward_bus, int * memory_array)
+Global::apexStruct Memory::run(
+	Global::Forwarding_Info(&Forward_Bus)[Global::FORWARDING_BUSES],
+	bool (&Stalled_Stages)[Global::TOTAL_STAGES],
+	int (&Memory_Array)[Global::MEMORY_SIZE])
 {
-	Global::apexStruct output_struct = input_struct;
-	snapshot_before = input_struct;
+	Global::apexStruct output_struct = myStruct;
+	snapshot_before = myStruct;
 
-	//get forwarded info, if needed
-	if (input_struct.instruction.destination_staus == 0)
+	//make sure we have valid data
+	if (myStruct.pc_value != INT_MAX)
 	{
-		if (forward_bus[Global::FORWARD_TYPE::FROM_WRITEBACK].reg_tag == input_struct.instruction.destination_tag)
+		//get forwarded info, if needed
+		if (myStruct.instruction.dest.status == Global::STATUS::INVALID)
 		{
-			output_struct.instruction.destination_value = forward_bus[Global::FORWARD_TYPE::FROM_WRITEBACK].reg_value;
-			output_struct.instruction.destination_staus = Global::STATUS::VALID;
+			if (Forward_Bus[Global::FORWARD_TYPE::FROM_WRITEBACK].reg_info.tag == myStruct.instruction.dest.tag)
+			{
+				output_struct.instruction.dest.value = Forward_Bus[Global::FORWARD_TYPE::FROM_WRITEBACK].reg_info.value;
+				output_struct.instruction.dest.status = Global::STATUS::VALID;
+			}
+			else
+			{
+				Stalled_Stages[Global::STALLED_STAGE::MEMORY] = true;
+			}
 		}
-	}
-
-	if (output_struct.instruction.destination_staus == Global::STATUS::INVALID)
-	{
-		stalled = true;
-	}
-	else
-	{
-		if (output_struct.instruction.op_code == Global::OPCODE::LOAD)
+		else
 		{
-			output_struct.instruction.destination_value = memory_array[input_struct.instruction.memory_location];
-			output_struct.instruction.destination_staus = Global::STATUS::VALID;
-			forward_bus[Global::FROM_MEMORY].reg_tag = output_struct.instruction.destination_tag;
-			forward_bus[Global::FROM_MEMORY].reg_value = output_struct.instruction.destination_value;
-		}
-		else if (output_struct.instruction.op_code == Global::OPCODE::STORE)
-		{
-			memory_array[input_struct.instruction.memory_location] = output_struct.instruction.destination_value;
+			if (output_struct.instruction.op_code == Global::OPCODE::LOAD)
+			{
+				output_struct.instruction.dest.value = Memory_Array[myStruct.instruction.memory_location];
+				output_struct.instruction.dest.status = Global::STATUS::VALID;
+				Forward_Bus[Global::FROM_MEMORY].pc_value = output_struct.pc_value;
+				Forward_Bus[Global::FROM_MEMORY].reg_info.tag = output_struct.instruction.dest.tag;
+				Forward_Bus[Global::FROM_MEMORY].reg_info.value = output_struct.instruction.dest.value;
+			}
+			else if (output_struct.instruction.op_code == Global::OPCODE::STORE)
+			{
+				Memory_Array[myStruct.instruction.memory_location] = output_struct.instruction.dest.value;
 
-			//write bogus info into forward bus
-			forward_bus[Global::FROM_MEMORY].reg_tag = Global::ARCH_REGISTERS::NA;
-			forward_bus[Global::FROM_MEMORY].reg_value = -1;
+				//write bogus info into forward bus
+				Forward_Bus[Global::FROM_MEMORY].pc_value = -1;
+				Forward_Bus[Global::FROM_MEMORY].reg_info.tag = Global::ARCH_REGISTERS::NA;
+				Forward_Bus[Global::FROM_MEMORY].reg_info.value = -1;
+			}
+
+			Stalled_Stages[Global::STALLED_STAGE::MEMORY] = false;
 		}
 	}
 
@@ -57,40 +67,48 @@ Global::apexStruct Memory::run(Global::apexStruct input_struct, Global::Register
 	return output_struct;
 }
 
-bool Memory::isStalled()
+void Memory::setPipelineStruct(Global::apexStruct input_struct)
 {
-	return stalled;
+	myStruct = input_struct;
 }
 
 void Memory::display()
 {
-	cout << endl
-		<< "--- MEM stage display ---" << endl
-		<< " - Entering stage - " << endl
-		<< "pc                  : " << snapshot_before.pc_value << endl
-		<< "op code             : " << snapshot_before.instruction.op_code << endl
-		<< "destination reg tag : " << snapshot_before.instruction.destination_tag << endl
-		<< "destination value   : N/A" << endl
-		<< "source 1 reg tag    : " << snapshot_before.instruction.src1_tag << endl
-		<< "source 1 reg valid  : " << snapshot_before.instruction.src1_valid << endl
-		<< "source 1 reg value  : " << snapshot_before.instruction.src1_value << endl
-		<< "source 2 reg tag    : " << snapshot_before.instruction.src2_tag << endl
-		<< "source 2 reg valid  : " << snapshot_before.instruction.src2_valid << endl
-		<< "source 2 reg value  : " << snapshot_before.instruction.src2_value << endl
-		<< "literal             : " << snapshot_before.instruction.literal_value << endl
-		<< "...................." << endl
-		<< " - Exiting stage - " << endl
-		<< "pc                  : " << snapshot_after.pc_value << endl
-		<< "op code             : " << snapshot_after.instruction.op_code << endl
-		<< "destination reg tag : " << snapshot_after.instruction.destination_tag << endl
-		<< "destination value   : " << snapshot_after.instruction.destination_value << endl
-		<< "source 1 reg tag    : " << snapshot_after.instruction.src1_tag << endl
-		<< "source 1 reg valid  : " << snapshot_after.instruction.src1_valid << endl
-		<< "source 1 reg value  : " << snapshot_after.instruction.src1_value << endl
-		<< "source 2 reg tag    : " << snapshot_after.instruction.src2_tag << endl
-		<< "source 2 reg valid  : " << snapshot_after.instruction.src2_valid << endl
-		<< "source 2 reg value  : " << snapshot_after.instruction.src2_value << endl
-		<< "literal             : " << snapshot_after.instruction.literal_value << endl
-		<< "memory location     : " << snapshot_after.instruction.memory_location << endl
-		<< "--- END MEM stage display ---" << endl;
+	//make sure we have valid data
+	if (myStruct.pc_value != INT_MAX)
+	{
+		Global::Debug("--- MEM stage display ---");
+		Global::Debug(" - Entering stage - ");
+		Global::Debug("pc                  : " + to_string(snapshot_before.pc_value));
+		Global::Debug("raw instruction     : " + snapshot_before.untouched_instruction);
+		Global::Debug("op code             : " + Global::toString(snapshot_before.instruction.op_code));
+		Global::Debug("destination reg tag : " + Global::toString(snapshot_before.instruction.dest.tag));
+		Global::Debug("destination value   : N/A");
+		Global::Debug("source 1 reg tag    : " + Global::toString(snapshot_before.instruction.src1.tag));
+		Global::Debug("source 1 reg valid  : " + Global::toString(snapshot_before.instruction.src1.status));
+		Global::Debug("source 1 reg value  : " + to_string(snapshot_before.instruction.src1.value));
+		Global::Debug("source 2 reg tag    : " + Global::toString(snapshot_before.instruction.src2.tag));
+		Global::Debug("source 2 reg valid  : " + Global::toString(snapshot_before.instruction.src2.status));
+		Global::Debug("source 2 reg value  : " + to_string(snapshot_before.instruction.src2.value));
+		Global::Debug("literal             : " + to_string(snapshot_before.instruction.literal_value));
+		Global::Debug("....................");
+		Global::Debug(" - Exiting stage - ");
+		Global::Debug("pc                  : " + to_string(snapshot_after.pc_value));
+		Global::Debug("op code             : " + Global::toString(snapshot_after.instruction.op_code));
+		Global::Debug("destination reg tag : " + Global::toString(snapshot_after.instruction.dest.tag));
+		Global::Debug("destination value   : " + to_string(snapshot_after.instruction.dest.value));
+		Global::Debug("source 1 reg tag    : " + Global::toString(snapshot_after.instruction.src1.tag));
+		Global::Debug("source 1 reg valid  : " + Global::toString(snapshot_after.instruction.src1.status));
+		Global::Debug("source 1 reg value  : " + to_string(snapshot_after.instruction.src1.value));
+		Global::Debug("source 2 reg tag    : " + Global::toString(snapshot_after.instruction.src2.tag));
+		Global::Debug("source 2 reg valid  : " + Global::toString(snapshot_after.instruction.src2.status));
+		Global::Debug("source 2 reg value  : " + to_string(snapshot_after.instruction.src2.value));
+		Global::Debug("literal             : " + to_string(snapshot_after.instruction.literal_value));
+		Global::Debug("memory location     : " + to_string(snapshot_after.instruction.memory_location));
+		Global::Debug("--- END MEM stage display ---");
+	}
+	else
+	{
+		Global::Debug("MEM STAGE --> No Instruction in Stage");
+	}
 }

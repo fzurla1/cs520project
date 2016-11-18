@@ -16,143 +16,159 @@ ALU1::~ALU1()
 //	This function will:
 //	1) Read the forward bus for missing register values
 //	2) update the apexStruct for the ALU2 phase
-Global::apexStruct ALU1::run(Global::apexStruct input_struct, Global::Register_Info * forward_bus)
+Global::apexStruct ALU1::run( Global::Forwarding_Info(&Forward_Bus)[Global::FORWARDING_BUSES],
+	bool(&Stalled_Stages)[Global::TOTAL_STAGES])
 {
-	Global::apexStruct output_struct = input_struct;
-	snapshot_before = input_struct;
+	Global::apexStruct output_struct = myStruct;
+	snapshot_before = myStruct;
 
-	//check source registers
-	if (output_struct.instruction.src1_valid == Global::STATUS::INVALID)
+	//make sure we have valid data
+	if (myStruct.pc_value != INT_MAX)
 	{
-		if (forward_bus[Global::FROM_ALU2].reg_tag = output_struct.instruction.src1_tag)
-		{
-			forward_bus[Global::FROM_ALU2].reg_value = output_struct.instruction.src1_value;
-			output_struct.instruction.src1_valid = Global::STATUS::VALID;
-		}
 
-		else if (forward_bus[Global::FROM_MEMORY].reg_tag = output_struct.instruction.src1_tag)
+		if (!Stalled_Stages[Global::STALLED_STAGE::ALU2])
 		{
-			forward_bus[Global::FROM_MEMORY].reg_value = output_struct.instruction.src1_value;
-			output_struct.instruction.src1_valid = Global::STATUS::VALID;
-		}
+			//assume not stalled
+			Stalled_Stages[Global::STALLED_STAGE::ALU1] = false;
 
-		else if (forward_bus[Global::FROM_WRITEBACK].reg_tag = output_struct.instruction.src1_tag)
-		{
-			forward_bus[Global::FROM_WRITEBACK].reg_value = output_struct.instruction.src1_value;
-			output_struct.instruction.src1_valid = Global::STATUS::VALID;
-		}
+			//check source registers
+			if (output_struct.instruction.src1.status == Global::STATUS::INVALID)
+			{
+				if (Forward_Bus[Global::FROM_ALU2].reg_info.tag = output_struct.instruction.src1.tag)
+				{
+					Forward_Bus[Global::FROM_ALU2].reg_info.value = output_struct.instruction.src1.value;
+					output_struct.instruction.src1.status = Global::STATUS::VALID;
+				}
 
+				else if (Forward_Bus[Global::FROM_MEMORY].reg_info.tag = output_struct.instruction.src1.tag)
+				{
+					Forward_Bus[Global::FROM_MEMORY].reg_info.value = output_struct.instruction.src1.value;
+					output_struct.instruction.src1.status = Global::STATUS::VALID;
+				}
+
+				else if (Forward_Bus[Global::FROM_WRITEBACK].reg_info.tag = output_struct.instruction.src1.tag)
+				{
+					Forward_Bus[Global::FROM_WRITEBACK].reg_info.value = output_struct.instruction.src1.value;
+					output_struct.instruction.src1.status = Global::STATUS::VALID;
+				}
+
+				else
+				{
+					output_struct.instruction.src1.status = Global::STATUS::INVALID;
+				}
+			}
+
+			if (output_struct.instruction.src2.status == Global::STATUS::INVALID)
+			{
+				if (Forward_Bus[Global::FROM_ALU2].reg_info.tag = output_struct.instruction.src2.tag)
+				{
+					Forward_Bus[Global::FROM_ALU2].reg_info.value = output_struct.instruction.src2.value;
+					output_struct.instruction.src2.status = Global::STATUS::VALID;
+				}
+
+				else if (Forward_Bus[Global::FROM_MEMORY].reg_info.tag = output_struct.instruction.src2.tag)
+				{
+					Forward_Bus[Global::FROM_MEMORY].reg_info.value = output_struct.instruction.src2.value;
+					output_struct.instruction.src2.status = Global::STATUS::VALID;
+				}
+
+				else if (Forward_Bus[Global::FROM_WRITEBACK].reg_info.tag = output_struct.instruction.src2.tag)
+				{
+					Forward_Bus[Global::FROM_WRITEBACK].reg_info.value = output_struct.instruction.src2.value;
+					output_struct.instruction.src2.status = Global::STATUS::VALID;
+				}
+
+				else
+				{
+					output_struct.instruction.src2.status = Global::STATUS::INVALID;
+				}
+			}
+
+			//verify source registers are valid to proceed
+			if ((output_struct.instruction.src1.status == Global::STATUS::VALID)
+				&& (output_struct.instruction.src2.status == Global::STATUS::VALID))
+			{
+				Stalled_Stages[Global::STALLED_STAGE::ALU1] = false;
+			}
+
+			//need to wait 
+			else
+			{
+				Stalled_Stages[Global::STALLED_STAGE::ALU1] = true;
+			}
+		}
 		else
 		{
-			output_struct.instruction.src1_valid = Global::STATUS::INVALID;
+			Stalled_Stages[Global::STALLED_STAGE::ALU1] = true;
 		}
 	}
-
-	if (output_struct.instruction.src2_valid == Global::STATUS::INVALID)
-	{
-		if (forward_bus[Global::FROM_ALU2].reg_tag = output_struct.instruction.src2_tag)
-		{
-			forward_bus[Global::FROM_ALU2].reg_value = output_struct.instruction.src2_value;
-			output_struct.instruction.src2_valid = Global::STATUS::VALID;
-		}
-
-		else if (forward_bus[Global::FROM_MEMORY].reg_tag = output_struct.instruction.src2_tag)
-		{
-			forward_bus[Global::FROM_MEMORY].reg_value = output_struct.instruction.src2_value;
-			output_struct.instruction.src2_valid = Global::STATUS::VALID;
-		}
-
-		else if (forward_bus[Global::FROM_WRITEBACK].reg_tag = output_struct.instruction.src2_tag)
-		{
-			forward_bus[Global::FROM_WRITEBACK].reg_value = output_struct.instruction.src2_value;
-			output_struct.instruction.src2_valid = Global::STATUS::VALID;
-		}
-
-		else
-		{
-			output_struct.instruction.src2_valid = Global::STATUS::INVALID;
-		}
-	}
-
-	//verify source registers are valid to proceed
-	if ((output_struct.instruction.src1_valid == Global::STATUS::VALID)
-		&& (output_struct.instruction.src2_valid == Global::STATUS::VALID))
-	{
-		stalled = false;
-	}
-
-	//need to wait 
-	else
-	{
-		stalled = true;
-	}
-
 	snapshot_after = output_struct;
 
 	return output_struct;
 }
 
-bool ALU1::isStalled()
+void ALU1::setPipelineStruct(Global::apexStruct input_struct)
 {
-	return stalled;
+	myStruct = input_struct;
 }
 
 void ALU1::display()
 {
-	Global::Debug("\n--- ALU1 stage display ---\n - ENTERING STAGE -");
-	Global::Debug("pc                  : " + snapshot_before.pc_value);
-	Global::Debug("op code             : " + Global::toString(snapshot_before.instruction.op_code));
-	Global::Debug("destination reg tag : R" + Global::toString(snapshot_before.instruction.destination_tag));
-	Global::Debug("destination value   : not ready");
-	Global::Debug("source 1 reg tag    : " + Global::toString(snapshot_before.instruction.src1_tag));
-	Global::Debug("source 1 reg valid  : " + Global::toString(snapshot_before.instruction.src1_valid));
-
-	if (snapshot_before.instruction.src1_valid == Global::STATUS::INVALID)
-		Global::Debug("source 1 reg value  : invalid!");
-	else
-		Global::Debug("source 1 reg value  : " + snapshot_before.instruction.src1_value);
-
-	Global::Debug("source 2 reg tag    : " + Global::toString(snapshot_before.instruction.src2_tag));
-	Global::Debug("source 2 reg valid  : " + Global::toString(snapshot_before.instruction.src2_valid));
-
-	if (!snapshot_before.instruction.src2_valid)
-		Global::Debug("source 2 reg value  : invalid!");
-	else
-		Global::Debug("source 2 reg value  : " + snapshot_before.instruction.src2_value);
-
-	Global::Debug("literal             : " + snapshot_before.instruction.literal_value);
-	Global::Debug(".....................");
-
-	if (!stalled)
+	//make sure we have valid data
+	if (myStruct.pc_value != INT_MAX)
 	{
-		Global::Debug(" - EXITING STAGE -");
-		Global::Debug("pc                  : " + snapshot_after.pc_value);
-		Global::Debug("op code             : " + Global::toString(snapshot_after.instruction.op_code));
-		Global::Debug("destination reg tag : " + Global::toString(snapshot_after.instruction.destination_tag));
+		Global::Debug("\n--- ALU1 stage display ---\n - ENTERING STAGE -");
+		Global::Debug("pc                  : " + to_string(snapshot_before.pc_value));
+		Global::Debug("raw instruction     : " + snapshot_before.untouched_instruction);
+		Global::Debug("op code             : " + Global::toString(snapshot_before.instruction.op_code));
+		Global::Debug("destination reg tag : " + Global::toString(snapshot_before.instruction.dest.tag));
 		Global::Debug("destination value   : not ready");
-		Global::Debug("source 1 reg tag    : " + Global::toString(snapshot_after.instruction.src1_tag));
-		Global::Debug("source 1 reg valid  : " + Global::toString(snapshot_after.instruction.src1_valid));
+		Global::Debug("source 1 reg tag    : " + Global::toString(snapshot_before.instruction.src1.tag));
+		Global::Debug("source 1 reg valid  : " + Global::toString(snapshot_before.instruction.src1.status));
 
-		if (!snapshot_after.instruction.src1_valid)
+		if (snapshot_before.instruction.src1.status == Global::STATUS::INVALID)
 			Global::Debug("source 1 reg value  : invalid!");
 		else
-			Global::Debug("source 1 reg value  : " + snapshot_after.instruction.src1_value);
+			Global::Debug("source 1 reg value  : " + to_string(snapshot_before.instruction.src1.value));
 
-		Global::Debug("source 2 reg tag    : " + Global::toString(snapshot_after.instruction.src2_tag));
-		Global::Debug("source 2 reg valid  : " + Global::toString(snapshot_after.instruction.src2_valid));
+		Global::Debug("source 2 reg tag    : " + Global::toString(snapshot_before.instruction.src2.tag));
+		Global::Debug("source 2 reg valid  : " + Global::toString(snapshot_before.instruction.src2.status));
 
-		if (!snapshot_after.instruction.src2_valid)
+		if (!snapshot_before.instruction.src2.status)
 			Global::Debug("source 2 reg value  : invalid!");
 		else
-			Global::Debug("source 2 reg value  : " + snapshot_after.instruction.src2_value);
+			Global::Debug("source 2 reg value  : " + to_string(snapshot_before.instruction.src2.value));
 
-		Global::Debug("literal             : " + snapshot_after.instruction.literal_value);
+		Global::Debug("literal             : " + to_string(snapshot_before.instruction.literal_value));
+		Global::Debug(".....................");
+
+		Global::Debug(" - EXITING STAGE -");
+		Global::Debug("pc                  : " + to_string(snapshot_after.pc_value));
+		Global::Debug("op code             : " + Global::toString(snapshot_after.instruction.op_code));
+		Global::Debug("destination reg tag : " + Global::toString(snapshot_after.instruction.dest.tag));
+		Global::Debug("destination value   : not ready");
+		Global::Debug("source 1 reg tag    : " + Global::toString(snapshot_after.instruction.src1.tag));
+		Global::Debug("source 1 reg valid  : " + Global::toString(snapshot_after.instruction.src1.status));
+
+		if (!snapshot_after.instruction.src1.status)
+			Global::Debug("source 1 reg value  : invalid!");
+		else
+			Global::Debug("source 1 reg value  : " + to_string(snapshot_after.instruction.src1.value));
+
+		Global::Debug("source 2 reg tag    : " + Global::toString(snapshot_after.instruction.src2.tag));
+		Global::Debug("source 2 reg valid  : " + Global::toString(snapshot_after.instruction.src2.status));
+
+		if (!snapshot_after.instruction.src2.status)
+			Global::Debug("source 2 reg value  : invalid!");
+		else
+			Global::Debug("source 2 reg value  : " + to_string(snapshot_after.instruction.src2.value));
+
+		Global::Debug("literal             : " + to_string(snapshot_after.instruction.literal_value));
+
+		Global::Debug("--- END ALU1 stage display ---");
 	}
 	else
 	{
-		Global::Debug("**********************");
-		Global::Debug("**  STAGE STALLED!  **");
-		Global::Debug("**********************");
+		Global::Debug("ALU 1 STAGE --> No Instruction in Stage");
 	}
-	Global::Debug("--- END ALU1 stage display ---");
 }

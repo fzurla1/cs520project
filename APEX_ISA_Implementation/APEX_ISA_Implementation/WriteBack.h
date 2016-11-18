@@ -8,12 +8,13 @@ class WriteBack
 public:
 	WriteBack();
 	~WriteBack();
-	void run(Global::apexStruct input_struct, Global::Register_Info * forward_bus, Global::Register_Info * register_file, int * HALT);
+	void run(
+		Global::Register_Info(&Register_File)[Global::ARCH_REGISTER_COUNT],
+		Global::Forwarding_Info(&Forward_Bus)[Global::FORWARDING_BUSES],
+		int(&Most_Recent_Reg)[Global::ARCH_REGISTER_COUNT],
+		int * HALT);
 
-	/// <summary>
-	///	identifies if this stage is stalled
-	/// </summary>
-	bool isStalled();
+	void setPipelineStruct(Global::apexStruct input_struct);
 
 	/// <summary>
 	///	displays current status of pipeline stage
@@ -21,7 +22,7 @@ public:
 	void display();
 
 private:
-	bool stalled = false;
+	Global::apexStruct myStruct;
 	Global::apexStruct snapshot_before;
 };
 

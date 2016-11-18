@@ -8,12 +8,9 @@ class Delay
 public:
 	Delay();
 	~Delay();
-	Global::apexStruct run(Global::apexStruct input_struct);
+	Global::apexStruct run(bool (&Stalled_Stages)[Global::TOTAL_STAGES]);
 
-	/// <summary>
-	///	identifies if this stage is stalled
-	/// </summary>
-	bool isStalled();
+	void setPipelineStruct(Global::apexStruct input_struct);
 
 	/// <summary>
 	///	displays current status of pipeline stage
@@ -21,7 +18,7 @@ public:
 	void display();
 
 private:
-	bool stalled = false;
+	Global::apexStruct myStruct;
 };
 
 #endif //DELAY_H

@@ -8,12 +8,13 @@ class Decode
 public:
 	Decode();
 	~Decode();
-	Global::apexStruct run(Global::apexStruct input_struct, Global::Register_Info * register_file);
+	Global::apexStruct run(
+		Global::Register_Info(&Register_File)[Global::ARCH_REGISTER_COUNT],
+		Global::Forwarding_Info(&Forward_Bus)[Global::FORWARDING_BUSES],
+		bool(&Stalled_Stages)[Global::TOTAL_STAGES],
+		int (&Most_Recent_Reg)[Global::ARCH_REGISTER_COUNT]);
 
-	/// <summary>
-	///	identifies if this stage is stalled
-	/// </summary>
-	bool isStalled();
+	void setPipelineStruct(Global::apexStruct input_struct);
 
 	/// <summary>
 	///	displays current status of pipeline stage
@@ -21,7 +22,9 @@ public:
 	void display();
 
 private:
-	bool stalled = false;
+	Global::apexStruct myStruct;
+	Global::apexStruct snapshot_before;
+	Global::apexStruct snapshot_after;
 };
 
 #endif //DECODE_H

@@ -21,20 +21,17 @@ public:
 	///	1) Read the forward bus for missing register values
 	///	2) update the Global::apexStruct for the ALU2 phase
 	/// </summary>
-	Global::apexStruct run(Global::apexStruct input_struct, Global::Register_Info * forward_bus);
+	Global::apexStruct run(	Global::Forwarding_Info(&Forward_Bus)[Global::FORWARDING_BUSES],
+		bool(&Stalled_Stages)[Global::TOTAL_STAGES]);
 
-	/// <summary>
-	///	identifies if this stage is stalled
-	/// </summary>
-	bool isStalled();
-
+	void setPipelineStruct(Global::apexStruct input_struct);
 	/// <summary>
 	///	displays current status of pipeline stage
 	/// </summary>
 	void display();
 
 private:
-	bool stalled = false;
+	Global::apexStruct myStruct;
 	Global::apexStruct snapshot_before;
 	Global::apexStruct snapshot_after;
 };

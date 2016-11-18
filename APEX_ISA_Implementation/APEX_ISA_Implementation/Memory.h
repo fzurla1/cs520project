@@ -16,12 +16,12 @@ public:
 	/// 3) forward results
 	/// 4) update the output structure
 	/// </summary>
-	Global::apexStruct run(Global::apexStruct input_struct, Global::Register_Info * forward_bus, int * memory_array);
+	Global::apexStruct run(
+		Global::Forwarding_Info(&Forward_Bus)[Global::FORWARDING_BUSES],
+		bool (&Stalled_Stages)[Global::TOTAL_STAGES],
+		int (&Memory_Array)[Global::MEMORY_SIZE]);
 
-	/// <summary>
-	///	identifies if this stage is stalled
-	/// </summary>
-	bool isStalled();
+	void setPipelineStruct(Global::apexStruct input_struct);
 
 	/// <summary>
 	///	displays current status of pipeline stage
@@ -29,7 +29,7 @@ public:
 	void display();
 
 private:
-	bool stalled = false;
+	Global::apexStruct myStruct;
 	Global::apexStruct snapshot_before;
 	Global::apexStruct snapshot_after;
 };

@@ -23,7 +23,12 @@ public:
 	/// 3) forwards data to the forwarding bus
 	/// 4) updates the flags (zero, overflow, underflow, etc)
 	/// </summary>
-	Global::apexStruct run(Global::apexStruct input_struct, Global::Register_Info * forward_bus, bool * flags);
+	Global::apexStruct run(
+		bool (&ALU_Flags)[Global::ALU_FLAG_COUNT],
+		Global::Forwarding_Info(&Forward_Bus)[Global::FORWARDING_BUSES],
+		bool (&Stalled_Stages)[Global::TOTAL_STAGES]);
+
+	void setPipelineStruct(Global::apexStruct input_struct);
 
 	/// <summary>
 	///	displays current status of pipeline stage
@@ -31,7 +36,7 @@ public:
 	void display();
 
 private:
-	bool stalled = false;
+	Global::apexStruct myStruct;
 	Global::apexStruct snapshot_before;
 	Global::apexStruct snapshot_after;
 };

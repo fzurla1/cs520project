@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "Global.h"
 
+#define DEBUG 1
+
 using namespace std;
 
 ofstream fout;
@@ -25,9 +27,13 @@ void Global::closeFile()
 
 void Global::Debug(string s1)
 {
+	if (DEBUG)
+		cout << s1 << endl;
+
 	fout << s1 << endl;
 }
 
+//OpCodes
 string Global::toString(OPCODE opcode)
 {
 	string out = "";
@@ -38,6 +44,54 @@ string Global::toString(OPCODE opcode)
 			break;
 		case OPCODE::ADDL:
 			out = "ADDL";
+			break;
+		case OPCODE::BAL:
+			out = "BAL";
+			break;
+		case OPCODE::BNZ:
+			out = "BNZ";
+			break;
+		case OPCODE::BZ:
+			out = "BZ";
+			break;
+		case OPCODE::EX_OR:
+			out = "EX_OR";
+			break;
+		case OPCODE::EX_ORL:
+			out = "EX_ORL";
+			break;
+		case OPCODE::HALT:
+			out = "HALT";
+			break;
+		case OPCODE::JUMP:
+			out = "JUMP";
+			break;
+		case OPCODE::LOAD:
+			out = "LOAD";
+			break;
+		case OPCODE::MOVC:
+			out = "MOVC";
+			break;
+		case OPCODE::MUL:
+			out = "MUL";
+			break;
+		case OPCODE::MULL:
+			out = "MULL";
+			break;
+		case OPCODE::OR:
+			out = "OR";
+			break;
+		case OPCODE::ORL:
+			out = "ORL";
+			break;
+		case OPCODE::STORE:
+			out = "STORE";
+			break;
+		case OPCODE::SUB:
+			out = "SUB";
+			break;
+		case OPCODE::SUBL:
+			out = "SUBL";
 			break;
 		default:
 			out = "NONE";
@@ -176,5 +230,40 @@ string Global::toString(STATUS stat)
 		out = "INVALID";
 		break;
 	}
+	return out;
+}
+
+//Stalled Stages
+string Global::toString(STALLED_STAGE stage)
+{
+	string out = "";
+	switch (stage)
+	{
+		case STALLED_STAGE::FETCH:
+			out = "FETCH";
+			break;
+		case STALLED_STAGE::DECODE_RF:
+			out = "DECODE_RF";
+			break;
+		case STALLED_STAGE::ALU1:
+			out = "ALU1";
+			break;
+		case STALLED_STAGE::ALU2:
+			out = "ALU2";
+			break;
+		case STALLED_STAGE::BRANCH:
+			out = "BRANCH";
+			break;
+		case STALLED_STAGE::DELAY:
+			out = "DELAY";
+			break;
+		case STALLED_STAGE::MEMORY:
+			out = "MEMORY";
+			break;
+		case STALLED_STAGE::WRITEBACK:
+			out = "WRITEBACK";
+			break;
+	}
+
 	return out;
 }

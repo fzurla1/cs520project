@@ -8,12 +8,13 @@ class Branch
 public:
 	Branch();
 	~Branch();
-	Global::apexStruct run(Global::apexStruct input_struct, Global::Register_Info * forward_bus, bool * flags);
+	Global::apexStruct run(
+		int PC,
+		Global::Forwarding_Info(&Forward_Bus)[Global::FORWARDING_BUSES],
+		bool(&Stalled_Stages)[Global::TOTAL_STAGES],
+		Global::Register_Info(&X));
 
-	/// <summary>
-	///	identifies if this stage is stalled
-	/// </summary>
-	bool isStalled();
+	void setPipelineStruct(Global::apexStruct input_struct);
 
 	/// <summary>
 	///	displays current status of pipeline stage
@@ -21,7 +22,7 @@ public:
 	void display();
 
 private:
-	bool stalled = false;
+	Global::apexStruct myStruct;
 };
 
 #endif //BRANCH_H
