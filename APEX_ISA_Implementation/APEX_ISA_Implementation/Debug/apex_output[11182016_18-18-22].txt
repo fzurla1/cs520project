@@ -1,0 +1,3178 @@
+
+--- Fetch stage display ---
+ - ENTERING STAGE -
+pc                  : 0
+op code             : N/A
+destination reg tag : N/A
+destination value   : N/A
+source 1 reg tag    : N/A
+source 1 reg valid  : N/A
+source 1 reg value  : N/A
+source 2 reg tag    : N/A
+source 2 reg valid  : N/A
+source 2 reg value  : N/A
+literal             : N/A
+.....................
+ - EXITING STAGE -
+pc                  : 4000
+raw instruction     : MOVC R0, #0
+op code             : N/A
+destination reg tag : N/A
+destination value   : N/A
+source 1 reg tag    : N/A
+source 1 reg valid  : N/A
+source 1 reg value  : N/A
+source 2 reg tag    : N/A
+source 2 reg valid  : N/A
+source 2 reg value  : N/A
+literal             : N/A
+--- END FETCH stage display ---
+
+--- Decode/RF stage display ---
+ - ENTERING STAGE -
+pc                  : 2147483647
+raw instruction     : 
+op code             : NONE
+destination reg tag : N/A
+destination value   : not ready
+source 1 reg tag    : N/A
+source 1 reg valid  : INVALID
+source 1 reg value  : invalid!
+source 2 reg tag    : N/A
+source 2 reg valid  : INVALID
+source 2 reg value  : invalid!
+literal             : 0
+.....................
+ - EXITING STAGE -
+pc                  : 2147483647
+op code             : NONE
+destination reg tag : N/A
+destination value   : not ready
+source 1 reg tag    : N/A
+source 1 reg valid  : INVALID
+source 1 reg value  : invalid!
+source 2 reg tag    : N/A
+source 2 reg valid  : INVALID
+source 2 reg value  : invalid!
+literal             : 0
+--- END Decode/RF stage display ---
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+--- Fetch stage display ---
+ - ENTERING STAGE -
+pc                  : 4
+op code             : N/A
+destination reg tag : N/A
+destination value   : N/A
+source 1 reg tag    : N/A
+source 1 reg valid  : N/A
+source 1 reg value  : N/A
+source 2 reg tag    : N/A
+source 2 reg valid  : N/A
+source 2 reg value  : N/A
+literal             : N/A
+.....................
+ - EXITING STAGE -
+pc                  : 4001
+raw instruction     : MOVC R1, #25
+op code             : N/A
+destination reg tag : N/A
+destination value   : N/A
+source 1 reg tag    : N/A
+source 1 reg valid  : N/A
+source 1 reg value  : N/A
+source 2 reg tag    : N/A
+source 2 reg valid  : N/A
+source 2 reg value  : N/A
+literal             : N/A
+--- END FETCH stage display ---
+
+--- Decode/RF stage display ---
+ - ENTERING STAGE -
+pc                  : 4000
+raw instruction     : MOVC R0, #0
+op code             : NONE
+destination reg tag : N/A
+destination value   : not ready
+source 1 reg tag    : N/A
+source 1 reg valid  : INVALID
+source 1 reg value  : invalid!
+source 2 reg tag    : N/A
+source 2 reg valid  : INVALID
+source 2 reg value  : invalid!
+literal             : 0
+.....................
+ - EXITING STAGE -
+pc                  : 4000
+op code             : MOVC
+destination reg tag : R0
+destination value   : not ready
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 0
+--- END Decode/RF stage display ---
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+--- Fetch stage display ---
+ - ENTERING STAGE -
+pc                  : 8
+op code             : N/A
+destination reg tag : N/A
+destination value   : N/A
+source 1 reg tag    : N/A
+source 1 reg valid  : N/A
+source 1 reg value  : N/A
+source 2 reg tag    : N/A
+source 2 reg valid  : N/A
+source 2 reg value  : N/A
+literal             : N/A
+.....................
+ - EXITING STAGE -
+pc                  : 4002
+raw instruction     : MOVC R2, #5
+op code             : N/A
+destination reg tag : N/A
+destination value   : N/A
+source 1 reg tag    : N/A
+source 1 reg valid  : N/A
+source 1 reg value  : N/A
+source 2 reg tag    : N/A
+source 2 reg valid  : N/A
+source 2 reg value  : N/A
+literal             : N/A
+--- END FETCH stage display ---
+
+--- Decode/RF stage display ---
+ - ENTERING STAGE -
+pc                  : 4001
+raw instruction     : MOVC R1, #25
+op code             : NONE
+destination reg tag : N/A
+destination value   : not ready
+source 1 reg tag    : N/A
+source 1 reg valid  : INVALID
+source 1 reg value  : invalid!
+source 2 reg tag    : N/A
+source 2 reg valid  : INVALID
+source 2 reg value  : invalid!
+literal             : 0
+.....................
+ - EXITING STAGE -
+pc                  : 4001
+op code             : MOVC
+destination reg tag : R1
+destination value   : not ready
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 25
+--- END Decode/RF stage display ---
+
+--- ALU1 stage display ---
+ - ENTERING STAGE -
+pc                  : 4000
+raw instruction     : MOVC R0, #0
+op code             : MOVC
+destination reg tag : R0
+destination value   : not ready
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 0
+.....................
+ - EXITING STAGE -
+pc                  : 4000
+op code             : MOVC
+destination reg tag : R0
+destination value   : not ready
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 0
+--- END ALU1 stage display ---
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+--- Fetch stage display ---
+ - ENTERING STAGE -
+pc                  : 12
+op code             : N/A
+destination reg tag : N/A
+destination value   : N/A
+source 1 reg tag    : N/A
+source 1 reg valid  : N/A
+source 1 reg value  : N/A
+source 2 reg tag    : N/A
+source 2 reg valid  : N/A
+source 2 reg value  : N/A
+literal             : N/A
+.....................
+ - EXITING STAGE -
+pc                  : 4003
+raw instruction     : MOVC R3, #1
+op code             : N/A
+destination reg tag : N/A
+destination value   : N/A
+source 1 reg tag    : N/A
+source 1 reg valid  : N/A
+source 1 reg value  : N/A
+source 2 reg tag    : N/A
+source 2 reg valid  : N/A
+source 2 reg value  : N/A
+literal             : N/A
+--- END FETCH stage display ---
+
+--- Decode/RF stage display ---
+ - ENTERING STAGE -
+pc                  : 4002
+raw instruction     : MOVC R2, #5
+op code             : NONE
+destination reg tag : N/A
+destination value   : not ready
+source 1 reg tag    : N/A
+source 1 reg valid  : INVALID
+source 1 reg value  : invalid!
+source 2 reg tag    : N/A
+source 2 reg valid  : INVALID
+source 2 reg value  : invalid!
+literal             : 0
+.....................
+ - EXITING STAGE -
+pc                  : 4002
+op code             : MOVC
+destination reg tag : R2
+destination value   : not ready
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 5
+--- END Decode/RF stage display ---
+
+--- ALU1 stage display ---
+ - ENTERING STAGE -
+pc                  : 4001
+raw instruction     : MOVC R1, #25
+op code             : MOVC
+destination reg tag : R1
+destination value   : not ready
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 25
+.....................
+ - EXITING STAGE -
+pc                  : 4001
+op code             : MOVC
+destination reg tag : R1
+destination value   : not ready
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 25
+--- END ALU1 stage display ---
+
+--- ALU2 stage display ---
+ - ENTERING STAGE -
+pc                  : 4000
+raw instruction     : MOVC R0, #0
+op code             : MOVC
+destination reg tag : R0
+destination value   : not ready
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 0
+.....................
+ - EXITING STAGE -
+pc                  : 4000
+op code             : MOVC
+destination reg tag : R0
+destination value   : 0
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 0
+--- END ALU2 stage display ---
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+--- Fetch stage display ---
+ - ENTERING STAGE -
+pc                  : 16
+op code             : N/A
+destination reg tag : N/A
+destination value   : N/A
+source 1 reg tag    : N/A
+source 1 reg valid  : N/A
+source 1 reg value  : N/A
+source 2 reg tag    : N/A
+source 2 reg valid  : N/A
+source 2 reg value  : N/A
+literal             : N/A
+.....................
+ - EXITING STAGE -
+pc                  : 4004
+raw instruction     : MOVC R4, #0
+op code             : N/A
+destination reg tag : N/A
+destination value   : N/A
+source 1 reg tag    : N/A
+source 1 reg valid  : N/A
+source 1 reg value  : N/A
+source 2 reg tag    : N/A
+source 2 reg valid  : N/A
+source 2 reg value  : N/A
+literal             : N/A
+--- END FETCH stage display ---
+
+--- Decode/RF stage display ---
+ - ENTERING STAGE -
+pc                  : 4003
+raw instruction     : MOVC R3, #1
+op code             : NONE
+destination reg tag : N/A
+destination value   : not ready
+source 1 reg tag    : N/A
+source 1 reg valid  : INVALID
+source 1 reg value  : invalid!
+source 2 reg tag    : N/A
+source 2 reg valid  : INVALID
+source 2 reg value  : invalid!
+literal             : 0
+.....................
+ - EXITING STAGE -
+pc                  : 4003
+op code             : MOVC
+destination reg tag : R3
+destination value   : not ready
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 1
+--- END Decode/RF stage display ---
+
+--- ALU1 stage display ---
+ - ENTERING STAGE -
+pc                  : 4002
+raw instruction     : MOVC R2, #5
+op code             : MOVC
+destination reg tag : R2
+destination value   : not ready
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 5
+.....................
+ - EXITING STAGE -
+pc                  : 4002
+op code             : MOVC
+destination reg tag : R2
+destination value   : not ready
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 5
+--- END ALU1 stage display ---
+
+--- ALU2 stage display ---
+ - ENTERING STAGE -
+pc                  : 4001
+raw instruction     : MOVC R1, #25
+op code             : MOVC
+destination reg tag : R1
+destination value   : not ready
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 25
+.....................
+ - EXITING STAGE -
+pc                  : 4001
+op code             : MOVC
+destination reg tag : R1
+destination value   : 25
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 25
+--- END ALU2 stage display ---
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+--- MEM stage display ---
+ - Entering stage - 
+pc                  : 4000
+raw instruction     : MOVC R0, #0
+op code             : MOVC
+destination reg tag : R0
+destination value   : N/A
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 0
+....................
+ - Exiting stage - 
+pc                  : 4000
+op code             : MOVC
+destination reg tag : R0
+destination value   : 0
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 0
+memory location     : 0
+--- END MEM stage display ---
+Writeback STAGE --> No Instruction in Stage
+
+--- Fetch stage display ---
+ - ENTERING STAGE -
+pc                  : 20
+op code             : N/A
+destination reg tag : N/A
+destination value   : N/A
+source 1 reg tag    : N/A
+source 1 reg valid  : N/A
+source 1 reg value  : N/A
+source 2 reg tag    : N/A
+source 2 reg valid  : N/A
+source 2 reg value  : N/A
+literal             : N/A
+.....................
+ - EXITING STAGE -
+pc                  : 4005
+raw instruction     : MOVC R5, #1
+op code             : N/A
+destination reg tag : N/A
+destination value   : N/A
+source 1 reg tag    : N/A
+source 1 reg valid  : N/A
+source 1 reg value  : N/A
+source 2 reg tag    : N/A
+source 2 reg valid  : N/A
+source 2 reg value  : N/A
+literal             : N/A
+--- END FETCH stage display ---
+
+--- Decode/RF stage display ---
+ - ENTERING STAGE -
+pc                  : 4004
+raw instruction     : MOVC R4, #0
+op code             : NONE
+destination reg tag : N/A
+destination value   : not ready
+source 1 reg tag    : N/A
+source 1 reg valid  : INVALID
+source 1 reg value  : invalid!
+source 2 reg tag    : N/A
+source 2 reg valid  : INVALID
+source 2 reg value  : invalid!
+literal             : 0
+.....................
+ - EXITING STAGE -
+pc                  : 4004
+op code             : MOVC
+destination reg tag : R4
+destination value   : not ready
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 0
+--- END Decode/RF stage display ---
+
+--- ALU1 stage display ---
+ - ENTERING STAGE -
+pc                  : 4003
+raw instruction     : MOVC R3, #1
+op code             : MOVC
+destination reg tag : R3
+destination value   : not ready
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 1
+.....................
+ - EXITING STAGE -
+pc                  : 4003
+op code             : MOVC
+destination reg tag : R3
+destination value   : not ready
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 1
+--- END ALU1 stage display ---
+
+--- ALU2 stage display ---
+ - ENTERING STAGE -
+pc                  : 4002
+raw instruction     : MOVC R2, #5
+op code             : MOVC
+destination reg tag : R2
+destination value   : not ready
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 5
+.....................
+ - EXITING STAGE -
+pc                  : 4002
+op code             : MOVC
+destination reg tag : R2
+destination value   : 5
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 5
+--- END ALU2 stage display ---
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+--- MEM stage display ---
+ - Entering stage - 
+pc                  : 4001
+raw instruction     : MOVC R1, #25
+op code             : MOVC
+destination reg tag : R1
+destination value   : N/A
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 25
+....................
+ - Exiting stage - 
+pc                  : 4001
+op code             : MOVC
+destination reg tag : R1
+destination value   : 25
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 25
+memory location     : 0
+--- END MEM stage display ---
+
+--- Writeback stage display ---
+ - ENTERING STAGE -
+pc                  : 4000
+raw instruction     : MOVC R0, #0
+op code             : MOVC
+destination reg tag : R0
+destination value   : 0
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 0
+ 
+Register File Contents
+Most Recent Register
+--- END Writeback stage display ---
+
+--- Fetch stage display ---
+ - ENTERING STAGE -
+pc                  : 24
+op code             : N/A
+destination reg tag : N/A
+destination value   : N/A
+source 1 reg tag    : N/A
+source 1 reg valid  : N/A
+source 1 reg value  : N/A
+source 2 reg tag    : N/A
+source 2 reg valid  : N/A
+source 2 reg value  : N/A
+literal             : N/A
+.....................
+ - EXITING STAGE -
+pc                  : 4006
+raw instruction     : MOVC R6, #100
+op code             : N/A
+destination reg tag : N/A
+destination value   : N/A
+source 1 reg tag    : N/A
+source 1 reg valid  : N/A
+source 1 reg value  : N/A
+source 2 reg tag    : N/A
+source 2 reg valid  : N/A
+source 2 reg value  : N/A
+literal             : N/A
+--- END FETCH stage display ---
+
+--- Decode/RF stage display ---
+ - ENTERING STAGE -
+pc                  : 4005
+raw instruction     : MOVC R5, #1
+op code             : NONE
+destination reg tag : N/A
+destination value   : not ready
+source 1 reg tag    : N/A
+source 1 reg valid  : INVALID
+source 1 reg value  : invalid!
+source 2 reg tag    : N/A
+source 2 reg valid  : INVALID
+source 2 reg value  : invalid!
+literal             : 0
+.....................
+ - EXITING STAGE -
+pc                  : 4005
+op code             : MOVC
+destination reg tag : R5
+destination value   : not ready
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 1
+--- END Decode/RF stage display ---
+
+--- ALU1 stage display ---
+ - ENTERING STAGE -
+pc                  : 4004
+raw instruction     : MOVC R4, #0
+op code             : MOVC
+destination reg tag : R4
+destination value   : not ready
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 0
+.....................
+ - EXITING STAGE -
+pc                  : 4004
+op code             : MOVC
+destination reg tag : R4
+destination value   : not ready
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 0
+--- END ALU1 stage display ---
+
+--- ALU2 stage display ---
+ - ENTERING STAGE -
+pc                  : 4003
+raw instruction     : MOVC R3, #1
+op code             : MOVC
+destination reg tag : R3
+destination value   : not ready
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 1
+.....................
+ - EXITING STAGE -
+pc                  : 4003
+op code             : MOVC
+destination reg tag : R3
+destination value   : 1
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 1
+--- END ALU2 stage display ---
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+--- MEM stage display ---
+ - Entering stage - 
+pc                  : 4002
+raw instruction     : MOVC R2, #5
+op code             : MOVC
+destination reg tag : R2
+destination value   : N/A
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 5
+....................
+ - Exiting stage - 
+pc                  : 4002
+op code             : MOVC
+destination reg tag : R2
+destination value   : 5
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 5
+memory location     : 0
+--- END MEM stage display ---
+
+--- Writeback stage display ---
+ - ENTERING STAGE -
+pc                  : 4001
+raw instruction     : MOVC R1, #25
+op code             : MOVC
+destination reg tag : R1
+destination value   : 25
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 25
+ 
+Register File Contents
+Most Recent Register
+--- END Writeback stage display ---
+
+--- Fetch stage display ---
+ - ENTERING STAGE -
+pc                  : 28
+op code             : N/A
+destination reg tag : N/A
+destination value   : N/A
+source 1 reg tag    : N/A
+source 1 reg valid  : N/A
+source 1 reg value  : N/A
+source 2 reg tag    : N/A
+source 2 reg valid  : N/A
+source 2 reg value  : N/A
+literal             : N/A
+.....................
+ - EXITING STAGE -
+pc                  : 4007
+raw instruction     : MOVC R11, #36
+op code             : N/A
+destination reg tag : N/A
+destination value   : N/A
+source 1 reg tag    : N/A
+source 1 reg valid  : N/A
+source 1 reg value  : N/A
+source 2 reg tag    : N/A
+source 2 reg valid  : N/A
+source 2 reg value  : N/A
+literal             : N/A
+--- END FETCH stage display ---
+
+--- Decode/RF stage display ---
+ - ENTERING STAGE -
+pc                  : 4006
+raw instruction     : MOVC R6, #100
+op code             : NONE
+destination reg tag : N/A
+destination value   : not ready
+source 1 reg tag    : N/A
+source 1 reg valid  : INVALID
+source 1 reg value  : invalid!
+source 2 reg tag    : N/A
+source 2 reg valid  : INVALID
+source 2 reg value  : invalid!
+literal             : 0
+.....................
+ - EXITING STAGE -
+pc                  : 4006
+op code             : MOVC
+destination reg tag : R6
+destination value   : not ready
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 100
+--- END Decode/RF stage display ---
+
+--- ALU1 stage display ---
+ - ENTERING STAGE -
+pc                  : 4005
+raw instruction     : MOVC R5, #1
+op code             : MOVC
+destination reg tag : R5
+destination value   : not ready
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 1
+.....................
+ - EXITING STAGE -
+pc                  : 4005
+op code             : MOVC
+destination reg tag : R5
+destination value   : not ready
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 1
+--- END ALU1 stage display ---
+
+--- ALU2 stage display ---
+ - ENTERING STAGE -
+pc                  : 4004
+raw instruction     : MOVC R4, #0
+op code             : MOVC
+destination reg tag : R4
+destination value   : not ready
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 0
+.....................
+ - EXITING STAGE -
+pc                  : 4004
+op code             : MOVC
+destination reg tag : R4
+destination value   : 0
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 0
+--- END ALU2 stage display ---
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+--- MEM stage display ---
+ - Entering stage - 
+pc                  : 4003
+raw instruction     : MOVC R3, #1
+op code             : MOVC
+destination reg tag : R3
+destination value   : N/A
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 1
+....................
+ - Exiting stage - 
+pc                  : 4003
+op code             : MOVC
+destination reg tag : R3
+destination value   : 1
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 1
+memory location     : 0
+--- END MEM stage display ---
+
+--- Writeback stage display ---
+ - ENTERING STAGE -
+pc                  : 4002
+raw instruction     : MOVC R2, #5
+op code             : MOVC
+destination reg tag : R2
+destination value   : 5
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 5
+ 
+Register File Contents
+Most Recent Register
+--- END Writeback stage display ---
+
+--- Fetch stage display ---
+ - ENTERING STAGE -
+pc                  : 32
+op code             : N/A
+destination reg tag : N/A
+destination value   : N/A
+source 1 reg tag    : N/A
+source 1 reg valid  : N/A
+source 1 reg value  : N/A
+source 2 reg tag    : N/A
+source 2 reg valid  : N/A
+source 2 reg value  : N/A
+literal             : N/A
+.....................
+ - EXITING STAGE -
+pc                  : 4008
+raw instruction     : MOVC R12, #4
+op code             : N/A
+destination reg tag : N/A
+destination value   : N/A
+source 1 reg tag    : N/A
+source 1 reg valid  : N/A
+source 1 reg value  : N/A
+source 2 reg tag    : N/A
+source 2 reg valid  : N/A
+source 2 reg value  : N/A
+literal             : N/A
+--- END FETCH stage display ---
+
+--- Decode/RF stage display ---
+ - ENTERING STAGE -
+pc                  : 4007
+raw instruction     : MOVC R11, #36
+op code             : NONE
+destination reg tag : N/A
+destination value   : not ready
+source 1 reg tag    : N/A
+source 1 reg valid  : INVALID
+source 1 reg value  : invalid!
+source 2 reg tag    : N/A
+source 2 reg valid  : INVALID
+source 2 reg value  : invalid!
+literal             : 0
+.....................
+ - EXITING STAGE -
+pc                  : 4007
+op code             : MOVC
+destination reg tag : R11
+destination value   : not ready
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 36
+--- END Decode/RF stage display ---
+
+--- ALU1 stage display ---
+ - ENTERING STAGE -
+pc                  : 4006
+raw instruction     : MOVC R6, #100
+op code             : MOVC
+destination reg tag : R6
+destination value   : not ready
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 100
+.....................
+ - EXITING STAGE -
+pc                  : 4006
+op code             : MOVC
+destination reg tag : R6
+destination value   : not ready
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 100
+--- END ALU1 stage display ---
+
+--- ALU2 stage display ---
+ - ENTERING STAGE -
+pc                  : 4005
+raw instruction     : MOVC R5, #1
+op code             : MOVC
+destination reg tag : R5
+destination value   : not ready
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 1
+.....................
+ - EXITING STAGE -
+pc                  : 4005
+op code             : MOVC
+destination reg tag : R5
+destination value   : 1
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 1
+--- END ALU2 stage display ---
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+--- MEM stage display ---
+ - Entering stage - 
+pc                  : 4004
+raw instruction     : MOVC R4, #0
+op code             : MOVC
+destination reg tag : R4
+destination value   : N/A
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 0
+....................
+ - Exiting stage - 
+pc                  : 4004
+op code             : MOVC
+destination reg tag : R4
+destination value   : 0
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 0
+memory location     : 0
+--- END MEM stage display ---
+
+--- Writeback stage display ---
+ - ENTERING STAGE -
+pc                  : 4003
+raw instruction     : MOVC R3, #1
+op code             : MOVC
+destination reg tag : R3
+destination value   : 1
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 1
+ 
+Register File Contents
+Most Recent Register
+--- END Writeback stage display ---
+
+--- Fetch stage display ---
+ - ENTERING STAGE -
+pc                  : 36
+op code             : N/A
+destination reg tag : N/A
+destination value   : N/A
+source 1 reg tag    : N/A
+source 1 reg valid  : N/A
+source 1 reg value  : N/A
+source 2 reg tag    : N/A
+source 2 reg valid  : N/A
+source 2 reg value  : N/A
+literal             : N/A
+.....................
+ - EXITING STAGE -
+pc                  : 4009
+raw instruction     : ADD R0, R0, R2
+op code             : N/A
+destination reg tag : N/A
+destination value   : N/A
+source 1 reg tag    : N/A
+source 1 reg valid  : N/A
+source 1 reg value  : N/A
+source 2 reg tag    : N/A
+source 2 reg valid  : N/A
+source 2 reg value  : N/A
+literal             : N/A
+--- END FETCH stage display ---
+
+--- Decode/RF stage display ---
+ - ENTERING STAGE -
+pc                  : 4008
+raw instruction     : MOVC R12, #4
+op code             : NONE
+destination reg tag : N/A
+destination value   : not ready
+source 1 reg tag    : N/A
+source 1 reg valid  : INVALID
+source 1 reg value  : invalid!
+source 2 reg tag    : N/A
+source 2 reg valid  : INVALID
+source 2 reg value  : invalid!
+literal             : 0
+.....................
+ - EXITING STAGE -
+pc                  : 4008
+op code             : MOVC
+destination reg tag : R12
+destination value   : not ready
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 4
+--- END Decode/RF stage display ---
+
+--- ALU1 stage display ---
+ - ENTERING STAGE -
+pc                  : 4007
+raw instruction     : MOVC R11, #36
+op code             : MOVC
+destination reg tag : R11
+destination value   : not ready
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 36
+.....................
+ - EXITING STAGE -
+pc                  : 4007
+op code             : MOVC
+destination reg tag : R11
+destination value   : not ready
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 36
+--- END ALU1 stage display ---
+
+--- ALU2 stage display ---
+ - ENTERING STAGE -
+pc                  : 4006
+raw instruction     : MOVC R6, #100
+op code             : MOVC
+destination reg tag : R6
+destination value   : not ready
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 100
+.....................
+ - EXITING STAGE -
+pc                  : 4006
+op code             : MOVC
+destination reg tag : R6
+destination value   : 100
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 100
+--- END ALU2 stage display ---
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+--- MEM stage display ---
+ - Entering stage - 
+pc                  : 4005
+raw instruction     : MOVC R5, #1
+op code             : MOVC
+destination reg tag : R5
+destination value   : N/A
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 1
+....................
+ - Exiting stage - 
+pc                  : 4005
+op code             : MOVC
+destination reg tag : R5
+destination value   : 1
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 1
+memory location     : 0
+--- END MEM stage display ---
+
+--- Writeback stage display ---
+ - ENTERING STAGE -
+pc                  : 4004
+raw instruction     : MOVC R4, #0
+op code             : MOVC
+destination reg tag : R4
+destination value   : 0
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 0
+ 
+Register File Contents
+Most Recent Register
+--- END Writeback stage display ---
+
+--- Fetch stage display ---
+ - ENTERING STAGE -
+pc                  : 40
+op code             : N/A
+destination reg tag : N/A
+destination value   : N/A
+source 1 reg tag    : N/A
+source 1 reg valid  : N/A
+source 1 reg value  : N/A
+source 2 reg tag    : N/A
+source 2 reg valid  : N/A
+source 2 reg value  : N/A
+literal             : N/A
+.....................
+ - EXITING STAGE -
+pc                  : 4010
+raw instruction     : MUL R6, R1, R3
+op code             : N/A
+destination reg tag : N/A
+destination value   : N/A
+source 1 reg tag    : N/A
+source 1 reg valid  : N/A
+source 1 reg value  : N/A
+source 2 reg tag    : N/A
+source 2 reg valid  : N/A
+source 2 reg value  : N/A
+literal             : N/A
+--- END FETCH stage display ---
+
+--- Decode/RF stage display ---
+ - ENTERING STAGE -
+pc                  : 4009
+raw instruction     : ADD R0, R0, R2
+op code             : NONE
+destination reg tag : N/A
+destination value   : not ready
+source 1 reg tag    : N/A
+source 1 reg valid  : INVALID
+source 1 reg value  : invalid!
+source 2 reg tag    : N/A
+source 2 reg valid  : INVALID
+source 2 reg value  : invalid!
+literal             : 0
+.....................
+ - EXITING STAGE -
+pc                  : 4009
+op code             : ADD
+destination reg tag : R0
+destination value   : not ready
+source 1 reg tag    : R0
+source 1 reg valid  : VALID
+source 1 reg value  : 0
+source 2 reg tag    : R2
+source 2 reg valid  : VALID
+source 2 reg value  : 5
+literal             : 0
+--- END Decode/RF stage display ---
+
+--- ALU1 stage display ---
+ - ENTERING STAGE -
+pc                  : 4008
+raw instruction     : MOVC R12, #4
+op code             : MOVC
+destination reg tag : R12
+destination value   : not ready
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 4
+.....................
+ - EXITING STAGE -
+pc                  : 4008
+op code             : MOVC
+destination reg tag : R12
+destination value   : not ready
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 4
+--- END ALU1 stage display ---
+
+--- ALU2 stage display ---
+ - ENTERING STAGE -
+pc                  : 4007
+raw instruction     : MOVC R11, #36
+op code             : MOVC
+destination reg tag : R11
+destination value   : not ready
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 36
+.....................
+ - EXITING STAGE -
+pc                  : 4007
+op code             : MOVC
+destination reg tag : R11
+destination value   : 36
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 36
+--- END ALU2 stage display ---
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+--- MEM stage display ---
+ - Entering stage - 
+pc                  : 4006
+raw instruction     : MOVC R6, #100
+op code             : MOVC
+destination reg tag : R6
+destination value   : N/A
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 100
+....................
+ - Exiting stage - 
+pc                  : 4006
+op code             : MOVC
+destination reg tag : R6
+destination value   : 100
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 100
+memory location     : 0
+--- END MEM stage display ---
+
+--- Writeback stage display ---
+ - ENTERING STAGE -
+pc                  : 4005
+raw instruction     : MOVC R5, #1
+op code             : MOVC
+destination reg tag : R5
+destination value   : 1
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 1
+ 
+Register File Contents
+Most Recent Register
+--- END Writeback stage display ---
+
+--- Fetch stage display ---
+ - ENTERING STAGE -
+pc                  : 44
+op code             : N/A
+destination reg tag : N/A
+destination value   : N/A
+source 1 reg tag    : N/A
+source 1 reg valid  : N/A
+source 1 reg value  : N/A
+source 2 reg tag    : N/A
+source 2 reg valid  : N/A
+source 2 reg value  : N/A
+literal             : N/A
+.....................
+ - EXITING STAGE -
+pc                  : 4011
+raw instruction     : SUB R7, R6, R0
+op code             : N/A
+destination reg tag : N/A
+destination value   : N/A
+source 1 reg tag    : N/A
+source 1 reg valid  : N/A
+source 1 reg value  : N/A
+source 2 reg tag    : N/A
+source 2 reg valid  : N/A
+source 2 reg value  : N/A
+literal             : N/A
+--- END FETCH stage display ---
+
+--- Decode/RF stage display ---
+ - ENTERING STAGE -
+pc                  : 4010
+raw instruction     : MUL R6, R1, R3
+op code             : NONE
+destination reg tag : N/A
+destination value   : not ready
+source 1 reg tag    : N/A
+source 1 reg valid  : INVALID
+source 1 reg value  : invalid!
+source 2 reg tag    : N/A
+source 2 reg valid  : INVALID
+source 2 reg value  : invalid!
+literal             : 0
+.....................
+ - EXITING STAGE -
+pc                  : 4010
+op code             : MUL
+destination reg tag : R6
+destination value   : not ready
+source 1 reg tag    : R1
+source 1 reg valid  : VALID
+source 1 reg value  : 25
+source 2 reg tag    : R3
+source 2 reg valid  : VALID
+source 2 reg value  : 1
+literal             : 0
+--- END Decode/RF stage display ---
+
+--- ALU1 stage display ---
+ - ENTERING STAGE -
+pc                  : 4009
+raw instruction     : ADD R0, R0, R2
+op code             : ADD
+destination reg tag : R0
+destination value   : not ready
+source 1 reg tag    : R0
+source 1 reg valid  : VALID
+source 1 reg value  : 0
+source 2 reg tag    : R2
+source 2 reg valid  : VALID
+source 2 reg value  : 5
+literal             : 0
+.....................
+ - EXITING STAGE -
+pc                  : 4009
+op code             : ADD
+destination reg tag : R0
+destination value   : not ready
+source 1 reg tag    : R0
+source 1 reg valid  : VALID
+source 1 reg value  : 0
+source 2 reg tag    : R2
+source 2 reg valid  : VALID
+source 2 reg value  : 5
+literal             : 0
+--- END ALU1 stage display ---
+
+--- ALU2 stage display ---
+ - ENTERING STAGE -
+pc                  : 4008
+raw instruction     : MOVC R12, #4
+op code             : MOVC
+destination reg tag : R12
+destination value   : not ready
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 4
+.....................
+ - EXITING STAGE -
+pc                  : 4008
+op code             : MOVC
+destination reg tag : R12
+destination value   : 4
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 4
+--- END ALU2 stage display ---
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+--- MEM stage display ---
+ - Entering stage - 
+pc                  : 4007
+raw instruction     : MOVC R11, #36
+op code             : MOVC
+destination reg tag : R11
+destination value   : N/A
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 36
+....................
+ - Exiting stage - 
+pc                  : 4007
+op code             : MOVC
+destination reg tag : R11
+destination value   : 36
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 36
+memory location     : 0
+--- END MEM stage display ---
+
+--- Writeback stage display ---
+ - ENTERING STAGE -
+pc                  : 4006
+raw instruction     : MOVC R6, #100
+op code             : MOVC
+destination reg tag : R6
+destination value   : 100
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 100
+ 
+Register File Contents
+Most Recent Register
+--- END Writeback stage display ---
+
+--- Fetch stage display ---
+ - ENTERING STAGE -
+pc                  : 48
+op code             : N/A
+destination reg tag : N/A
+destination value   : N/A
+source 1 reg tag    : N/A
+source 1 reg valid  : N/A
+source 1 reg value  : N/A
+source 2 reg tag    : N/A
+source 2 reg valid  : N/A
+source 2 reg value  : N/A
+literal             : N/A
+.....................
+ - EXITING STAGE -
+pc                  : 4012
+raw instruction     : BNZ #12
+op code             : N/A
+destination reg tag : N/A
+destination value   : N/A
+source 1 reg tag    : N/A
+source 1 reg valid  : N/A
+source 1 reg value  : N/A
+source 2 reg tag    : N/A
+source 2 reg valid  : N/A
+source 2 reg value  : N/A
+literal             : N/A
+--- END FETCH stage display ---
+DECODE STALLED!- Src2 not valid!
+
+--- Decode/RF stage display ---
+ - ENTERING STAGE -
+pc                  : 4011
+raw instruction     : SUB R7, R6, R0
+op code             : NONE
+destination reg tag : N/A
+destination value   : not ready
+source 1 reg tag    : N/A
+source 1 reg valid  : INVALID
+source 1 reg value  : invalid!
+source 2 reg tag    : N/A
+source 2 reg valid  : INVALID
+source 2 reg value  : invalid!
+literal             : 0
+.....................
+ - EXITING STAGE -
+pc                  : 4011
+op code             : SUB
+destination reg tag : R7
+destination value   : not ready
+source 1 reg tag    : R6
+source 1 reg valid  : VALID
+source 1 reg value  : 100
+source 2 reg tag    : R0
+source 2 reg valid  : INVALID
+source 2 reg value  : invalid!
+literal             : 0
+--- END Decode/RF stage display ---
+
+--- ALU1 stage display ---
+ - ENTERING STAGE -
+pc                  : 4010
+raw instruction     : MUL R6, R1, R3
+op code             : MUL
+destination reg tag : R6
+destination value   : not ready
+source 1 reg tag    : R1
+source 1 reg valid  : VALID
+source 1 reg value  : 25
+source 2 reg tag    : R3
+source 2 reg valid  : VALID
+source 2 reg value  : 1
+literal             : 0
+.....................
+ - EXITING STAGE -
+pc                  : 4010
+op code             : MUL
+destination reg tag : R6
+destination value   : not ready
+source 1 reg tag    : R1
+source 1 reg valid  : VALID
+source 1 reg value  : 25
+source 2 reg tag    : R3
+source 2 reg valid  : VALID
+source 2 reg value  : 1
+literal             : 0
+--- END ALU1 stage display ---
+
+--- ALU2 stage display ---
+ - ENTERING STAGE -
+pc                  : 4009
+raw instruction     : ADD R0, R0, R2
+op code             : ADD
+destination reg tag : R0
+destination value   : not ready
+source 1 reg tag    : R0
+source 1 reg valid  : VALID
+source 1 reg value  : 0
+source 2 reg tag    : R2
+source 2 reg valid  : VALID
+source 2 reg value  : 5
+literal             : 0
+.....................
+ - EXITING STAGE -
+pc                  : 4009
+op code             : ADD
+destination reg tag : R0
+destination value   : 5
+source 1 reg tag    : R0
+source 1 reg valid  : VALID
+source 1 reg value  : 0
+source 2 reg tag    : R2
+source 2 reg valid  : VALID
+source 2 reg value  : 5
+literal             : 0
+--- END ALU2 stage display ---
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+--- MEM stage display ---
+ - Entering stage - 
+pc                  : 4008
+raw instruction     : MOVC R12, #4
+op code             : MOVC
+destination reg tag : R12
+destination value   : N/A
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 4
+....................
+ - Exiting stage - 
+pc                  : 4008
+op code             : MOVC
+destination reg tag : R12
+destination value   : 4
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 4
+memory location     : 0
+--- END MEM stage display ---
+
+--- Writeback stage display ---
+ - ENTERING STAGE -
+pc                  : 4007
+raw instruction     : MOVC R11, #36
+op code             : MOVC
+destination reg tag : R11
+destination value   : 36
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 36
+ 
+Register File Contents
+Most Recent Register
+--- END Writeback stage display ---
+FETCH STALLED!
+
+--- Decode/RF stage display ---
+ - ENTERING STAGE -
+pc                  : 2147483647
+raw instruction     : 
+op code             : NONE
+destination reg tag : N/A
+destination value   : not ready
+source 1 reg tag    : N/A
+source 1 reg valid  : INVALID
+source 1 reg value  : invalid!
+source 2 reg tag    : N/A
+source 2 reg valid  : INVALID
+source 2 reg value  : invalid!
+literal             : 0
+.....................
+ - EXITING STAGE -
+pc                  : 2147483647
+op code             : NONE
+destination reg tag : N/A
+destination value   : not ready
+source 1 reg tag    : N/A
+source 1 reg valid  : INVALID
+source 1 reg value  : invalid!
+source 2 reg tag    : N/A
+source 2 reg valid  : INVALID
+source 2 reg value  : invalid!
+literal             : 0
+--- END Decode/RF stage display ---
+ALU 1 STAGE --> No Instruction in Stage
+
+--- ALU2 stage display ---
+ - ENTERING STAGE -
+pc                  : 4010
+raw instruction     : MUL R6, R1, R3
+op code             : MUL
+destination reg tag : R6
+destination value   : not ready
+source 1 reg tag    : R1
+source 1 reg valid  : VALID
+source 1 reg value  : 25
+source 2 reg tag    : R3
+source 2 reg valid  : VALID
+source 2 reg value  : 1
+literal             : 0
+.....................
+ - EXITING STAGE -
+pc                  : 4010
+op code             : MUL
+destination reg tag : R6
+destination value   : 25
+source 1 reg tag    : R1
+source 1 reg valid  : VALID
+source 1 reg value  : 25
+source 2 reg tag    : R3
+source 2 reg valid  : VALID
+source 2 reg value  : 1
+literal             : 0
+--- END ALU2 stage display ---
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+--- MEM stage display ---
+ - Entering stage - 
+pc                  : 4009
+raw instruction     : ADD R0, R0, R2
+op code             : ADD
+destination reg tag : R0
+destination value   : N/A
+source 1 reg tag    : R0
+source 1 reg valid  : VALID
+source 1 reg value  : 0
+source 2 reg tag    : R2
+source 2 reg valid  : VALID
+source 2 reg value  : 5
+literal             : 0
+....................
+ - Exiting stage - 
+pc                  : 4009
+op code             : ADD
+destination reg tag : R0
+destination value   : 5
+source 1 reg tag    : R0
+source 1 reg valid  : VALID
+source 1 reg value  : 0
+source 2 reg tag    : R2
+source 2 reg valid  : VALID
+source 2 reg value  : 5
+literal             : 0
+memory location     : 0
+--- END MEM stage display ---
+
+--- Writeback stage display ---
+ - ENTERING STAGE -
+pc                  : 4008
+raw instruction     : MOVC R12, #4
+op code             : MOVC
+destination reg tag : R12
+destination value   : 4
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 4
+ 
+Register File Contents
+Most Recent Register
+--- END Writeback stage display ---
+
+--- Fetch stage display ---
+ - ENTERING STAGE -
+pc                  : 52
+op code             : N/A
+destination reg tag : N/A
+destination value   : N/A
+source 1 reg tag    : N/A
+source 1 reg valid  : N/A
+source 1 reg value  : N/A
+source 2 reg tag    : N/A
+source 2 reg valid  : N/A
+source 2 reg value  : N/A
+literal             : N/A
+.....................
+ - EXITING STAGE -
+pc                  : 4013
+raw instruction     : MOVC R10, #4000
+op code             : N/A
+destination reg tag : N/A
+destination value   : N/A
+source 1 reg tag    : N/A
+source 1 reg valid  : N/A
+source 1 reg value  : N/A
+source 2 reg tag    : N/A
+source 2 reg valid  : N/A
+source 2 reg value  : N/A
+literal             : N/A
+--- END FETCH stage display ---
+
+--- Decode/RF stage display ---
+ - ENTERING STAGE -
+pc                  : 4012
+raw instruction     : BNZ #12
+op code             : NONE
+destination reg tag : N/A
+destination value   : not ready
+source 1 reg tag    : N/A
+source 1 reg valid  : INVALID
+source 1 reg value  : invalid!
+source 2 reg tag    : N/A
+source 2 reg valid  : INVALID
+source 2 reg value  : invalid!
+literal             : 0
+.....................
+ - EXITING STAGE -
+pc                  : 4012
+op code             : BNZ
+destination reg tag : N/A
+destination value   : not ready
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 12
+--- END Decode/RF stage display ---
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+--- MEM stage display ---
+ - Entering stage - 
+pc                  : 4010
+raw instruction     : MUL R6, R1, R3
+op code             : MUL
+destination reg tag : R6
+destination value   : N/A
+source 1 reg tag    : R1
+source 1 reg valid  : VALID
+source 1 reg value  : 25
+source 2 reg tag    : R3
+source 2 reg valid  : VALID
+source 2 reg value  : 1
+literal             : 0
+....................
+ - Exiting stage - 
+pc                  : 4010
+op code             : MUL
+destination reg tag : R6
+destination value   : 25
+source 1 reg tag    : R1
+source 1 reg valid  : VALID
+source 1 reg value  : 25
+source 2 reg tag    : R3
+source 2 reg valid  : VALID
+source 2 reg value  : 1
+literal             : 0
+memory location     : 0
+--- END MEM stage display ---
+
+--- Writeback stage display ---
+ - ENTERING STAGE -
+pc                  : 4009
+raw instruction     : ADD R0, R0, R2
+op code             : ADD
+destination reg tag : R0
+destination value   : 5
+source 1 reg tag    : R0
+source 1 reg valid  : VALID
+source 1 reg value  : 0
+source 2 reg tag    : R2
+source 2 reg valid  : VALID
+source 2 reg value  : 5
+literal             : 0
+ 
+Register File Contents
+Most Recent Register
+--- END Writeback stage display ---
+
+--- Fetch stage display ---
+ - ENTERING STAGE -
+pc                  : 56
+op code             : N/A
+destination reg tag : N/A
+destination value   : N/A
+source 1 reg tag    : N/A
+source 1 reg valid  : N/A
+source 1 reg value  : N/A
+source 2 reg tag    : N/A
+source 2 reg valid  : N/A
+source 2 reg value  : N/A
+literal             : N/A
+.....................
+ - EXITING STAGE -
+pc                  : 4014
+raw instruction     : BAL R10, #19
+op code             : N/A
+destination reg tag : N/A
+destination value   : N/A
+source 1 reg tag    : N/A
+source 1 reg valid  : N/A
+source 1 reg value  : N/A
+source 2 reg tag    : N/A
+source 2 reg valid  : N/A
+source 2 reg value  : N/A
+literal             : N/A
+--- END FETCH stage display ---
+
+--- Decode/RF stage display ---
+ - ENTERING STAGE -
+pc                  : 4013
+raw instruction     : MOVC R10, #4000
+op code             : NONE
+destination reg tag : N/A
+destination value   : not ready
+source 1 reg tag    : N/A
+source 1 reg valid  : INVALID
+source 1 reg value  : invalid!
+source 2 reg tag    : N/A
+source 2 reg valid  : INVALID
+source 2 reg value  : invalid!
+literal             : 0
+.....................
+ - EXITING STAGE -
+pc                  : 4013
+op code             : MOVC
+destination reg tag : R10
+destination value   : not ready
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 4000
+--- END Decode/RF stage display ---
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+
+--- Branch stage display ---
+ - ENTERING STAGE -
+pc                  : 4012
+raw instruction     : BNZ #12
+op code             : BNZ
+destination reg tag : N/A
+destination value   : not ready
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 12
+--- END Branch stage display ---
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+
+--- Writeback stage display ---
+ - ENTERING STAGE -
+pc                  : 4010
+raw instruction     : MUL R6, R1, R3
+op code             : MUL
+destination reg tag : R6
+destination value   : 25
+source 1 reg tag    : R1
+source 1 reg valid  : VALID
+source 1 reg value  : 25
+source 2 reg tag    : R3
+source 2 reg valid  : VALID
+source 2 reg value  : 1
+literal             : 0
+ 
+Register File Contents
+Most Recent Register
+--- END Writeback stage display ---
+
+--- Fetch stage display ---
+ - ENTERING STAGE -
+pc                  : 60
+op code             : N/A
+destination reg tag : N/A
+destination value   : N/A
+source 1 reg tag    : N/A
+source 1 reg valid  : N/A
+source 1 reg value  : N/A
+source 2 reg tag    : N/A
+source 2 reg valid  : N/A
+source 2 reg value  : N/A
+literal             : N/A
+.....................
+ - EXITING STAGE -
+pc                  : 4015
+raw instruction     : ADD R4, R4, R5
+op code             : N/A
+destination reg tag : N/A
+destination value   : N/A
+source 1 reg tag    : N/A
+source 1 reg valid  : N/A
+source 1 reg value  : N/A
+source 2 reg tag    : N/A
+source 2 reg valid  : N/A
+source 2 reg value  : N/A
+literal             : N/A
+--- END FETCH stage display ---
+
+--- Decode/RF stage display ---
+ - ENTERING STAGE -
+pc                  : 2147483647
+raw instruction     : 
+op code             : NONE
+destination reg tag : N/A
+destination value   : not ready
+source 1 reg tag    : N/A
+source 1 reg valid  : INVALID
+source 1 reg value  : invalid!
+source 2 reg tag    : N/A
+source 2 reg valid  : INVALID
+source 2 reg value  : invalid!
+literal             : 0
+.....................
+ - EXITING STAGE -
+pc                  : 2147483647
+op code             : NONE
+destination reg tag : N/A
+destination value   : not ready
+source 1 reg tag    : N/A
+source 1 reg valid  : INVALID
+source 1 reg value  : invalid!
+source 2 reg tag    : N/A
+source 2 reg valid  : INVALID
+source 2 reg value  : invalid!
+literal             : 0
+--- END Decode/RF stage display ---
+
+--- ALU1 stage display ---
+ - ENTERING STAGE -
+pc                  : 4013
+raw instruction     : MOVC R10, #4000
+op code             : MOVC
+destination reg tag : R10
+destination value   : not ready
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 4000
+.....................
+ - EXITING STAGE -
+pc                  : 4013
+op code             : MOVC
+destination reg tag : R10
+destination value   : not ready
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 4000
+--- END ALU1 stage display ---
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+
+--- Delay stage display ---
+ - ENTERING STAGE -
+pc                  : 4012
+raw instruction     : BNZ #12
+op code             : BNZ
+destination reg tag : N/A
+destination value   : not ready
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 12
+--- END Delay stage display ---
+MEM STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+--- Fetch stage display ---
+ - ENTERING STAGE -
+pc                  : 64
+op code             : N/A
+destination reg tag : N/A
+destination value   : N/A
+source 1 reg tag    : N/A
+source 1 reg valid  : N/A
+source 1 reg value  : N/A
+source 2 reg tag    : N/A
+source 2 reg valid  : N/A
+source 2 reg value  : N/A
+literal             : N/A
+.....................
+ - EXITING STAGE -
+pc                  : 4016
+raw instruction     : SUB R8, R6, R4
+op code             : N/A
+destination reg tag : N/A
+destination value   : N/A
+source 1 reg tag    : N/A
+source 1 reg valid  : N/A
+source 1 reg value  : N/A
+source 2 reg tag    : N/A
+source 2 reg valid  : N/A
+source 2 reg value  : N/A
+literal             : N/A
+--- END FETCH stage display ---
+
+--- Decode/RF stage display ---
+ - ENTERING STAGE -
+pc                  : 4015
+raw instruction     : ADD R4, R4, R5
+op code             : NONE
+destination reg tag : N/A
+destination value   : not ready
+source 1 reg tag    : N/A
+source 1 reg valid  : INVALID
+source 1 reg value  : invalid!
+source 2 reg tag    : N/A
+source 2 reg valid  : INVALID
+source 2 reg value  : invalid!
+literal             : 0
+.....................
+ - EXITING STAGE -
+pc                  : 4015
+op code             : ADD
+destination reg tag : R4
+destination value   : not ready
+source 1 reg tag    : R4
+source 1 reg valid  : VALID
+source 1 reg value  : 0
+source 2 reg tag    : R5
+source 2 reg valid  : VALID
+source 2 reg value  : 1
+literal             : 0
+--- END Decode/RF stage display ---
+
+--- ALU1 stage display ---
+ - ENTERING STAGE -
+pc                  : 4013
+raw instruction     : MOVC R10, #4000
+op code             : MOVC
+destination reg tag : R10
+destination value   : not ready
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 4000
+.....................
+ - EXITING STAGE -
+pc                  : 4013
+op code             : MOVC
+destination reg tag : R10
+destination value   : not ready
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 4000
+--- END ALU1 stage display ---
+
+--- ALU2 stage display ---
+ - ENTERING STAGE -
+pc                  : 4013
+raw instruction     : MOVC R10, #4000
+op code             : MOVC
+destination reg tag : R10
+destination value   : not ready
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 4000
+.....................
+ - EXITING STAGE -
+pc                  : 4013
+op code             : MOVC
+destination reg tag : R10
+destination value   : 4000
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 4000
+--- END ALU2 stage display ---
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+--- MEM stage display ---
+ - Entering stage - 
+pc                  : 4012
+raw instruction     : BNZ #12
+op code             : BNZ
+destination reg tag : N/A
+destination value   : N/A
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 12
+....................
+ - Exiting stage - 
+pc                  : 4012
+op code             : BNZ
+destination reg tag : N/A
+destination value   : 4294967295
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 12
+memory location     : 0
+--- END MEM stage display ---
+Writeback STAGE --> No Instruction in Stage
+
+--- Fetch stage display ---
+ - ENTERING STAGE -
+pc                  : 68
+op code             : N/A
+destination reg tag : N/A
+destination value   : N/A
+source 1 reg tag    : N/A
+source 1 reg valid  : N/A
+source 1 reg value  : N/A
+source 2 reg tag    : N/A
+source 2 reg valid  : N/A
+source 2 reg value  : N/A
+literal             : N/A
+.....................
+ - EXITING STAGE -
+pc                  : 4017
+raw instruction     : BNZ #-32
+op code             : N/A
+destination reg tag : N/A
+destination value   : N/A
+source 1 reg tag    : N/A
+source 1 reg valid  : N/A
+source 1 reg value  : N/A
+source 2 reg tag    : N/A
+source 2 reg valid  : N/A
+source 2 reg value  : N/A
+literal             : N/A
+--- END FETCH stage display ---
+DECODE STALLED!- Src2 not valid!
+
+--- Decode/RF stage display ---
+ - ENTERING STAGE -
+pc                  : 4016
+raw instruction     : SUB R8, R6, R4
+op code             : NONE
+destination reg tag : N/A
+destination value   : not ready
+source 1 reg tag    : N/A
+source 1 reg valid  : INVALID
+source 1 reg value  : invalid!
+source 2 reg tag    : N/A
+source 2 reg valid  : INVALID
+source 2 reg value  : invalid!
+literal             : 0
+.....................
+ - EXITING STAGE -
+pc                  : 4016
+op code             : SUB
+destination reg tag : R8
+destination value   : not ready
+source 1 reg tag    : R6
+source 1 reg valid  : VALID
+source 1 reg value  : 25
+source 2 reg tag    : R4
+source 2 reg valid  : INVALID
+source 2 reg value  : invalid!
+literal             : 0
+--- END Decode/RF stage display ---
+
+--- ALU1 stage display ---
+ - ENTERING STAGE -
+pc                  : 4015
+raw instruction     : ADD R4, R4, R5
+op code             : ADD
+destination reg tag : R4
+destination value   : not ready
+source 1 reg tag    : R4
+source 1 reg valid  : VALID
+source 1 reg value  : 0
+source 2 reg tag    : R5
+source 2 reg valid  : VALID
+source 2 reg value  : 1
+literal             : 0
+.....................
+ - EXITING STAGE -
+pc                  : 4015
+op code             : ADD
+destination reg tag : R4
+destination value   : not ready
+source 1 reg tag    : R4
+source 1 reg valid  : VALID
+source 1 reg value  : 0
+source 2 reg tag    : R5
+source 2 reg valid  : VALID
+source 2 reg value  : 1
+literal             : 0
+--- END ALU1 stage display ---
+ALU2 STALLED!
+Branch STAGE --> No Instruction in Stage
+ALU2 STALLED!
+--- MEM stage display ---
+ - Entering stage - 
+pc                  : 4012
+raw instruction     : BNZ #12
+op code             : BNZ
+destination reg tag : N/A
+destination value   : N/A
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 12
+....................
+ - Exiting stage - 
+pc                  : 4012
+op code             : BNZ
+destination reg tag : N/A
+destination value   : 4294967295
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 12
+memory location     : 0
+--- END MEM stage display ---
+
+--- Writeback stage display ---
+ - ENTERING STAGE -
+pc                  : 4012
+raw instruction     : BNZ #12
+op code             : BNZ
+destination reg tag : N/A
+destination value   : 4294967295
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 12
+ 
+Register File Contents
+Most Recent Register
+--- END Writeback stage display ---
+FETCH STALLED!
+
+--- Decode/RF stage display ---
+ - ENTERING STAGE -
+pc                  : 2147483647
+raw instruction     : 
+op code             : NONE
+destination reg tag : N/A
+destination value   : not ready
+source 1 reg tag    : N/A
+source 1 reg valid  : INVALID
+source 1 reg value  : invalid!
+source 2 reg tag    : N/A
+source 2 reg valid  : INVALID
+source 2 reg value  : invalid!
+literal             : 0
+.....................
+ - EXITING STAGE -
+pc                  : 2147483647
+op code             : NONE
+destination reg tag : N/A
+destination value   : not ready
+source 1 reg tag    : N/A
+source 1 reg valid  : INVALID
+source 1 reg value  : invalid!
+source 2 reg tag    : N/A
+source 2 reg valid  : INVALID
+source 2 reg value  : invalid!
+literal             : 0
+--- END Decode/RF stage display ---
+ALU1 STALLED!
+ALU2 STALLED!
+ALU2 STALLED!
+ALU2 STALLED!
+--- MEM stage display ---
+ - Entering stage - 
+pc                  : 4012
+raw instruction     : BNZ #12
+op code             : BNZ
+destination reg tag : N/A
+destination value   : N/A
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 12
+....................
+ - Exiting stage - 
+pc                  : 4012
+op code             : BNZ
+destination reg tag : N/A
+destination value   : 4294967295
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 12
+memory location     : 0
+--- END MEM stage display ---
+
+--- Writeback stage display ---
+ - ENTERING STAGE -
+pc                  : 4012
+raw instruction     : BNZ #12
+op code             : BNZ
+destination reg tag : N/A
+destination value   : 4294967295
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 12
+ 
+Register File Contents
+Most Recent Register
+--- END Writeback stage display ---
+
+--- Fetch stage display ---
+ - ENTERING STAGE -
+pc                  : 72
+op code             : N/A
+destination reg tag : N/A
+destination value   : N/A
+source 1 reg tag    : N/A
+source 1 reg valid  : N/A
+source 1 reg value  : N/A
+source 2 reg tag    : N/A
+source 2 reg valid  : N/A
+source 2 reg value  : N/A
+literal             : N/A
+.....................
+ - EXITING STAGE -
+pc                  : 4018
+raw instruction     : HALT
+op code             : N/A
+destination reg tag : N/A
+destination value   : N/A
+source 1 reg tag    : N/A
+source 1 reg valid  : N/A
+source 1 reg value  : N/A
+source 2 reg tag    : N/A
+source 2 reg valid  : N/A
+source 2 reg value  : N/A
+literal             : N/A
+--- END FETCH stage display ---
+DECODE STALLED!
+ALU1 STALLED!
+ALU2 STALLED!
+ALU2 STALLED!
+ALU2 STALLED!
+--- MEM stage display ---
+ - Entering stage - 
+pc                  : 4012
+raw instruction     : BNZ #12
+op code             : BNZ
+destination reg tag : N/A
+destination value   : N/A
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 12
+....................
+ - Exiting stage - 
+pc                  : 4012
+op code             : BNZ
+destination reg tag : N/A
+destination value   : 4294967295
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 12
+memory location     : 0
+--- END MEM stage display ---
+
+--- Writeback stage display ---
+ - ENTERING STAGE -
+pc                  : 4012
+raw instruction     : BNZ #12
+op code             : BNZ
+destination reg tag : N/A
+destination value   : 4294967295
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 12
+ 
+Register File Contents
+Most Recent Register
+--- END Writeback stage display ---
+FETCH STALLED!
+DECODE STALLED!
+ALU1 STALLED!
+ALU2 STALLED!
+ALU2 STALLED!
+ALU2 STALLED!
+--- MEM stage display ---
+ - Entering stage - 
+pc                  : 4012
+raw instruction     : BNZ #12
+op code             : BNZ
+destination reg tag : N/A
+destination value   : N/A
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 12
+....................
+ - Exiting stage - 
+pc                  : 4012
+op code             : BNZ
+destination reg tag : N/A
+destination value   : 4294967295
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 12
+memory location     : 0
+--- END MEM stage display ---
+
+--- Writeback stage display ---
+ - ENTERING STAGE -
+pc                  : 4012
+raw instruction     : BNZ #12
+op code             : BNZ
+destination reg tag : N/A
+destination value   : 4294967295
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 12
+ 
+Register File Contents
+Most Recent Register
+--- END Writeback stage display ---
+FETCH STALLED!
+DECODE STALLED!
+ALU1 STALLED!
+ALU2 STALLED!
+ALU2 STALLED!
+ALU2 STALLED!
+--- MEM stage display ---
+ - Entering stage - 
+pc                  : 4012
+raw instruction     : BNZ #12
+op code             : BNZ
+destination reg tag : N/A
+destination value   : N/A
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 12
+....................
+ - Exiting stage - 
+pc                  : 4012
+op code             : BNZ
+destination reg tag : N/A
+destination value   : 4294967295
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 12
+memory location     : 0
+--- END MEM stage display ---
+
+--- Writeback stage display ---
+ - ENTERING STAGE -
+pc                  : 4012
+raw instruction     : BNZ #12
+op code             : BNZ
+destination reg tag : N/A
+destination value   : 4294967295
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 12
+ 
+Register File Contents
+Most Recent Register
+--- END Writeback stage display ---
+FETCH STALLED!
+DECODE STALLED!
+ALU1 STALLED!
+ALU2 STALLED!
+ALU2 STALLED!
+ALU2 STALLED!
+--- MEM stage display ---
+ - Entering stage - 
+pc                  : 4012
+raw instruction     : BNZ #12
+op code             : BNZ
+destination reg tag : N/A
+destination value   : N/A
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 12
+....................
+ - Exiting stage - 
+pc                  : 4012
+op code             : BNZ
+destination reg tag : N/A
+destination value   : 4294967295
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 12
+memory location     : 0
+--- END MEM stage display ---
+
+--- Writeback stage display ---
+ - ENTERING STAGE -
+pc                  : 4012
+raw instruction     : BNZ #12
+op code             : BNZ
+destination reg tag : N/A
+destination value   : 4294967295
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 12
+ 
+Register File Contents
+Most Recent Register
+--- END Writeback stage display ---
+FETCH STALLED!
+DECODE STALLED!
+ALU1 STALLED!
+ALU2 STALLED!
+ALU2 STALLED!
+ALU2 STALLED!
+--- MEM stage display ---
+ - Entering stage - 
+pc                  : 4012
+raw instruction     : BNZ #12
+op code             : BNZ
+destination reg tag : N/A
+destination value   : N/A
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 12
+....................
+ - Exiting stage - 
+pc                  : 4012
+op code             : BNZ
+destination reg tag : N/A
+destination value   : 4294967295
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 12
+memory location     : 0
+--- END MEM stage display ---
+
+--- Writeback stage display ---
+ - ENTERING STAGE -
+pc                  : 4012
+raw instruction     : BNZ #12
+op code             : BNZ
+destination reg tag : N/A
+destination value   : 4294967295
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 12
+ 
+Register File Contents
+Most Recent Register
+--- END Writeback stage display ---
+FETCH STALLED!
+DECODE STALLED!
+ALU1 STALLED!
+ALU2 STALLED!
+ALU2 STALLED!
+ALU2 STALLED!
+--- MEM stage display ---
+ - Entering stage - 
+pc                  : 4012
+raw instruction     : BNZ #12
+op code             : BNZ
+destination reg tag : N/A
+destination value   : N/A
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 12
+....................
+ - Exiting stage - 
+pc                  : 4012
+op code             : BNZ
+destination reg tag : N/A
+destination value   : 4294967295
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 12
+memory location     : 0
+--- END MEM stage display ---
+
+--- Writeback stage display ---
+ - ENTERING STAGE -
+pc                  : 4012
+raw instruction     : BNZ #12
+op code             : BNZ
+destination reg tag : N/A
+destination value   : 4294967295
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 12
+ 
+Register File Contents
+Most Recent Register
+--- END Writeback stage display ---
+FETCH STALLED!
+DECODE STALLED!
+ALU1 STALLED!
+ALU2 STALLED!
+ALU2 STALLED!
+ALU2 STALLED!
+--- MEM stage display ---
+ - Entering stage - 
+pc                  : 4012
+raw instruction     : BNZ #12
+op code             : BNZ
+destination reg tag : N/A
+destination value   : N/A
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 12
+....................
+ - Exiting stage - 
+pc                  : 4012
+op code             : BNZ
+destination reg tag : N/A
+destination value   : 4294967295
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 12
+memory location     : 0
+--- END MEM stage display ---
+
+--- Writeback stage display ---
+ - ENTERING STAGE -
+pc                  : 4012
+raw instruction     : BNZ #12
+op code             : BNZ
+destination reg tag : N/A
+destination value   : 4294967295
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 12
+ 
+Register File Contents
+Most Recent Register
+--- END Writeback stage display ---
+FETCH STALLED!
+DECODE STALLED!
+ALU1 STALLED!
+ALU2 STALLED!
+ALU2 STALLED!
+ALU2 STALLED!
+--- MEM stage display ---
+ - Entering stage - 
+pc                  : 4012
+raw instruction     : BNZ #12
+op code             : BNZ
+destination reg tag : N/A
+destination value   : N/A
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 12
+....................
+ - Exiting stage - 
+pc                  : 4012
+op code             : BNZ
+destination reg tag : N/A
+destination value   : 4294967295
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 12
+memory location     : 0
+--- END MEM stage display ---
+
+--- Writeback stage display ---
+ - ENTERING STAGE -
+pc                  : 4012
+raw instruction     : BNZ #12
+op code             : BNZ
+destination reg tag : N/A
+destination value   : 4294967295
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 12
+ 
+Register File Contents
+Most Recent Register
+--- END Writeback stage display ---
+FETCH STALLED!
+DECODE STALLED!
+ALU1 STALLED!
+ALU2 STALLED!
+ALU2 STALLED!
+ALU2 STALLED!
+--- MEM stage display ---
+ - Entering stage - 
+pc                  : 4012
+raw instruction     : BNZ #12
+op code             : BNZ
+destination reg tag : N/A
+destination value   : N/A
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 12
+....................
+ - Exiting stage - 
+pc                  : 4012
+op code             : BNZ
+destination reg tag : N/A
+destination value   : 4294967295
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 12
+memory location     : 0
+--- END MEM stage display ---
+
+--- Writeback stage display ---
+ - ENTERING STAGE -
+pc                  : 4012
+raw instruction     : BNZ #12
+op code             : BNZ
+destination reg tag : N/A
+destination value   : 4294967295
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 12
+ 
+Register File Contents
+Most Recent Register
+--- END Writeback stage display ---
+FETCH STALLED!
+DECODE STALLED!
+ALU1 STALLED!
+ALU2 STALLED!
+ALU2 STALLED!
+ALU2 STALLED!
+--- MEM stage display ---
+ - Entering stage - 
+pc                  : 4012
+raw instruction     : BNZ #12
+op code             : BNZ
+destination reg tag : N/A
+destination value   : N/A
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 12
+....................
+ - Exiting stage - 
+pc                  : 4012
+op code             : BNZ
+destination reg tag : N/A
+destination value   : 4294967295
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 12
+memory location     : 0
+--- END MEM stage display ---
+
+--- Writeback stage display ---
+ - ENTERING STAGE -
+pc                  : 4012
+raw instruction     : BNZ #12
+op code             : BNZ
+destination reg tag : N/A
+destination value   : 4294967295
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 12
+ 
+Register File Contents
+Most Recent Register
+--- END Writeback stage display ---

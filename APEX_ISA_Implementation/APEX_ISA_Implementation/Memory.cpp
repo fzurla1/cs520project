@@ -79,7 +79,7 @@ void Memory::display()
 	{
 		Global::Debug("--- MEM stage display ---");
 		Global::Debug(" - Entering stage - ");
-		Global::Debug("pc                  : " + to_string(snapshot_before.pc_value));
+		Global::Debug("pc                  : " + to_string(4000 + ((snapshot_before.pc_value - 4000) * 4)));
 		Global::Debug("raw instruction     : " + snapshot_before.untouched_instruction);
 		Global::Debug("op code             : " + Global::toString(snapshot_before.instruction.op_code));
 		Global::Debug("destination reg tag : " + Global::toString(snapshot_before.instruction.dest.tag));
@@ -93,7 +93,7 @@ void Memory::display()
 		Global::Debug("literal             : " + to_string(snapshot_before.instruction.literal_value));
 		Global::Debug("....................");
 		Global::Debug(" - Exiting stage - ");
-		Global::Debug("pc                  : " + to_string(snapshot_after.pc_value));
+		Global::Debug("pc                  : " + to_string(4000 + ((snapshot_after.pc_value - 4000) * 4)));
 		Global::Debug("op code             : " + Global::toString(snapshot_after.instruction.op_code));
 		Global::Debug("destination reg tag : " + Global::toString(snapshot_after.instruction.dest.tag));
 		Global::Debug("destination value   : " + to_string(snapshot_after.instruction.dest.value));

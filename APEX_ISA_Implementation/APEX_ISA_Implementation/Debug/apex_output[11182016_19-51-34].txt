@@ -1,0 +1,132 @@
+
+--- Fetch stage display ---
+ - ENTERING STAGE -
+pc                  : 4000
+op code             : N/A
+destination reg tag : N/A
+destination value   : N/A
+source 1 reg tag    : N/A
+source 1 reg valid  : N/A
+source 1 reg value  : N/A
+source 2 reg tag    : N/A
+source 2 reg valid  : N/A
+source 2 reg value  : N/A
+literal             : N/A
+.....................
+ - EXITING STAGE -
+pc                  : 4000
+raw instruction     : MOVC R0, #0
+op code             : N/A
+destination reg tag : N/A
+destination value   : N/A
+source 1 reg tag    : N/A
+source 1 reg valid  : N/A
+source 1 reg value  : N/A
+source 2 reg tag    : N/A
+source 2 reg valid  : N/A
+source 2 reg value  : N/A
+literal             : N/A
+--- END FETCH stage display ---
+Decode/RF STAGE --> No Instruction in Stage
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+--- Fetch stage display ---
+ - ENTERING STAGE -
+pc                  : 4005
+op code             : N/A
+destination reg tag : N/A
+destination value   : N/A
+source 1 reg tag    : N/A
+source 1 reg valid  : N/A
+source 1 reg value  : N/A
+source 2 reg tag    : N/A
+source 2 reg valid  : N/A
+source 2 reg value  : N/A
+literal             : N/A
+.....................
+ - EXITING STAGE -
+pc                  : 4005
+raw instruction     : MOVC R1, #25
+op code             : N/A
+destination reg tag : N/A
+destination value   : N/A
+source 1 reg tag    : N/A
+source 1 reg valid  : N/A
+source 1 reg value  : N/A
+source 2 reg tag    : N/A
+source 2 reg valid  : N/A
+source 2 reg value  : N/A
+literal             : N/A
+--- END FETCH stage display ---
+
+--- Decode/RF stage display ---
+ - ENTERING STAGE -
+pc                  : 4000
+raw instruction     : MOVC R0, #0
+op code             : NONE
+destination reg tag : N/A
+destination value   : not ready
+source 1 reg tag    : N/A
+source 1 reg valid  : INVALID
+source 1 reg value  : invalid!
+source 2 reg tag    : N/A
+source 2 reg valid  : INVALID
+source 2 reg value  : invalid!
+literal             : 0
+.....................
+ - EXITING STAGE -
+pc                  : 4000
+op code             : MOVC
+destination reg tag : R0
+destination value   : not ready
+source 1 reg tag    : N/A
+source 1 reg valid  : VALID
+source 1 reg value  : 4294967295
+source 2 reg tag    : N/A
+source 2 reg valid  : VALID
+source 2 reg value  : 4294967295
+literal             : 0
+--- END Decode/RF stage display ---
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+--- Fetch stage display ---
+ - ENTERING STAGE -
+pc                  : 4010
+op code             : N/A
+destination reg tag : N/A
+destination value   : N/A
+source 1 reg tag    : N/A
+source 1 reg valid  : N/A
+source 1 reg value  : N/A
+source 2 reg tag    : N/A
+source 2 reg valid  : N/A
+source 2 reg value  : N/A
+literal             : N/A
+.....................
+ - EXITING STAGE -
+pc                  : 4010
+raw instruction     : MOVC R2, #5
+op code             : N/A
+destination reg tag : N/A
+destination value   : N/A
+source 1 reg tag    : N/A
+source 1 reg valid  : N/A
+source 1 reg value  : N/A
+source 2 reg tag    : N/A
+source 2 reg valid  : N/A
+source 2 reg value  : N/A
+literal             : N/A
+--- END FETCH stage display ---
+
+--- Decode/RF stage display ---
+ - ENTERING STAGE -

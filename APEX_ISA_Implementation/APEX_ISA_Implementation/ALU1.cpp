@@ -118,7 +118,7 @@ void ALU1::display()
 	if (myStruct.pc_value != INT_MAX)
 	{
 		Global::Debug("\n--- ALU1 stage display ---\n - ENTERING STAGE -");
-		Global::Debug("pc                  : " + to_string(snapshot_before.pc_value));
+		Global::Debug("pc                  : " + to_string(4000 + ((snapshot_before.pc_value -4000)* 4)));
 		Global::Debug("raw instruction     : " + snapshot_before.untouched_instruction);
 		Global::Debug("op code             : " + Global::toString(snapshot_before.instruction.op_code));
 		Global::Debug("destination reg tag : " + Global::toString(snapshot_before.instruction.dest.tag));
@@ -143,7 +143,7 @@ void ALU1::display()
 		Global::Debug(".....................");
 
 		Global::Debug(" - EXITING STAGE -");
-		Global::Debug("pc                  : " + to_string(snapshot_after.pc_value));
+		Global::Debug("pc                  : " + to_string(4000 + ((snapshot_after.pc_value - 4000) * 4)));
 		Global::Debug("op code             : " + Global::toString(snapshot_after.instruction.op_code));
 		Global::Debug("destination reg tag : " + Global::toString(snapshot_after.instruction.dest.tag));
 		Global::Debug("destination value   : not ready");

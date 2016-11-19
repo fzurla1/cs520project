@@ -377,6 +377,10 @@ Global::apexStruct Decode::run(
 			iss >> s_literal;
 			s_literal = s_literal.substr(1, s_literal.length());
 			output_struct.instruction.literal_value = atoi(s_literal.c_str());
+
+			output_struct.instruction.dest.status = Global::STATUS::VALID;
+			output_struct.instruction.src1.status = Global::STATUS::VALID;
+			output_struct.instruction.src2.status = Global::STATUS::VALID;
 			break;
 			//opcode <src1>, #literal
 		case Global::OPCODE::BAL:
@@ -425,10 +429,10 @@ void Decode::setPipelineStruct(Global::apexStruct input_struct)
 void Decode::display()
 {
 	//make sure we have valid data
-	//if (snapshot_before.pc_value != INT_MAX)
-//	{
+	if (snapshot_before.pc_value != INT_MAX)
+	{
 		Global::Debug("\n--- Decode/RF stage display ---\n - ENTERING STAGE -");
-		Global::Debug("pc                  : " + to_string(snapshot_before.pc_value));
+		Global::Debug("pc                  : " + to_string(4000 + ((snapshot_before.pc_value - 4000) * 4)));
 		Global::Debug("raw instruction     : " + snapshot_before.untouched_instruction);
 		Global::Debug("op code             : " + Global::toString(snapshot_before.instruction.op_code));
 		Global::Debug("destination reg tag : " + Global::toString(snapshot_before.instruction.dest.tag));
@@ -453,7 +457,7 @@ void Decode::display()
 		Global::Debug(".....................");
 
 		Global::Debug(" - EXITING STAGE -");
-		Global::Debug("pc                  : " + to_string(snapshot_after.pc_value));
+		Global::Debug("pc                  : " + to_string(4000 + ((snapshot_after.pc_value - 4000) * 4)));
 		Global::Debug("op code             : " + Global::toString(snapshot_after.instruction.op_code));
 		Global::Debug("destination reg tag : " + Global::toString(snapshot_after.instruction.dest.tag));
 		Global::Debug("destination value   : not ready");
@@ -476,11 +480,9 @@ void Decode::display()
 		Global::Debug("literal             : " + to_string(snapshot_after.instruction.literal_value));
 
 		Global::Debug("--- END Decode/RF stage display ---");
-		/*
 	}
 	else
 	{
 		Global::Debug("Decode/RF STAGE --> No Instruction in Stage");
 	}
-	*/
 }

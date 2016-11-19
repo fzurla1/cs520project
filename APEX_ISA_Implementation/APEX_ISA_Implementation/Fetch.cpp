@@ -72,7 +72,7 @@ bool Fetch::endOfFile()
 void Fetch::display()
 {
 	Global::Debug("\n--- Fetch stage display ---\n - ENTERING STAGE -");
-	Global::Debug("pc                  : " + to_string((snapshot_after.pc_value - 4000)*4));
+	Global::Debug("pc                  : " + to_string(4000 + ((snapshot_after.pc_value - 4000) * 4)));
 	Global::Debug("op code             : N/A");
 	Global::Debug("destination reg tag : N/A");
 	Global::Debug("destination value   : N/A");
@@ -85,7 +85,7 @@ void Fetch::display()
 	Global::Debug("literal             : N/A");
 	Global::Debug(".....................");
 	Global::Debug(" - EXITING STAGE -");
-	Global::Debug("pc                  : " + to_string(snapshot_after.pc_value));
+	Global::Debug("pc                  : " + to_string(4000 + ((snapshot_after.pc_value - 4000) * 4)));
 	Global::Debug("raw instruction     : " + snapshot_after.untouched_instruction);
 	Global::Debug("op code             : N/A");
 	Global::Debug("destination reg tag : N/A");

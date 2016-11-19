@@ -76,7 +76,7 @@ void Branch::display()
 	if (myStruct.pc_value != INT_MAX)
 	{
 		Global::Debug("\n--- Branch stage display ---\n - ENTERING STAGE -");
-		Global::Debug("pc                  : " + to_string(myStruct.pc_value));
+		Global::Debug("pc                  : " + to_string(4000 + ((myStruct.pc_value - 4000) * 4)));
 		Global::Debug("raw instruction     : " + myStruct.untouched_instruction);
 		Global::Debug("op code             : " + Global::toString(myStruct.instruction.op_code));
 		Global::Debug("destination reg tag : " + Global::toString(myStruct.instruction.dest.tag));

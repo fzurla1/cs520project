@@ -46,7 +46,7 @@ void WriteBack::display()
 	if (myStruct.pc_value != INT_MAX)
 	{
 		Global::Debug("\n--- Writeback stage display ---\n - ENTERING STAGE -");
-		Global::Debug("pc                  : " + to_string(snapshot_before.pc_value));
+		Global::Debug("pc                  : " + to_string(4000 + ((snapshot_before.pc_value - 4000) * 4)));
 		Global::Debug("raw instruction     : " + snapshot_before.untouched_instruction);
 		Global::Debug("op code             : " + Global::toString(snapshot_before.instruction.op_code));
 		Global::Debug("destination reg tag : " + Global::toString(snapshot_before.instruction.dest.tag));

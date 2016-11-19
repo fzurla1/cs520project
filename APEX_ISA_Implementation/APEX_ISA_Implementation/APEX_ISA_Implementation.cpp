@@ -86,7 +86,7 @@ void initialize_forwarding_bus()
 
 void initialize_memory()
 {
-	for each (int x in Memory_Array)
+	for (int x = 0; x < Global::MEMORY_SIZE; x++)
 	{
 		Memory_Array[x] = 0;
 	}
@@ -103,7 +103,7 @@ void initialize_Register_File()
 
 void initialize_most_recent()
 {
-	for each(int x in Most_Recent_Reg)
+	for (int x = 0; x < Global::ARCH_REGISTER_COUNT; x++)
 	{
 		Most_Recent_Reg[x] = Global::ARCH_REGISTERS::NA;
 	}
@@ -111,7 +111,7 @@ void initialize_most_recent()
 
 void initialize_stalled_stages()
 {
-	for each(int x in Stalled_Stages)
+	for (int x = 0; x < Global::TOTAL_STAGES; x++)
 	{
 		Stalled_Stages[x] = false;
 	}
@@ -508,13 +508,13 @@ int _tmain(int argc, char* argv[])
 					
 
 					//set up for the next cycle
-					if (!Stalled_Stages[Global::STALLED_STAGE::DECODE_RF])
+					if (!Stalled_Stages[Global::STALLED_STAGE::DECODE_RF] && !Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].updatePC)
 					{
 						decode->setPipelineStruct(pipeline_struct_fetch);
 						pipeline_struct_fetch.clear();
 						PC++;
 					}
-					else if (!Stalled_Stages[Global::STALLED_STAGE::DECODE_RF])
+					else if (!Stalled_Stages[Global::STALLED_STAGE::DECODE_RF] || Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].updatePC)
 					{
 						decode->setPipelineStruct(garbage_struct);
 					}
@@ -537,16 +537,16 @@ int _tmain(int argc, char* argv[])
 						case Global::OPCODE::HALT:
 						case Global::OPCODE::LOAD:
 						case Global::OPCODE::STORE:
-							if (!Stalled_Stages[Global::STALLED_STAGE::DECODE_RF] && !Stalled_Stages[Global::STALLED_STAGE::ALU1])
+							if (!Stalled_Stages[Global::STALLED_STAGE::DECODE_RF] && !Stalled_Stages[Global::STALLED_STAGE::ALU1] &&  !Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].updatePC)
 							{
 								alu1->setPipelineStruct(pipeline_struct_decode);
 							}
-							else if (!Stalled_Stages[Global::STALLED_STAGE::ALU1])
+							else if (!Stalled_Stages[Global::STALLED_STAGE::ALU1] || Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].updatePC)
 							{
 								alu1->setPipelineStruct(garbage_struct);
 							}
 
-							if (!Stalled_Stages[Global::STALLED_STAGE::BRANCH])
+							if (!Stalled_Stages[Global::STALLED_STAGE::BRANCH] )
 							{
 								branch->setPipelineStruct(garbage_struct);
 							}
@@ -555,7 +555,7 @@ int _tmain(int argc, char* argv[])
 						case Global::OPCODE::BNZ:
 						case Global::OPCODE::BZ:
 						case Global::OPCODE::JUMP:
-							if (!Stalled_Stages[Global::STALLED_STAGE::DECODE_RF] && !Stalled_Stages[Global::STALLED_STAGE::BRANCH])
+							if (!Stalled_Stages[Global::STALLED_STAGE::DECODE_RF] && !Stalled_Stages[Global::STALLED_STAGE::BRANCH] && !Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].updatePC)
 							{
 								branch->setPipelineStruct(pipeline_struct_decode);	
 							}
