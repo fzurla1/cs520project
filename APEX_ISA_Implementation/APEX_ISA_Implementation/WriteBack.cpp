@@ -40,6 +40,11 @@ void WriteBack::setPipelineStruct(Global::apexStruct input_struct)
 	myStruct = input_struct;
 }
 
+bool WriteBack::hasValidData()
+{
+	return (myStruct.pc_value != INT_MAX);
+}
+
 void WriteBack::display()
 {
 	//make sure we have valid data
@@ -68,9 +73,6 @@ void WriteBack::display()
 			Global::Debug("source 2 reg value  : " + to_string(snapshot_before.instruction.src2.value));
 
 		Global::Debug("literal             : " + to_string(snapshot_before.instruction.literal_value));
-		Global::Debug(" ");
-		Global::Debug("Register File Contents");
-		Global::Debug("Most Recent Register");
 		Global::Debug("--- END Writeback stage display ---");
 	}
 	else

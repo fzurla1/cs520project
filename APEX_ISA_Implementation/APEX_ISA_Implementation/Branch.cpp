@@ -32,6 +32,7 @@ Global::apexStruct Branch::run(
 				Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].updatePC = true;
 				Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].target = myStruct.instruction.dest.value + myStruct.instruction.literal_value;
 				X.value = PC + 1;
+				Global::Debug("-- Branch Taken! BAL-- ");
 				break;
 			case Global::OPCODE::BNZ:
 				if (!Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].flag == Global::FLAGS::ZERO)
@@ -39,6 +40,7 @@ Global::apexStruct Branch::run(
 					Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].opcode = Global::OPCODE::BNZ;
 					Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].updatePC = true;
 					Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].target = myStruct.instruction.literal_value;
+					Global::Debug("-- Branch Taken! BNZ-- ");
 				}
 				break;
 			case Global::OPCODE::BZ:
@@ -47,14 +49,19 @@ Global::apexStruct Branch::run(
 					Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].opcode = Global::OPCODE::BZ;
 					Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].updatePC = true;
 					Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].target = myStruct.instruction.literal_value;
+					Global::Debug("-- Branch Taken! BZ-- ");
 				}
 				break;
 			case Global::OPCODE::JUMP:
 				Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].opcode = Global::OPCODE::JUMP;
 				Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].updatePC = true;
 				Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].target = X.value + myStruct.instruction.literal_value;
+				Global::Debug("-- Branch Taken! JUMP-- ");
 				break;
 		}
+		x_value = X.value;
+		updatePC = Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].updatePC;
+		target = Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].target;
 	}
 
 	if (Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].updatePC)
@@ -70,6 +77,11 @@ void Branch::setPipelineStruct(Global::apexStruct input_struct)
 	myStruct = input_struct;
 }
 
+bool Branch::hasValidData()
+{
+	return (myStruct.pc_value != INT_MAX);
+}
+
 void Branch::display()
 {
 	//make sure we have valid data
@@ -79,25 +91,12 @@ void Branch::display()
 		Global::Debug("pc                  : " + to_string(4000 + ((myStruct.pc_value - 4000) * 4)));
 		Global::Debug("raw instruction     : " + myStruct.untouched_instruction);
 		Global::Debug("op code             : " + Global::toString(myStruct.instruction.op_code));
-		Global::Debug("destination reg tag : " + Global::toString(myStruct.instruction.dest.tag));
-		Global::Debug("destination value   : not ready");
-		Global::Debug("source 1 reg tag    : " + Global::toString(myStruct.instruction.src1.tag));
-		Global::Debug("source 1 reg valid  : " + Global::toString(myStruct.instruction.src1.status));
-
-		if (myStruct.instruction.src1.status == Global::STATUS::INVALID)
-			Global::Debug("source 1 reg value  : invalid!");
-		else
-			Global::Debug("source 1 reg value  : " + to_string(myStruct.instruction.src1.value));
-
-		Global::Debug("source 2 reg tag    : " + Global::toString(myStruct.instruction.src2.tag));
-		Global::Debug("source 2 reg valid  : " + Global::toString(myStruct.instruction.src2.status));
-
-		if (!myStruct.instruction.src2.status)
-			Global::Debug("source 2 reg value  : invalid!");
-		else
-			Global::Debug("source 2 reg value  : " + to_string(myStruct.instruction.src2.value));
-
-		Global::Debug("literal             : " + to_string(myStruct.instruction.literal_value));
+		if (updatePC)
+		{
+			Global::Debug("Branch Taken!");
+			Global::Debug("X                   : " + to_string(4000 + ((x_value - 4000) * 4)));
+			Global::Debug("target              : " + to_string(target));
+		}
 		Global::Debug("--- END Branch stage display ---");
 	}
 	else

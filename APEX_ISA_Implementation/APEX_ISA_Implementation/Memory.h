@@ -23,6 +23,8 @@ public:
 
 	void setPipelineStruct(Global::apexStruct input_struct);
 
+	bool hasValidData();
+
 	/// <summary>
 	///	displays current status of pipeline stage
 	/// </summary>

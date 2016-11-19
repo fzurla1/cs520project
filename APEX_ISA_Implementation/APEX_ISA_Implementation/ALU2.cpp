@@ -280,6 +280,11 @@ void ALU2::setPipelineStruct(Global::apexStruct input_struct)
 	myStruct = input_struct;
 }
 
+bool ALU2::hasValidData()
+{
+	return (myStruct.pc_value != INT_MAX);
+
+}
 void ALU2::display()
 {
 	//make sure we have valid data

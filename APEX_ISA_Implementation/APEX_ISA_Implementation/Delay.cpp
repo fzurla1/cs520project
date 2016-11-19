@@ -35,6 +35,11 @@ void Delay::setPipelineStruct(Global::apexStruct input_struct)
 	myStruct = input_struct;
 }
 
+bool Delay::hasValidData()
+{
+	return (myStruct.pc_value != INT_MAX);
+}
+
 void Delay::display()
 {
 	//make sure we have valid data

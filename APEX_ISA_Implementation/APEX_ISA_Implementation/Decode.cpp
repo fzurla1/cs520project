@@ -384,7 +384,6 @@ Global::apexStruct Decode::run(
 			break;
 			//opcode <src1>, #literal
 		case Global::OPCODE::BAL:
-		case Global::OPCODE::JUMP:
 		case Global::OPCODE::MOVC:
 			iss >> s_dest;
 			s_dest = s_dest.substr(1, (s_dest.length() - 1));
@@ -401,6 +400,22 @@ Global::apexStruct Decode::run(
 
 			output_struct.instruction.literal_value = atoi(s_literal.c_str());
 			break;
+		case Global::OPCODE::JUMP:
+			iss >> s_dest;
+			s_dest = s_dest.substr(1, (s_dest.length() - 1));
+			iss >> s_literal;
+			s_literal = s_literal.substr(1, s_literal.length());
+
+			output_struct.instruction.dest.tag = Global::ARCH_REGISTERS::NA;
+
+			output_struct.instruction.src1.tag = Global::ARCH_REGISTERS::X;
+			output_struct.instruction.src1.status = Global::STATUS::VALID;
+			output_struct.instruction.src1.value = Register_File[Global::ARCH_REGISTERS::X].value;
+
+			output_struct.instruction.src2.tag = Global::ARCH_REGISTERS::NA;
+			output_struct.instruction.src2.status = Global::STATUS::VALID;
+
+			output_struct.instruction.literal_value = atoi(s_literal.c_str());
 		default:
 			break;
 
@@ -424,6 +439,11 @@ Global::apexStruct Decode::run(
 void Decode::setPipelineStruct(Global::apexStruct input_struct)
 {
 	myStruct = input_struct;
+}
+
+bool Decode::hasValidData()
+{
+	return (myStruct.pc_value != INT_MAX);
 }
 
 void Decode::display()

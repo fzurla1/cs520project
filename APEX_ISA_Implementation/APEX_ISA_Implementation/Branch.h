@@ -16,6 +16,8 @@ public:
 
 	void setPipelineStruct(Global::apexStruct input_struct);
 
+	bool hasValidData();
+
 	/// <summary>
 	///	displays current status of pipeline stage
 	/// </summary>
@@ -23,6 +25,9 @@ public:
 
 private:
 	Global::apexStruct myStruct;
+	int x_value = 0;
+	bool updatePC = false;
+	int target = 0;
 };
 
 #endif //BRANCH_H

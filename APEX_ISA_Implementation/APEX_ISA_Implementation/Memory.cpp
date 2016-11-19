@@ -24,40 +24,46 @@ Global::apexStruct Memory::run(
 	//make sure we have valid data
 	if (myStruct.pc_value != INT_MAX)
 	{
-		//get forwarded info, if needed
-		if (myStruct.instruction.dest.status == Global::STATUS::INVALID)
+		if ((myStruct.instruction.op_code != Global::OPCODE::BAL)
+			&& (myStruct.instruction.op_code != Global::OPCODE::BNZ)
+			&& (myStruct.instruction.op_code != Global::OPCODE::BZ)
+			&& (myStruct.instruction.op_code != Global::OPCODE::JUMP))
 		{
-			if (Forward_Bus[Global::FORWARD_TYPE::FROM_WRITEBACK].reg_info.tag == myStruct.instruction.dest.tag)
+			//get forwarded info, if needed
+			if (myStruct.instruction.dest.status == Global::STATUS::INVALID)
 			{
-				output_struct.instruction.dest.value = Forward_Bus[Global::FORWARD_TYPE::FROM_WRITEBACK].reg_info.value;
-				output_struct.instruction.dest.status = Global::STATUS::VALID;
+				if (Forward_Bus[Global::FORWARD_TYPE::FROM_WRITEBACK].reg_info.tag == myStruct.instruction.dest.tag)
+				{
+					output_struct.instruction.dest.value = Forward_Bus[Global::FORWARD_TYPE::FROM_WRITEBACK].reg_info.value;
+					output_struct.instruction.dest.status = Global::STATUS::VALID;
+				}
+				else
+				{
+					Stalled_Stages[Global::STALLED_STAGE::MEMORY] = true;
+				}
 			}
 			else
 			{
-				Stalled_Stages[Global::STALLED_STAGE::MEMORY] = true;
-			}
-		}
-		else
-		{
-			if (output_struct.instruction.op_code == Global::OPCODE::LOAD)
-			{
-				output_struct.instruction.dest.value = Memory_Array[myStruct.instruction.memory_location];
-				output_struct.instruction.dest.status = Global::STATUS::VALID;
-				Forward_Bus[Global::FROM_MEMORY].pc_value = output_struct.pc_value;
-				Forward_Bus[Global::FROM_MEMORY].reg_info.tag = output_struct.instruction.dest.tag;
-				Forward_Bus[Global::FROM_MEMORY].reg_info.value = output_struct.instruction.dest.value;
-			}
-			else if (output_struct.instruction.op_code == Global::OPCODE::STORE)
-			{
-				Memory_Array[myStruct.instruction.memory_location] = output_struct.instruction.dest.value;
+				if (output_struct.instruction.op_code == Global::OPCODE::LOAD)
+				{
+					output_struct.instruction.dest.value = Memory_Array[myStruct.instruction.memory_location];
+					output_struct.instruction.dest.status = Global::STATUS::VALID;
+					Forward_Bus[Global::FROM_MEMORY].pc_value = output_struct.pc_value;
+					Forward_Bus[Global::FROM_MEMORY].reg_info.tag = output_struct.instruction.dest.tag;
+					Forward_Bus[Global::FROM_MEMORY].reg_info.value = output_struct.instruction.dest.value;
+				}
+				else if (output_struct.instruction.op_code == Global::OPCODE::STORE)
+				{
+					Memory_Array[myStruct.instruction.memory_location] = output_struct.instruction.dest.value;
 
-				//write bogus info into forward bus
-				Forward_Bus[Global::FROM_MEMORY].pc_value = -1;
-				Forward_Bus[Global::FROM_MEMORY].reg_info.tag = Global::ARCH_REGISTERS::NA;
-				Forward_Bus[Global::FROM_MEMORY].reg_info.value = -1;
-			}
+					//write bogus info into forward bus
+					Forward_Bus[Global::FROM_MEMORY].pc_value = -1;
+					Forward_Bus[Global::FROM_MEMORY].reg_info.tag = Global::ARCH_REGISTERS::NA;
+					Forward_Bus[Global::FROM_MEMORY].reg_info.value = -1;
+				}
 
-			Stalled_Stages[Global::STALLED_STAGE::MEMORY] = false;
+				Stalled_Stages[Global::STALLED_STAGE::MEMORY] = false;
+			}
 		}
 	}
 
@@ -70,6 +76,11 @@ Global::apexStruct Memory::run(
 void Memory::setPipelineStruct(Global::apexStruct input_struct)
 {
 	myStruct = input_struct;
+}
+
+bool Memory::hasValidData()
+{
+	return (myStruct.pc_value != INT_MAX);
 }
 
 void Memory::display()

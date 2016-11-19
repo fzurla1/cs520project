@@ -56,6 +56,9 @@ int Memory_Array[Global::MEMORY_SIZE];
 //contains PC values
 int Most_Recent_Reg[Global::ARCH_REGISTER_COUNT];
 
+//identify when instructions are still in the pipeline
+bool pipelineHasData = true;
+
 Fetch * fetch;
 Decode * decode;
 ALU1 * alu1;
@@ -150,25 +153,25 @@ void initialize_pipeline()
 #pragma region displays
 void displayRegisterFile()
 {
-	cout << endl
-		<< "-- Register File --" << endl;
+	Global::Debug("");
+	Global::Debug("-- Register File --");
 
 	for (int x = 0; x < Global::ARCH_REGISTER_COUNT; x++)
 	{
-		cout << "R" << Global::toString(Global::ARCH_REGISTERS(x)) << endl
-			<< "   status : " << Global::toString(Register_File[x].status) << endl
-			<< "   value  : " << Register_File[x].value << endl;
+		Global::Debug("R" + Global::toString(Global::ARCH_REGISTERS(x)));
+		Global::Debug("   status : " + Global::toString(Register_File[x].status));
+		Global::Debug("   value  : " + to_string(Register_File[x].value));
 	}
 }
 
 void displayMemory()
 {
-	cout << endl
-		<< "-- Memory Locations --" << endl;
+	Global::Debug("");
+	Global::Debug("-- Memory Locations --");
 
 	for each (int x in Memory_Array)
 	{
-		cout << "Memory[" << x << "] = " << Memory_Array[x] << endl;
+		Global::Debug("Memory[" + to_string(x) + "] = " + to_string(Memory_Array[x]));
 	}
 }
 
@@ -179,17 +182,17 @@ void displayMostRecentlyUsed()
 
 void displayStalledStages()
 {
-	cout << endl
-		<< "-- Stalled stages --"
-		<< "Fetch		: " << to_string(Stalled_Stages[Global::STALLED_STAGE::FETCH]) << endl
-		<< "DECODE_RF	: " << to_string(Stalled_Stages[Global::STALLED_STAGE::DECODE_RF]) << endl
-		<< "ALU1		: " << to_string(Stalled_Stages[Global::STALLED_STAGE::ALU1]) << endl
-		<< "ALU2		: " << to_string(Stalled_Stages[Global::STALLED_STAGE::ALU2]) << endl
-		<< "BRANCH		: " << to_string(Stalled_Stages[Global::STALLED_STAGE::BRANCH]) << endl
-		<< "DELAY		: " << to_string(Stalled_Stages[Global::STALLED_STAGE::DELAY]) << endl
-		<< "MEMORY		: " << to_string(Stalled_Stages[Global::STALLED_STAGE::MEMORY]) << endl
-		<< "WRITEBACK	: " << to_string(Stalled_Stages[Global::STALLED_STAGE::WRITEBACK]) << endl
-		<< endl;
+	Global::Debug("");
+	Global::Debug("-- Stalled stages --");
+	Global::Debug("Fetch		: " + to_string(Stalled_Stages[Global::STALLED_STAGE::FETCH]));
+	Global::Debug("DECODE_RF	: " + to_string(Stalled_Stages[Global::STALLED_STAGE::DECODE_RF]));
+	Global::Debug("ALU1		    : " + to_string(Stalled_Stages[Global::STALLED_STAGE::ALU1]));
+	Global::Debug("ALU2		    : " + to_string(Stalled_Stages[Global::STALLED_STAGE::ALU2]));
+	Global::Debug("BRANCH		: " + to_string(Stalled_Stages[Global::STALLED_STAGE::BRANCH]));
+	Global::Debug("DELAY		: " + to_string(Stalled_Stages[Global::STALLED_STAGE::DELAY]));
+	Global::Debug("MEMORY		: " + to_string(Stalled_Stages[Global::STALLED_STAGE::MEMORY]));
+	Global::Debug("WRITEBACK	: " + to_string(Stalled_Stages[Global::STALLED_STAGE::WRITEBACK]));
+	Global::Debug("");
 }
 #pragma endregion
 
@@ -301,7 +304,7 @@ int _tmain(int argc, char* argv[])
 	
 	if (input_file)
 	{
-		while (command != "end" && !fetch->endOfFile())
+		while (command != "end")
 		{
 
 			cout << endl
@@ -369,10 +372,10 @@ int _tmain(int argc, char* argv[])
 				tempS = command.substr(9, command.length() - 8);
 				n = atoi(tempS.c_str());
 
-				while (!HALT && n > 0)
+				while (!HALT && n > 0 && pipelineHasData)
 				{
 					//start pipeline
-					if (!Stalled_Stages[Global::STALLED_STAGE::DECODE_RF])
+					if (!Stalled_Stages[Global::STALLED_STAGE::DECODE_RF] && !fetch->endOfFile())
 					{
 
 						pipeline_struct_fetch = fetch->run(PC, Forward_Bus, Stalled_Stages);
@@ -392,6 +395,10 @@ int _tmain(int argc, char* argv[])
 							}
 						}
 						*/
+					}
+					else if (fetch->endOfFile())
+					{
+						pipeline_struct_fetch = garbage_struct;
 					}
 					else
 					{
@@ -514,9 +521,18 @@ int _tmain(int argc, char* argv[])
 						pipeline_struct_fetch.clear();
 						PC++;
 					}
-					else if (!Stalled_Stages[Global::STALLED_STAGE::DECODE_RF] || Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].updatePC)
+					else if (!Stalled_Stages[Global::STALLED_STAGE::DECODE_RF])
 					{
 						decode->setPipelineStruct(garbage_struct);
+					}
+
+					if (Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].updatePC)
+					{
+						decode->setPipelineStruct(garbage_struct);
+						Global::Debug("....");
+						Global::Debug("Flushing Fetch!");
+						Global::Debug("Flushing Decode/RF");
+						Global::Debug("....");
 					}
 
 					switch (pipeline_struct_decode.instruction.op_code)
@@ -619,6 +635,21 @@ int _tmain(int argc, char* argv[])
 						pipeline_struct_memory.clear();
 					}
 
+					if (decode->hasValidData() 
+						|| alu1->hasValidData() 
+						|| alu2->hasValidData()
+						|| branch->hasValidData()
+						|| delay->hasValidData()
+						|| memory->hasValidData()
+						|| writeBack->hasValidData())
+					{
+						pipelineHasData = true;
+					}
+					else
+					{
+						pipelineHasData = false;
+					}
+
 					n--;
 				} //!HALT && n > 0
 			}
@@ -632,6 +663,7 @@ int _tmain(int argc, char* argv[])
 			<< "EXITING" << endl;
 	}
 
+	/*
 	//destruct
 	fetch->~Fetch();
 	decode->~Decode();
@@ -641,6 +673,7 @@ int _tmain(int argc, char* argv[])
 	delay->~Delay();
 	memory->~Memory();
 	writeBack->~WriteBack();
+	*/
 
 	input_file.close();
 	Global::closeFile();
