@@ -8,14 +8,27 @@ class WriteBack
 public:
 	WriteBack();
 	~WriteBack();
-	void run(
+
+	/// <summary>
+	///	This function will:
+	///	write result to register file, forward bus, remove instruction from blocking register, 
+	/// and state if we reached a HALt
+	/// </summary>
+	bool run(
 		Global::Register_Info(&Register_File)[Global::ARCH_REGISTER_COUNT],
 		Global::Forwarding_Info(&Forward_Bus)[Global::FORWARDING_BUSES],
-		int(&Most_Recent_Reg)[Global::ARCH_REGISTER_COUNT],
-		int * HALT);
+		int(&Most_Recent_Reg)[Global::ARCH_REGISTER_COUNT]);
 
+	/// <summary>
+	///	This function will:
+	///	set up the structure for the next run of the stage
+	/// </summary>
 	void setPipelineStruct(Global::apexStruct input_struct);
-	
+
+	/// <summary>
+	///	This function will:
+	///	return if the stage has valid data
+	/// </summary>
 	bool hasValidData();
 
 	/// <summary>

@@ -10,12 +10,12 @@ WriteBack::~WriteBack()
 {
 }
 
-void WriteBack::run(
+bool WriteBack::run(
 	Global::Register_Info(&Register_File)[Global::ARCH_REGISTER_COUNT],
 	Global::Forwarding_Info(&Forward_Bus)[Global::FORWARDING_BUSES],
-	int(&Most_Recent_Reg)[Global::ARCH_REGISTER_COUNT],
-	int * HALT)
+	int(&Most_Recent_Reg)[Global::ARCH_REGISTER_COUNT])
 {
+	bool HALT = false;
 	snapshot_before = myStruct;
 
 	//make sure we have valid data
@@ -32,7 +32,13 @@ void WriteBack::run(
 		{
 			Most_Recent_Reg[myStruct.instruction.dest.tag] = 0;
 		}
+
+		if (myStruct.instruction.op_code == Global::OPCODE::HALT)
+		{
+			HALT = true;
+		}
 	}
+	return HALT;
 }
 
 void WriteBack::setPipelineStruct(Global::apexStruct input_struct)

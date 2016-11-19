@@ -18,6 +18,7 @@ Global::apexStruct Branch::run(
 	Global::Register_Info(&X))
 {
 	Global::apexStruct output_struct = myStruct;
+	//assue no stall, and no branch
 	Stalled_Stages[Global::STALLED_STAGE::BRANCH] = false;
 	Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].updatePC = false;
 	Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].opcode = Global::OPCODE::NONE;
@@ -55,7 +56,7 @@ Global::apexStruct Branch::run(
 			case Global::OPCODE::JUMP:
 				Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].opcode = Global::OPCODE::JUMP;
 				Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].updatePC = true;
-				Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].target = X.value + myStruct.instruction.literal_value;
+				Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].target = X.value + myStruct.instruction.literal_value/4;
 				Global::Debug("-- Branch Taken! JUMP-- ");
 				break;
 		}
@@ -64,6 +65,7 @@ Global::apexStruct Branch::run(
 		target = Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].target;
 	}
 
+	//if updating PC from branch, store off current PC value too
 	if (Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].updatePC)
 	{
 		Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].pc_value = myStruct.pc_value;

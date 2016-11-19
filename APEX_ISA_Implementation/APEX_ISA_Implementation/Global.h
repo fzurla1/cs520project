@@ -10,11 +10,14 @@ using namespace std;
 class Global
 {
 public:
+
+	//register status flags
 	enum STATUS{
 		INVALID,
 		VALID
 	};
 
+	//possible instruction OPCODEs
 	enum OPCODE{
 		//ALU Instructions
 		ADD,	ADDL, //literal
@@ -31,6 +34,7 @@ public:
 		HALT,	NONE
 	};
 
+	//ALU flags
 	enum FLAGS{
 		ZERO,
 		OVER_FLOW,
@@ -38,6 +42,7 @@ public:
 		CLEAR
 	};
 
+	//available architecture registers
 	enum ARCH_REGISTERS{
 		R0, R1, R2, R3,
 		R4, R5, R6, R7,
@@ -46,6 +51,7 @@ public:
 		X,NA
 	};
 
+	//forwarding types
 	enum FORWARD_TYPE{
 		FROM_ALU2,
 		FROM_BRANCH,
@@ -53,6 +59,7 @@ public:
 		FROM_WRITEBACK
 	};
 
+	//stages that can stall
 	enum STALLED_STAGE{
 		FETCH,
 		DECODE_RF,
@@ -64,6 +71,7 @@ public:
 		WRITEBACK
 	};
 
+	//generic register information
 	struct Register_Info{
 		ARCH_REGISTERS tag = ARCH_REGISTERS::NA;
 		unsigned int value = -1;
@@ -77,6 +85,7 @@ public:
 		}
 	};
 
+	//structure used in forwarding bus
 	struct Forwarding_Info{
 		int pc_value = 0;
 		Register_Info reg_info;
@@ -97,6 +106,7 @@ public:
 		}
 	};
 
+	//APEX structure to get passed between stages
 	struct apexStruct{
 		int pc_value = INT_MAX;
 		string untouched_instruction = "";
@@ -185,6 +195,7 @@ public:
 	
 	int PC; //program counter
 
+	//constants
 	static const int ALU_FLAG_COUNT = 3;
 	static const int FORWARDING_BUSES = 4;
 	static const int ARCH_REGISTER_COUNT = 16;
@@ -195,6 +206,8 @@ public:
 	static void setOutFile(string filename);
 	static void closeFile();
 	static void Debug(string s1);
+
+	//used for debug - set enums to string for easier debugging and output
 	static string toString(OPCODE opcode);
 	static string toString(FLAGS flag);
 	static string toString(ARCH_REGISTERS reg);

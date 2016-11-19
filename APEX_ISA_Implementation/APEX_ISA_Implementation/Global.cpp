@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "Global.h"
 
-#define DEBUG 1
+#define DEBUG 0
 
 using namespace std;
 

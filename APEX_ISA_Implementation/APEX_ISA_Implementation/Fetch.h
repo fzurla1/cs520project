@@ -8,11 +8,44 @@ class Fetch
 public:
 	Fetch();
 	~Fetch();
+
+	/// <summary>
+	///	This function will:
+	///	read the input file based on PC value, but if there is a
+	/// branch, than use the updated PC value from branch instead
+	/// stall if decode is stalled
+	/// </summary>
 	Global::apexStruct run(int(&PC),
 		Global::Forwarding_Info(&Forward_Bus)[Global::FORWARDING_BUSES], 
 		bool(&Stalled_Stages)[Global::TOTAL_STAGES]);
+
+	/// <summary>
+	///	This function will:
+	///	set file name to read from
+	/// </summary>
 	void setFile(string filename);
+
+	/// <summary>
+	///	This function will:
+	///	return if reached end of file
+	/// </summary>
 	bool endOfFile();
+
+	/// <summary>
+	///	This function will:
+	///	set up the structure for the next run of the stage
+	/// </summary>
+	void setPipelineStruct(Global::apexStruct input_struct);
+
+	/// <summary>
+	///	This function will:
+	///	return if the stage has valid data
+	/// </summary>
+	bool hasValidData();
+
+	/// <summary>
+	///	displays current status of pipeline stage
+	/// </summary>
 	void display();
 
 private:

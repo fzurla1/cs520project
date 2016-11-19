@@ -29,9 +29,20 @@ Global::apexStruct Fetch::run(int (&PC),
 
 	if (Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].updatePC)
 	{
-		Global::Debug(" -- BRANCH TAKEN! -- ");
-		PC = Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].pc_value + (Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].target / 4);
-		Global::Debug(" -- New PC = " + to_string(4000 + ((PC - 4000) * 4)) + " -- ");
+		//for every other branch but jump, read out target and add it to PC
+		if (Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].opcode != Global::OPCODE::JUMP)
+		{
+			Global::Debug(" -- BRANCH TAKEN! -- ");
+			PC = Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].pc_value + (Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].target / 4);
+			Global::Debug(" -- New PC = " + to_string(4000 + ((PC - 4000) * 4)) + " -- ");
+		}
+		//for jump, pc value = x + literal, which is stored in target of jump
+		else
+		{
+			Global::Debug(" -- BRANCH TAKEN! -- ");
+			PC = Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].target;
+			Global::Debug(" -- New PC = " + to_string(4000 + ((PC - 4000) * 4)) + " -- ");
+		}
 	}
 	
 	ourPC = PC - 4000;
@@ -40,6 +51,7 @@ Global::apexStruct Fetch::run(int (&PC),
 
 	if (!input_file.eof())
 	{
+		//read out line based on PC value
 		output_struct.pc_value = PC;
 		if (ourPC > 0)
 		{
@@ -48,6 +60,7 @@ Global::apexStruct Fetch::run(int (&PC),
 		getline(input_file, output_struct.untouched_instruction);
 	}
 	
+	//return updated structure
 	snapshot_after = output_struct;
 	return output_struct;
 }

@@ -21,8 +21,16 @@ public:
 		bool (&Stalled_Stages)[Global::TOTAL_STAGES],
 		int (&Memory_Array)[Global::MEMORY_SIZE]);
 
+	/// <summary>
+	///	This function will:
+	///	set up the structure for the next run of the stage
+	/// </summary>
 	void setPipelineStruct(Global::apexStruct input_struct);
 
+	/// <summary>
+	///	This function will:
+	///	return if the stage has valid data
+	/// </summary>
 	bool hasValidData();
 
 	/// <summary>
