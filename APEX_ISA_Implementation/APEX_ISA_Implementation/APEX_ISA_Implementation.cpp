@@ -172,7 +172,7 @@ void displayMemory()
 	Global::Debug("");
 	Global::Debug("-- Memory Locations --");
 
-	for each (int x in Memory_Array)
+	for (int x = 0; x < 100; x++)
 	{
 		Global::Debug("Memory[" + to_string(x) + "] = " + to_string(Memory_Array[x]));
 	}

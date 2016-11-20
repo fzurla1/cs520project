@@ -451,6 +451,8 @@ void Decode::display()
 	//make sure we have valid data
 	if (snapshot_before.pc_value != INT_MAX)
 	{
+		Global::Debug("DECODE/RF  - " + snapshot_before.untouched_instruction);
+		/*
 		Global::Debug("\n--- Decode/RF stage display ---\n - ENTERING STAGE -");
 		Global::Debug("pc                  : " + to_string(4000 + ((snapshot_before.pc_value - 4000) * 4)));
 		Global::Debug("raw instruction     : " + snapshot_before.untouched_instruction);
@@ -500,6 +502,7 @@ void Decode::display()
 		Global::Debug("literal             : " + to_string(snapshot_after.instruction.literal_value));
 
 		Global::Debug("--- END Decode/RF stage display ---");
+		*/
 	}
 	else
 	{

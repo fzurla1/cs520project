@@ -290,6 +290,8 @@ void ALU2::display()
 	//make sure we have valid data
 	if (myStruct.pc_value != INT_MAX)
 	{
+		Global::Debug("ALU2       - " + snapshot_before.untouched_instruction);
+		/*
 		Global::Debug("\n--- ALU2 stage display ---\n - ENTERING STAGE -");
 		Global::Debug("pc                  : " + to_string(4000 + ((snapshot_before.pc_value - 4000) * 4)));
 		Global::Debug("raw instruction     : " + snapshot_before.untouched_instruction);
@@ -317,6 +319,7 @@ void ALU2::display()
 		Global::Debug("source 2 reg value  : " + to_string(snapshot_after.instruction.src2.value));
 		Global::Debug("literal             : " + to_string(snapshot_after.instruction.literal_value));
 		Global::Debug("--- END ALU2 stage display ---");
+		*/
 	}
 	else
 	{

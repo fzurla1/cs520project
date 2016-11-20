@@ -86,6 +86,8 @@ bool Fetch::endOfFile()
 
 void Fetch::display()
 {
+	Global::Debug("FETCH      - " + snapshot_after.untouched_instruction);
+	/*
 	Global::Debug("\n--- Fetch stage display ---\n - ENTERING STAGE -");
 	Global::Debug("pc                  : " + to_string(4000 + ((snapshot_after.pc_value - 4000) * 4)));
 	Global::Debug("op code             : N/A");
@@ -113,4 +115,5 @@ void Fetch::display()
 	Global::Debug("source 2 reg value  : N/A");
 	Global::Debug("literal             : N/A");
 	Global::Debug("--- END FETCH stage display ---");
+	*/
 }

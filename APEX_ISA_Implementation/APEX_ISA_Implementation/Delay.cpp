@@ -45,6 +45,8 @@ void Delay::display()
 	//make sure we have valid data
 	if (myStruct.pc_value != INT_MAX)
 	{
+		Global::Debug("DELAY      - " + myStruct.untouched_instruction);
+		/*
 		Global::Debug("\n--- Delay stage display ---\n - ENTERING STAGE -");
 		Global::Debug("pc                  : " + to_string(4000 + ((myStruct.pc_value -4000)* 4)));
 		Global::Debug("raw instruction     : " + myStruct.untouched_instruction);
@@ -69,6 +71,7 @@ void Delay::display()
 
 		Global::Debug("literal             : " + to_string(myStruct.instruction.literal_value));
 		Global::Debug("--- END Delay stage display ---");
+		*/
 	}
 	else
 	{

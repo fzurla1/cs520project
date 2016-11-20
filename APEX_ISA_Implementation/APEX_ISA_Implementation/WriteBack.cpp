@@ -56,6 +56,8 @@ void WriteBack::display()
 	//make sure we have valid data
 	if (myStruct.pc_value != INT_MAX)
 	{
+		Global::Debug("WRITEBACK  - " + snapshot_before.untouched_instruction);
+		/*
 		Global::Debug("\n--- Writeback stage display ---\n - ENTERING STAGE -");
 		Global::Debug("pc                  : " + to_string(4000 + ((snapshot_before.pc_value - 4000) * 4)));
 		Global::Debug("raw instruction     : " + snapshot_before.untouched_instruction);
@@ -80,6 +82,7 @@ void WriteBack::display()
 
 		Global::Debug("literal             : " + to_string(snapshot_before.instruction.literal_value));
 		Global::Debug("--- END Writeback stage display ---");
+		*/
 	}
 	else
 	{

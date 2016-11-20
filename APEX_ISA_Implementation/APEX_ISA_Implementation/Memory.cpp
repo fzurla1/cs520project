@@ -88,6 +88,8 @@ void Memory::display()
 	//make sure we have valid data
 	if (myStruct.pc_value != INT_MAX)
 	{
+		Global::Debug("MEMORY     - " + snapshot_after.untouched_instruction);
+		/*
 		Global::Debug("--- MEM stage display ---");
 		Global::Debug(" - Entering stage - ");
 		Global::Debug("pc                  : " + to_string(4000 + ((snapshot_before.pc_value - 4000) * 4)));
@@ -117,6 +119,7 @@ void Memory::display()
 		Global::Debug("literal             : " + to_string(snapshot_after.instruction.literal_value));
 		Global::Debug("memory location     : " + to_string(snapshot_after.instruction.memory_location));
 		Global::Debug("--- END MEM stage display ---");
+		*/
 	}
 	else
 	{
