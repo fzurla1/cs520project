@@ -201,9 +201,12 @@ Global::apexStruct ALU2::run(
 
 #pragma region "OTHERS"
 			case Global::OPCODE::LOAD:
-			case Global::OPCODE::STORE:
 				output_struct.instruction.memory_location =
 					myStruct.instruction.src1.value + myStruct.instruction.literal_value;
+				break;
+			case Global::OPCODE::STORE:
+				output_struct.instruction.memory_location =
+					myStruct.instruction.src2.value + myStruct.instruction.literal_value;
 				break;
 			case Global::OPCODE::MOVC:
 				output_struct.instruction.dest.value = myStruct.instruction.literal_value;

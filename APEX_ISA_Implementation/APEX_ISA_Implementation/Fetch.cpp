@@ -24,7 +24,7 @@ Global::apexStruct Fetch::run(int (&PC),
 	Global::Forwarding_Info(&Forward_Bus)[Global::FORWARDING_BUSES], 
 	bool(&Stalled_Stages)[Global::TOTAL_STAGES])
 {
-	unsigned int ourPC;
+	int ourPC;
 	Stalled_Stages[Global::STALLED_STAGE::FETCH] = false;
 
 	if (Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].updatePC)

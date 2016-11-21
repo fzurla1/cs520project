@@ -89,7 +89,7 @@ void Branch::display()
 	//make sure we have valid data
 	if (myStruct.pc_value != INT_MAX)
 	{
-		Global::Debug("BRANCH     - " + snapshot_before.untouched_instruction);
+		Global::Debug("BRANCH     - " + myStruct.untouched_instruction);
 		/*
 		Global::Debug("\n--- Branch stage display ---\n - ENTERING STAGE -");
 		Global::Debug("pc                  : " + to_string(4000 + ((myStruct.pc_value - 4000) * 4)));

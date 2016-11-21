@@ -31,6 +31,7 @@ Global::apexStruct ALU1::run( Global::Forwarding_Info(&Forward_Bus)[Global::FORW
 			//assume not stalled
 			Stalled_Stages[Global::STALLED_STAGE::ALU1] = false;
 
+			/*
 			//check source registers
 			if (output_struct.instruction.src1.status == Global::STATUS::INVALID)
 			{
@@ -83,10 +84,11 @@ Global::apexStruct ALU1::run( Global::Forwarding_Info(&Forward_Bus)[Global::FORW
 					output_struct.instruction.src2.status = Global::STATUS::INVALID;
 				}
 			}
+			*/
 
 			//verify source registers are valid to proceed
-			if ((output_struct.instruction.src1.status == Global::STATUS::VALID)
-				&& (output_struct.instruction.src2.status == Global::STATUS::VALID))
+			if (((output_struct.instruction.src1.status == Global::STATUS::VALID) && (output_struct.instruction.src2.status == Global::STATUS::VALID))
+				|| ((output_struct.instruction.op_code == Global::OPCODE::STORE) && (output_struct.instruction.src2.status == Global::STATUS::VALID)))
 			{
 				Stalled_Stages[Global::STALLED_STAGE::ALU1] = false;
 			}

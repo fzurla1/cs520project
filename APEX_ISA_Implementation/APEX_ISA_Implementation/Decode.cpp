@@ -232,12 +232,6 @@ Global::apexStruct Decode::run(
 				{
 					output_struct.instruction.src1.value = Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].reg_info.value;
 				}
-				//check from branch
-				else if ((Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].reg_info.tag == output_struct.instruction.src1.tag)
-					&& (Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].pc_value == Most_Recent_Reg[Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].reg_info.tag]))
-				{
-					output_struct.instruction.src1.value = Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].reg_info.value;
-				}
 				//check from memory
 				else if ((Forward_Bus[Global::FORWARD_TYPE::FROM_MEMORY].reg_info.tag == output_struct.instruction.src1.tag)
 					&& (Forward_Bus[Global::FORWARD_TYPE::FROM_MEMORY].pc_value == Most_Recent_Reg[Forward_Bus[Global::FORWARD_TYPE::FROM_MEMORY].reg_info.tag]))
@@ -275,12 +269,6 @@ Global::apexStruct Decode::run(
 				{
 					output_struct.instruction.src2.value = Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].reg_info.value;
 				}
-				//check from branch
-				else if ((Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].reg_info.tag == output_struct.instruction.src2.tag)
-					&& (Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].pc_value == Most_Recent_Reg[Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].reg_info.tag]))
-				{
-					output_struct.instruction.src2.value = Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].reg_info.value;
-				}
 				//check from memory
 				else if ((Forward_Bus[Global::FORWARD_TYPE::FROM_MEMORY].reg_info.tag == output_struct.instruction.src2.tag)
 					&& (Forward_Bus[Global::FORWARD_TYPE::FROM_MEMORY].pc_value == Most_Recent_Reg[Forward_Bus[Global::FORWARD_TYPE::FROM_MEMORY].reg_info.tag]))
@@ -310,7 +298,6 @@ Global::apexStruct Decode::run(
 		case Global::OPCODE::ORL:
 		case Global::OPCODE::SUBL:
 		case Global::OPCODE::LOAD:
-		case Global::OPCODE::STORE:
 			iss >> s_dest;
 			iss >> s_reg1;
 			iss >> s_literal;
@@ -344,12 +331,6 @@ Global::apexStruct Decode::run(
 				{
 					output_struct.instruction.src1.value = Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].reg_info.value;
 				}
-				//check from branch
-				else if ((Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].reg_info.tag == output_struct.instruction.src1.tag)
-					&& (Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].pc_value == Most_Recent_Reg[Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].reg_info.tag]))
-				{
-					output_struct.instruction.src1.value = Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].reg_info.value;
-				}
 				//check from memory
 				else if ((Forward_Bus[Global::FORWARD_TYPE::FROM_MEMORY].reg_info.tag == output_struct.instruction.src1.tag)
 					&& (Forward_Bus[Global::FORWARD_TYPE::FROM_MEMORY].pc_value == Most_Recent_Reg[Forward_Bus[Global::FORWARD_TYPE::FROM_MEMORY].reg_info.tag]))
@@ -370,6 +351,99 @@ Global::apexStruct Decode::run(
 				}
 			}
 
+			break;
+		
+		case Global::OPCODE::STORE:
+			iss >> s_reg1;
+			iss >> s_reg2;
+			iss >> s_literal;
+
+			s_reg1 = s_reg1.substr(1, s_reg1.length() - 1);
+			s_reg2 = s_reg2.substr(1, s_reg2.length() - 1);
+			s_literal = s_literal.substr(1, s_literal.length());
+
+			output_struct.instruction.src1.tag = Global::ARCH_REGISTERS(atoi(s_reg1.c_str()));
+			output_struct.instruction.src1.status = Global::STATUS::VALID;
+			output_struct.instruction.literal_value = atoi(s_literal.c_str());
+
+			output_struct.instruction.src2.tag = Global::ARCH_REGISTERS(atoi(s_reg2.c_str()));
+			output_struct.instruction.src2.status = Global::STATUS::VALID;
+
+			//FOR SRC1
+			//look to reg file for valid data
+			if (Register_File[output_struct.instruction.src1.tag].status == Global::STATUS::VALID)
+			{
+				output_struct.instruction.src1.value = Register_File[output_struct.instruction.src1.tag].value;
+			}
+			//check forward bus
+			//if tag matches what we are looking for, and that instruction is the most recent to update 
+			//the register, then grab that value, otherwise, we can let src 1 go through until the mem stage
+			//, but we need src2.
+			else
+			{
+				//check from ALU2
+				if ((Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].reg_info.tag == output_struct.instruction.src1.tag)
+					&& (Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].pc_value == Most_Recent_Reg[Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].reg_info.tag]))
+				{
+					output_struct.instruction.src1.value = Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].reg_info.value;
+				}
+				//check from memory
+				else if ((Forward_Bus[Global::FORWARD_TYPE::FROM_MEMORY].reg_info.tag == output_struct.instruction.src1.tag)
+					&& (Forward_Bus[Global::FORWARD_TYPE::FROM_MEMORY].pc_value == Most_Recent_Reg[Forward_Bus[Global::FORWARD_TYPE::FROM_MEMORY].reg_info.tag]))
+				{
+					output_struct.instruction.src1.value = Forward_Bus[Global::FORWARD_TYPE::FROM_MEMORY].reg_info.value;
+				}
+				//check from writeback
+				else if ((Forward_Bus[Global::FORWARD_TYPE::FROM_WRITEBACK].reg_info.tag == output_struct.instruction.src1.tag)
+					&& (Forward_Bus[Global::FORWARD_TYPE::FROM_WRITEBACK].pc_value == Most_Recent_Reg[Forward_Bus[Global::FORWARD_TYPE::FROM_WRITEBACK].reg_info.tag]))
+				{
+					output_struct.instruction.src1.value = Forward_Bus[Global::FORWARD_TYPE::FROM_WRITEBACK].reg_info.value;
+				}
+				else
+				{
+					//Stalled_Stages[Global::STALLED_STAGE::DECODE_RF] = true;
+					output_struct.instruction.src1.status = Global::STATUS::INVALID;
+					Global::Debug("DECODE - Src1 not valid, but we cant wait until MEM for this");
+				}
+			}
+			
+			//FOR SRC2
+			//look to reg file for valid data
+			if (Register_File[output_struct.instruction.src2.tag].status == Global::STATUS::VALID)
+			{
+				output_struct.instruction.src2.value = Register_File[output_struct.instruction.src2.tag].value;
+			}
+			//check forward bus
+			//if tag matches what we are looking for, and that instruction is the most recent to update 
+			//the register, then grab that value, otherwise, we can let src 1 go through until the mem stage
+			//, but we need src2.
+			else
+			{
+				//check from ALU2
+				if ((Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].reg_info.tag == output_struct.instruction.src2.tag)
+					&& (Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].pc_value == Most_Recent_Reg[Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].reg_info.tag]))
+				{
+					output_struct.instruction.src2.value = Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].reg_info.value;
+				}
+				//check from memory
+				else if ((Forward_Bus[Global::FORWARD_TYPE::FROM_MEMORY].reg_info.tag == output_struct.instruction.src2.tag)
+					&& (Forward_Bus[Global::FORWARD_TYPE::FROM_MEMORY].pc_value == Most_Recent_Reg[Forward_Bus[Global::FORWARD_TYPE::FROM_MEMORY].reg_info.tag]))
+				{
+					output_struct.instruction.src2.value = Forward_Bus[Global::FORWARD_TYPE::FROM_MEMORY].reg_info.value;
+				}
+				//check from writeback
+				else if ((Forward_Bus[Global::FORWARD_TYPE::FROM_WRITEBACK].reg_info.tag == output_struct.instruction.src2.tag)
+					&& (Forward_Bus[Global::FORWARD_TYPE::FROM_WRITEBACK].pc_value == Most_Recent_Reg[Forward_Bus[Global::FORWARD_TYPE::FROM_WRITEBACK].reg_info.tag]))
+				{
+					output_struct.instruction.src2.value = Forward_Bus[Global::FORWARD_TYPE::FROM_WRITEBACK].reg_info.value;
+				}
+				else
+				{
+					Stalled_Stages[Global::STALLED_STAGE::DECODE_RF] = true;
+					output_struct.instruction.src2.status = Global::STATUS::INVALID;
+					Global::Debug("DECODE STALLED!- Src2 not valid!");
+				}
+			}
 			break;
 
 		case Global::OPCODE::BNZ:
@@ -423,10 +497,15 @@ Global::apexStruct Decode::run(
 
 		//set up the destination information within the register file and most recently used array
 		output_struct.instruction.dest.status = Global::STATUS::INVALID;
-		Register_File[output_struct.instruction.dest.tag].status = output_struct.instruction.dest.status;
-		if (output_struct.instruction.dest.tag != Global::ARCH_REGISTERS::NA)
+
+		if ((output_struct.instruction.src1.status == Global::STATUS::VALID) 
+			&& (output_struct.instruction.src2.status == Global::STATUS::VALID))
 		{
-			Most_Recent_Reg[output_struct.instruction.dest.tag] = output_struct.pc_value;
+			Register_File[output_struct.instruction.dest.tag].status = output_struct.instruction.dest.status;
+			if (output_struct.instruction.dest.tag != Global::ARCH_REGISTERS::NA)
+			{
+				Most_Recent_Reg[output_struct.instruction.dest.tag] = output_struct.pc_value;
+			}
 		}
 
 		//look for values from forward bus first, then from register file

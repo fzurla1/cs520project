@@ -20,22 +20,33 @@ Global::apexStruct Memory::run(
 {
 	Global::apexStruct output_struct = myStruct;
 	snapshot_before = myStruct;
+	Stalled_Stages[Global::STALLED_STAGE::MEMORY] = false;
 
 	//make sure we have valid data
 	if (myStruct.pc_value != INT_MAX)
 	{
-		if ((myStruct.instruction.op_code != Global::OPCODE::BAL)
-			&& (myStruct.instruction.op_code != Global::OPCODE::BNZ)
-			&& (myStruct.instruction.op_code != Global::OPCODE::BZ)
-			&& (myStruct.instruction.op_code != Global::OPCODE::JUMP))
+		if (output_struct.instruction.op_code == Global::OPCODE::LOAD)
 		{
-			//get forwarded info, if needed
-			if (myStruct.instruction.dest.status == Global::STATUS::INVALID)
+			output_struct.instruction.dest.value = Memory_Array[myStruct.instruction.memory_location/4];
+			output_struct.instruction.dest.status = Global::STATUS::VALID;
+			Forward_Bus[Global::FROM_MEMORY].pc_value = output_struct.pc_value;
+			Forward_Bus[Global::FROM_MEMORY].reg_info.tag = output_struct.instruction.dest.tag;
+			Forward_Bus[Global::FROM_MEMORY].reg_info.value = output_struct.instruction.dest.value;
+		}
+		else if (output_struct.instruction.op_code == Global::OPCODE::STORE)
+		{
+			if (myStruct.instruction.src1.status == Global::STATUS::INVALID)
 			{
-				if (Forward_Bus[Global::FORWARD_TYPE::FROM_WRITEBACK].reg_info.tag == myStruct.instruction.dest.tag)
+				if (Forward_Bus[Global::FORWARD_TYPE::FROM_WRITEBACK].reg_info.tag == myStruct.instruction.src1.tag)
 				{
-					output_struct.instruction.dest.value = Forward_Bus[Global::FORWARD_TYPE::FROM_WRITEBACK].reg_info.value;
-					output_struct.instruction.dest.status = Global::STATUS::VALID;
+					output_struct.instruction.src1.value = Forward_Bus[Global::FORWARD_TYPE::FROM_WRITEBACK].reg_info.value;
+					output_struct.instruction.src1.status = Global::STATUS::VALID;
+					Memory_Array[myStruct.instruction.memory_location/4] = output_struct.instruction.src1.value;
+
+					//write bogus info into forward bus
+					Forward_Bus[Global::FROM_MEMORY].pc_value = -1;
+					Forward_Bus[Global::FROM_MEMORY].reg_info.tag = Global::ARCH_REGISTERS::NA;
+					Forward_Bus[Global::FROM_MEMORY].reg_info.value = -1;
 				}
 				else
 				{
@@ -44,25 +55,12 @@ Global::apexStruct Memory::run(
 			}
 			else
 			{
-				if (output_struct.instruction.op_code == Global::OPCODE::LOAD)
-				{
-					output_struct.instruction.dest.value = Memory_Array[myStruct.instruction.memory_location];
-					output_struct.instruction.dest.status = Global::STATUS::VALID;
-					Forward_Bus[Global::FROM_MEMORY].pc_value = output_struct.pc_value;
-					Forward_Bus[Global::FROM_MEMORY].reg_info.tag = output_struct.instruction.dest.tag;
-					Forward_Bus[Global::FROM_MEMORY].reg_info.value = output_struct.instruction.dest.value;
-				}
-				else if (output_struct.instruction.op_code == Global::OPCODE::STORE)
-				{
-					Memory_Array[myStruct.instruction.memory_location] = output_struct.instruction.dest.value;
+				Memory_Array[myStruct.instruction.memory_location] = output_struct.instruction.src1.value;
 
-					//write bogus info into forward bus
-					Forward_Bus[Global::FROM_MEMORY].pc_value = -1;
-					Forward_Bus[Global::FROM_MEMORY].reg_info.tag = Global::ARCH_REGISTERS::NA;
-					Forward_Bus[Global::FROM_MEMORY].reg_info.value = -1;
-				}
-
-				Stalled_Stages[Global::STALLED_STAGE::MEMORY] = false;
+				//write bogus info into forward bus
+				Forward_Bus[Global::FROM_MEMORY].pc_value = -1;
+				Forward_Bus[Global::FROM_MEMORY].reg_info.tag = Global::ARCH_REGISTERS::NA;
+				Forward_Bus[Global::FROM_MEMORY].reg_info.value = -1;
 			}
 		}
 	}

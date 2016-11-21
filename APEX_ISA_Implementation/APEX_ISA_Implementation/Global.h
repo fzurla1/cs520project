@@ -117,28 +117,12 @@ public:
 			//destination register information
 			Register_Info dest;
 			
-			/*
-			Global::STATUS destination_staus = STATUS::INVALID;
-			ARCH_REGISTERS dest.tag = ARCH_REGISTERS::NA;
-			int destination_value = -1;
-			*/
-
 			//source 1 register information
 			Register_Info src1;
-			/*
-			Global::STATUS src1.status = STATUS::INVALID;
-			ARCH_REGISTERS src1.tag = ARCH_REGISTERS::NA;
-			int src1.value = -1;
-			*/
-
+			
 			//source 2 register information
 			Register_Info src2;
-			/*
-			Global::STATUS src2.status = STATUS::INVALID;
-			ARCH_REGISTERS src2.tag = ARCH_REGISTERS::NA;
-			int src2.value = -1;
-			*/
-
+			
 			//literal value information
 			int literal_value = 0;
 
@@ -160,28 +144,12 @@ public:
 				//destination register information
 				Register_Info dest;
 
-				/*
-				Global::STATUS destination_staus = STATUS::INVALID;
-				ARCH_REGISTERS dest.tag = ARCH_REGISTERS::NA;
-				int destination_value = -1;
-				*/
-
 				//source 1 register information
 				Register_Info src1;
-				/*
-				Global::STATUS src1.status = STATUS::INVALID;
-				ARCH_REGISTERS src1.tag = ARCH_REGISTERS::NA;
-				int src1.value = -1;
-				*/
-
+		
 				//source 2 register information
 				Register_Info src2;
-				/*
-				Global::STATUS src2.status = STATUS::INVALID;
-				ARCH_REGISTERS src2.tag = ARCH_REGISTERS::NA;
-				int src2.value = -1;
-				*/
-
+				
 				//literal value information
 				int literal_value = 0;
 
