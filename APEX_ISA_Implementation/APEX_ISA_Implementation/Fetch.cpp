@@ -35,6 +35,7 @@ Global::apexStruct Fetch::run(int (&PC),
 			Global::Debug(" -- BRANCH TAKEN! -- ");
 			PC = Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].pc_value + (Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].target / 4);
 			Global::Debug(" -- New PC = " + to_string(4000 + ((PC - 4000) * 4)) + " -- ");
+			input_file.seekg(std::ios::beg);
 		}
 		//for jump, pc value = x + literal, which is stored in target of jump
 		else
@@ -42,6 +43,7 @@ Global::apexStruct Fetch::run(int (&PC),
 			Global::Debug(" -- BRANCH TAKEN! -- ");
 			PC = Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].target;
 			Global::Debug(" -- New PC = " + to_string(4000 + ((PC - 4000) * 4)) + " -- ");
+			input_file.seekg(std::ios::beg);
 		}
 	}
 	

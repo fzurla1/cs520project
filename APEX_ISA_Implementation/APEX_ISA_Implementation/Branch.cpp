@@ -36,13 +36,19 @@ Global::apexStruct Branch::run(
 				Global::Debug("-- Branch Taken! BAL-- ");
 				break;
 			case Global::OPCODE::BNZ:
-				if ((!Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].flag == Global::FLAGS::ZERO)
-					&& (Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].pc_value == myStruct.branch_waiting_to_complete))
+				if (Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].pc_value == myStruct.branch_waiting_to_complete)
 				{
-					Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].opcode = Global::OPCODE::BNZ;
-					Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].updatePC = true;
-					Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].target = myStruct.instruction.literal_value;
-					Global::Debug("-- Branch Taken! BNZ-- ");
+					if (!Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].flag == Global::FLAGS::ZERO)
+					{
+						Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].opcode = Global::OPCODE::BNZ;
+						Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].updatePC = true;
+						Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].target = myStruct.instruction.literal_value;
+						Global::Debug("-- Branch Taken! BNZ-- ");
+					}
+					else
+					{
+						Global::Debug("-- Branch NOT Taken.-- ");
+					}
 				}
 				else
 				{
@@ -50,13 +56,19 @@ Global::apexStruct Branch::run(
 				}
 				break;
 			case Global::OPCODE::BZ:
-				if ((Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].flag == Global::FLAGS::ZERO)
-					&& (Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].pc_value == myStruct.branch_waiting_to_complete))
+				if (Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].pc_value == myStruct.branch_waiting_to_complete)
 				{
-					Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].opcode = Global::OPCODE::BZ;
-					Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].updatePC = true;
-					Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].target = myStruct.instruction.literal_value;
-					Global::Debug("-- Branch Taken! BZ-- ");
+					if (Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].flag == Global::FLAGS::ZERO)
+					{
+						Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].opcode = Global::OPCODE::BZ;
+						Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].updatePC = true;
+						Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].target = myStruct.instruction.literal_value;
+						Global::Debug("-- Branch Taken! BZ-- ");
+					}
+					else
+					{
+						Global::Debug("-- Branch NOT Taken.-- ");
+					}
 				}
 				else
 				{

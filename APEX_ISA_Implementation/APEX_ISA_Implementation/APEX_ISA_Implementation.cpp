@@ -529,9 +529,10 @@ int _tmain(int argc, char* argv[])
 						
 						//as long as decode is not stalled and we still have data to read from the
 						//input file, fetch the next command
-						if (!Stalled_Stages[Global::STALLED_STAGE::DECODE_RF]
+						if ((!Stalled_Stages[Global::STALLED_STAGE::DECODE_RF]
 							&& !fetch->endOfFile()
 							&& (pipeline_struct_decode.instruction.op_code != Global::OPCODE::HALT))
+							|| (Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].updatePC))
 						{
 							pipeline_struct_fetch = fetch->run(PC, Forward_Bus, Stalled_Stages);
 						}
@@ -731,7 +732,7 @@ int _tmain(int argc, char* argv[])
 						// the PC from a branch, and we still have data to read
 						//from fetch, move the fetch output to the input of decode
 						if (!Stalled_Stages[Global::STALLED_STAGE::DECODE_RF]
-							&& !fetch->endOfFile()
+							//&& !fetch->endOfFile()
 							&& !HALT)
 						{
 							decode->setPipelineStruct(pipeline_struct_fetch);
@@ -783,6 +784,10 @@ int _tmain(int argc, char* argv[])
 					n--;
 					iteration++;
 				} //!HALT && n > 0
+				cout << "." << endl
+					<< "." << endl
+					<< "." << endl
+					<<"Simulation Complete" << endl;
 			} // command == simulate n
 		} //command != "end"
 	}

@@ -39,20 +39,21 @@ Global::apexStruct ALU2::run(
 			{
 #pragma region "ADD"
 			case Global::OPCODE::ADD:
-				/* overflow */;
+				/* overflow
 				if ((output_struct.instruction.src2.value > 0)
 					&& (myStruct.instruction.src1.value > INT_MAX - myStruct.instruction.src2.value))
 				{
 					ALU_Flags[Global::FLAGS::OVER_FLOW] = true;
 					Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].flag = Global::FLAGS::OVER_FLOW;
 				}
-				/* underflow */;
+				/* underflow
 				if ((output_struct.instruction.src2.value < 0)
 					&& (myStruct.instruction.src1.value < INT_MIN - myStruct.instruction.src2.value))
 				{
 					ALU_Flags[Global::FLAGS::UNDER_FLOW] = true;
 					Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].flag = Global::FLAGS::UNDER_FLOW;
 				}
+				*/
 				output_struct.instruction.dest.value =
 					myStruct.instruction.src1.value + myStruct.instruction.src2.value;
 
@@ -61,20 +62,21 @@ Global::apexStruct ALU2::run(
 
 #pragma region "ADD w/ literal"
 			case Global::OPCODE::ADDL:
-				/* overflow */;
+				/* overflow 
 				if ((output_struct.instruction.literal_value > 0)
 					&& (myStruct.instruction.src1.value > INT_MAX - myStruct.instruction.literal_value))
 				{
 					ALU_Flags[Global::FLAGS::OVER_FLOW] = true;
 					Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].flag = Global::FLAGS::OVER_FLOW;
 				}
-				/* underflow */;
+				/* underflow 
 				if ((output_struct.instruction.literal_value < 0)
 					&& (myStruct.instruction.src1.value < INT_MIN - myStruct.instruction.literal_value))
 				{
 					ALU_Flags[Global::FLAGS::UNDER_FLOW] = true;
 					Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].flag = Global::FLAGS::UNDER_FLOW;
 				}
+				*/
 				output_struct.instruction.dest.value =
 					myStruct.instruction.src1.value + myStruct.instruction.literal_value;
 
@@ -83,7 +85,7 @@ Global::apexStruct ALU2::run(
 
 #pragma region "SUB"
 			case Global::OPCODE::SUB:
-				/* overflow */
+				/* overflow 
 				if ((myStruct.instruction.src2.value < 0)
 					&& (myStruct.instruction.src1.value > INT_MAX + myStruct.instruction.src2.value))
 				{
@@ -91,13 +93,14 @@ Global::apexStruct ALU2::run(
 					Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].flag = Global::FLAGS::OVER_FLOW;
 				}
 
-				/* underflow */
+				/* underflow 
 				if ((myStruct.instruction.src2.value > 0)
 					&& (myStruct.instruction.src1.value < INT_MIN + myStruct.instruction.src2.value))
 				{
 					ALU_Flags[Global::FLAGS::UNDER_FLOW] = true;
 					Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].flag = Global::FLAGS::UNDER_FLOW;
 				}
+				*/
 
 				output_struct.instruction.dest.value =
 					myStruct.instruction.src1.value - myStruct.instruction.src2.value;
@@ -107,7 +110,7 @@ Global::apexStruct ALU2::run(
 
 #pragma region "SUB w/ lieral"
 			case Global::OPCODE::SUBL:
-				/* overflow */
+				/* overflow
 				if ((myStruct.instruction.literal_value < 0)
 					&& (myStruct.instruction.src1.value > INT_MAX + myStruct.instruction.literal_value))
 				{
@@ -115,13 +118,14 @@ Global::apexStruct ALU2::run(
 					Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].flag = Global::FLAGS::OVER_FLOW;
 				}
 
-				/* underflow */
+				/* underflow
 				if ((myStruct.instruction.literal_value > 0)
 					&& (myStruct.instruction.src1.value < INT_MIN + myStruct.instruction.literal_value))
 				{
 					ALU_Flags[Global::FLAGS::UNDER_FLOW] = true;
 					Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].flag = Global::FLAGS::UNDER_FLOW;
 				}
+				*/
 
 				output_struct.instruction.dest.value =
 					myStruct.instruction.src1.value - myStruct.instruction.literal_value;
@@ -131,7 +135,7 @@ Global::apexStruct ALU2::run(
 
 #pragma region "MUL"
 			case Global::OPCODE::MUL:
-				/* overflow */
+				/* overflow 
 				if ((myStruct.instruction.src1.value > INT_MAX / myStruct.instruction.src2.value)
 					|| ((myStruct.instruction.src1.value == -1) && (myStruct.instruction.src2.value == INT_MIN)) //2's comp
 					|| ((myStruct.instruction.src2.value == -1) && (myStruct.instruction.src1.value == INT_MIN))) //2' comp
@@ -139,12 +143,13 @@ Global::apexStruct ALU2::run(
 					ALU_Flags[Global::FLAGS::OVER_FLOW] = true;
 					Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].flag = Global::FLAGS::OVER_FLOW;
 				}
-				/* underflow */
+				/* underflow 
 				if (myStruct.instruction.src1.value < INT_MIN / myStruct.instruction.src2.value)
 				{
 					ALU_Flags[Global::FLAGS::UNDER_FLOW] = true;
 					Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].flag = Global::FLAGS::UNDER_FLOW;
 				}
+				*/
 
 				output_struct.instruction.dest.value =
 					myStruct.instruction.src1.value * myStruct.instruction.src2.value;
@@ -154,7 +159,7 @@ Global::apexStruct ALU2::run(
 
 #pragma region "MUL w/ literal"
 			case Global::OPCODE::MULL:
-				/* overflow */
+				/* overflow
 				if ((myStruct.instruction.src1.value > INT_MAX / myStruct.instruction.literal_value)
 					|| ((myStruct.instruction.src1.value == -1) && (myStruct.instruction.literal_value == INT_MIN)) //2's comp
 					|| ((myStruct.instruction.literal_value == -1) && (myStruct.instruction.src1.value == INT_MIN))) //2' comp
@@ -162,12 +167,13 @@ Global::apexStruct ALU2::run(
 					ALU_Flags[Global::FLAGS::OVER_FLOW] = true;
 					Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].flag = Global::FLAGS::OVER_FLOW;
 				}
-				/* underflow */
+				/* underflow
 				if (myStruct.instruction.src1.value < INT_MIN / myStruct.instruction.literal_value)
 				{
 					ALU_Flags[Global::FLAGS::UNDER_FLOW] = true;
 					Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].flag = Global::FLAGS::UNDER_FLOW;
 				}
+				*/
 
 				output_struct.instruction.dest.value =
 					myStruct.instruction.src1.value * myStruct.instruction.literal_value;

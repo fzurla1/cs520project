@@ -1,0 +1,880 @@
+
+Iteration 1
+FETCH      - 
+Decode/RF STAGE --> No Instruction in Stage
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+Iteration 2
+FETCH      - 
+DECODE/RF  - 
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+Iteration 3
+FETCH      - 
+DECODE/RF  - 
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+Iteration 4
+FETCH      - 
+DECODE/RF  - 
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+Iteration 5
+FETCH      - 
+DECODE/RF  - 
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+Iteration 6
+FETCH      - 
+DECODE/RF  - 
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+Iteration 7
+FETCH      - 
+DECODE/RF  - 
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+Iteration 8
+FETCH      - 
+DECODE/RF  - 
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+Iteration 9
+FETCH      - 
+DECODE/RF  - 
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+Iteration 10
+FETCH      - 
+DECODE/RF  - 
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+Iteration 11
+FETCH      - 
+DECODE/RF  - 
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+Iteration 12
+FETCH      - 
+DECODE/RF  - 
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+Iteration 13
+FETCH      - 
+DECODE/RF  - 
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+Iteration 14
+FETCH      - 
+DECODE/RF  - 
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+Iteration 15
+FETCH      - 
+DECODE/RF  - 
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+Iteration 16
+FETCH      - 
+DECODE/RF  - 
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+Iteration 17
+FETCH      - 
+DECODE/RF  - 
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+Iteration 18
+FETCH      - 
+DECODE/RF  - 
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+Iteration 19
+FETCH      - 
+DECODE/RF  - 
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+Iteration 20
+FETCH      - 
+DECODE/RF  - 
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+Iteration 21
+FETCH      - 
+DECODE/RF  - 
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+Iteration 22
+FETCH      - 
+DECODE/RF  - 
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+Iteration 23
+FETCH      - 
+DECODE/RF  - 
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+Iteration 24
+FETCH      - 
+DECODE/RF  - 
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+Iteration 25
+FETCH      - 
+DECODE/RF  - 
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+Iteration 26
+FETCH      - 
+DECODE/RF  - 
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+Iteration 27
+FETCH      - 
+DECODE/RF  - 
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+Iteration 28
+FETCH      - 
+DECODE/RF  - 
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+Iteration 29
+FETCH      - 
+DECODE/RF  - 
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+Iteration 30
+FETCH      - 
+DECODE/RF  - 
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+Iteration 31
+FETCH      - 
+DECODE/RF  - 
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+Iteration 32
+FETCH      - 
+DECODE/RF  - 
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+Iteration 33
+FETCH      - 
+DECODE/RF  - 
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+Iteration 34
+FETCH      - 
+DECODE/RF  - 
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+Iteration 35
+FETCH      - 
+DECODE/RF  - 
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+Iteration 36
+FETCH      - 
+DECODE/RF  - 
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+Iteration 37
+FETCH      - 
+DECODE/RF  - 
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+Iteration 38
+FETCH      - 
+DECODE/RF  - 
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+Iteration 39
+FETCH      - 
+DECODE/RF  - 
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+Iteration 40
+FETCH      - 
+DECODE/RF  - 
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+Iteration 41
+FETCH      - 
+DECODE/RF  - 
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+Iteration 42
+FETCH      - 
+DECODE/RF  - 
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+Iteration 43
+FETCH      - 
+DECODE/RF  - 
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+Iteration 44
+FETCH      - 
+DECODE/RF  - 
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+Iteration 45
+FETCH      - 
+DECODE/RF  - 
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+Iteration 46
+FETCH      - 
+DECODE/RF  - 
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+Iteration 47
+FETCH      - 
+DECODE/RF  - 
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+Iteration 48
+FETCH      - 
+DECODE/RF  - 
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+Iteration 49
+FETCH      - 
+DECODE/RF  - 
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+Iteration 50
+FETCH      - 
+DECODE/RF  - 
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+Iteration 51
+FETCH      - 
+DECODE/RF  - 
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+Iteration 52
+FETCH      - 
+DECODE/RF  - 
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+Iteration 53
+FETCH      - 
+DECODE/RF  - 
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+Iteration 54
+FETCH      - 
+DECODE/RF  - 
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+Iteration 55
+FETCH      - 
+DECODE/RF  - 
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+Iteration 56
+FETCH      - 
+DECODE/RF  - 
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+Iteration 57
+FETCH      - 
+DECODE/RF  - 
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+Iteration 58
+FETCH      - 
+DECODE/RF  - 
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+Iteration 59
+FETCH      - 
+DECODE/RF  - 
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+Iteration 60
+FETCH      - 
+DECODE/RF  - 
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+Iteration 61
+FETCH      - 
+DECODE/RF  - 
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+Iteration 62
+FETCH      - 
+DECODE/RF  - 
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+Iteration 63
+FETCH      - 
+DECODE/RF  - 
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+Iteration 64
+FETCH      - 
+DECODE/RF  - 
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+Iteration 65
+FETCH      - 
+DECODE/RF  - 
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+Iteration 66
+FETCH      - 
+DECODE/RF  - 
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+Iteration 67
+FETCH      - 
+DECODE/RF  - 
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+Iteration 68
+FETCH      - 
+DECODE/RF  - 
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+Iteration 69
+FETCH      - 
+DECODE/RF  - 
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+Iteration 70
+FETCH      - 
+DECODE/RF  - 
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+Iteration 71
+FETCH      - 
+DECODE/RF  - 
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+Iteration 72
+FETCH      - 
+DECODE/RF  - 
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+Iteration 73
+FETCH      - 
+DECODE/RF  - 
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+Iteration 74
+FETCH      - 
+DECODE/RF  - 
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+Iteration 75
+FETCH      - 
+DECODE/RF  - 
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+Iteration 76
+FETCH      - 
+DECODE/RF  - 
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+Iteration 77
+FETCH      - 
+DECODE/RF  - 
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+Iteration 78
+FETCH      - 
+DECODE/RF  - 
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+Iteration 79
+FETCH      - 
+DECODE/RF  - 
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+Iteration 80
+FETCH      - 
+DECODE/RF  - 
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+Iteration 81
+FETCH      - 
+DECODE/RF  - 
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+Iteration 82
+FETCH      - 
+DECODE/RF  - 
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+Iteration 83
+FETCH      - 
+DECODE/RF  - 
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+Iteration 84
+FETCH      - 
+DECODE/RF  - 
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+Iteration 85
+FETCH      - 
+DECODE/RF  - 
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+Iteration 86
+FETCH      - 
+DECODE/RF  - 
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+Iteration 87
+FETCH      - 
+DECODE/RF  - 
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+Iteration 88
+FETCH      - 
+DECODE/RF  - 
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
