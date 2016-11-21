@@ -1,4 +1,4 @@
-﻿Build started 11/20/2016 7:05:08 PM.
+﻿Build started 11/20/2016 8:25:57 PM.
      1>Project "C:\Users\Frank\Documents\GitHub\cs520project\APEX_ISA_Implementation\APEX_ISA_Implementation\APEX_ISA_Implementation.vcxproj" on node 2 (Rebuild target(s)).
      1>ClCompile:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _LIB /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Yc"stdafx.h" /Fp"Debug\APEX_ISA_Implementation.pch" /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt stdafx.cpp
@@ -16,12 +16,12 @@
      1>c:\users\frank\documents\github\cs520project\apex_isa_implementation\apex_isa_implementation\apex_isa_implementation.cpp(13): warning C4627: '#include "APEX_ISA_Implementation.h"': skipped when looking for precompiled header use
                  Add directive to 'stdafx.h' or rebuild precompiled header
          ALU2.cpp
-     1>c:\users\frank\documents\github\cs520project\apex_isa_implementation\apex_isa_implementation\alu2.cpp(67): warning C4018: '>' : signed/unsigned mismatch
-     1>c:\users\frank\documents\github\cs520project\apex_isa_implementation\apex_isa_implementation\alu2.cpp(73): warning C4018: '<' : signed/unsigned mismatch
-     1>c:\users\frank\documents\github\cs520project\apex_isa_implementation\apex_isa_implementation\alu2.cpp(109): warning C4018: '>' : signed/unsigned mismatch
-     1>c:\users\frank\documents\github\cs520project\apex_isa_implementation\apex_isa_implementation\alu2.cpp(116): warning C4018: '<' : signed/unsigned mismatch
-     1>c:\users\frank\documents\github\cs520project\apex_isa_implementation\apex_isa_implementation\alu2.cpp(151): warning C4018: '>' : signed/unsigned mismatch
-     1>c:\users\frank\documents\github\cs520project\apex_isa_implementation\apex_isa_implementation\alu2.cpp(158): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\frank\documents\github\cs520project\apex_isa_implementation\apex_isa_implementation\alu2.cpp(72): warning C4018: '>' : signed/unsigned mismatch
+     1>c:\users\frank\documents\github\cs520project\apex_isa_implementation\apex_isa_implementation\alu2.cpp(79): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\frank\documents\github\cs520project\apex_isa_implementation\apex_isa_implementation\alu2.cpp(118): warning C4018: '>' : signed/unsigned mismatch
+     1>c:\users\frank\documents\github\cs520project\apex_isa_implementation\apex_isa_implementation\alu2.cpp(126): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\frank\documents\github\cs520project\apex_isa_implementation\apex_isa_implementation\alu2.cpp(164): warning C4018: '>' : signed/unsigned mismatch
+     1>c:\users\frank\documents\github\cs520project\apex_isa_implementation\apex_isa_implementation\alu2.cpp(172): warning C4018: '<' : signed/unsigned mismatch
          ALU1.cpp
          Generating Code...
        ResourceCompile:
@@ -44,4 +44,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:05.09
+Time Elapsed 00:00:05.66

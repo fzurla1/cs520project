@@ -1,0 +1,145 @@
+
+Iteration 1
+FETCH      - MOVC R0, #0
+Decode/RF STAGE --> No Instruction in Stage
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+Iteration 2
+FETCH      - MOVC R1, #64
+DECODE/RF  - MOVC R0, #0
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+Iteration 3
+FETCH      - MOVC R2, #10
+DECODE/RF  - MOVC R1, #64
+ALU1       - MOVC R0, #0
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+Iteration 4
+FETCH      - MOVC R3, #4
+DECODE/RF  - MOVC R2, #10
+ALU1       - MOVC R1, #64
+ALU2       - MOVC R0, #0
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+Iteration 5
+FETCH      - MOVC R4, #1
+DECODE/RF  - MOVC R3, #4
+ALU1       - MOVC R2, #10
+ALU2       - MOVC R1, #64
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEMORY     - MOVC R0, #0
+Writeback STAGE --> No Instruction in Stage
+
+Iteration 6
+FETCH      - ADD R0, R0, R4
+DECODE/RF  - MOVC R4, #1
+ALU1       - MOVC R3, #4
+ALU2       - MOVC R2, #10
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEMORY     - MOVC R1, #64
+WRITEBACK  - MOVC R0, #0
+
+Iteration 7
+DECODE STALLED!- Src2 not valid!
+FETCH STALLED!
+-- Fetch Stalled --
+-- Decode Stalled --
+ALU1       - MOVC R4, #1
+ALU2       - MOVC R3, #4
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEMORY     - MOVC R2, #10
+WRITEBACK  - MOVC R1, #64
+
+Iteration 8
+FETCH      - STORE R0, R1, #0
+DECODE/RF  - ADD R0, R0, R4
+ALU 1 STAGE --> No Instruction in Stage
+ALU2       - MOVC R4, #1
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEMORY     - MOVC R3, #4
+WRITEBACK  - MOVC R2, #10
+
+Iteration 9
+DECODE - Src1 not valid, but we cant wait until MEM for this
+FETCH      - ADD R1, R1, R3
+DECODE/RF  - STORE R0, R1, #0
+ALU1       - ADD R0, R0, R4
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEMORY     - MOVC R4, #1
+WRITEBACK  - MOVC R3, #4
+
+Iteration 10
+FETCH      - SUB R2, R2, R4
+DECODE/RF  - ADD R1, R1, R3
+ALU1       - STORE R0, R1, #0
+ALU2       - ADD R0, R0, R4
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+WRITEBACK  - MOVC R4, #1
+
+Iteration 11
+FETCH      - BNZ #-16
+DECODE/RF  - SUB R2, R2, R4
+ALU1       - ADD R1, R1, R3
+ALU2       - STORE R0, R1, #0
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEMORY     - ADD R0, R0, R4
+Writeback STAGE --> No Instruction in Stage
+
+Iteration 12
+FETCH      - MOVC R2, #10
+DECODE/RF  - BNZ #-16
+ALU1       - SUB R2, R2, R4
+ALU2       - ADD R1, R1, R3
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEMORY     - STORE R0, R1, #0
+WRITEBACK  - ADD R0, R0, R4
+
+Iteration 13
+DECODE STALLED!
+FETCH STALLED!
+-- Fetch Stalled --
+-- Decode Stalled --
+ALU 1 STAGE --> No Instruction in Stage
+ALU2       - SUB R2, R2, R4
+-- Branch Stalled --
+Delay STAGE --> No Instruction in Stage
+MEMORY     - ADD R1, R1, R3
+WRITEBACK  - STORE R0, R1, #0
+
+Iteration 14
+FETCH      - MOVC R5, #0
+DECODE/RF  - MOVC R2, #10
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEMORY     - SUB R2, R2, R4
+WRITEBACK  - ADD R1, R1, R3

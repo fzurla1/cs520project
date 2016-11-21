@@ -79,9 +79,9 @@ public:
 		
 		void clear()
 		{
-			ARCH_REGISTERS tag = ARCH_REGISTERS::NA;
-			unsigned int value = -1;
-			STATUS status = STATUS::INVALID;
+			tag = ARCH_REGISTERS::NA;
+			value = -1;
+			status = STATUS::INVALID;
 		}
 	};
 
@@ -97,12 +97,12 @@ public:
 
 		void clear()
 		{
-			int pc_value = 0;
-			Register_Info reg_info;
-			FLAGS flag = FLAGS::CLEAR;
-			bool updatePC = false;
-			int target = 0;
-			OPCODE opcode = OPCODE::NONE;
+			pc_value = 0;
+			reg_info.clear();
+			flag = FLAGS::CLEAR;
+			updatePC = false;
+			target = 0;
+			opcode = OPCODE::NONE;
 		}
 	};
 
@@ -110,6 +110,7 @@ public:
 	struct apexStruct{
 		int pc_value = INT_MAX;
 		string untouched_instruction = "";
+		int branch_waiting_to_complete = INT_MAX; //instruction that branch is dependent on
 		struct instruction{
 			//instruction operation code
 			OPCODE op_code = OPCODE::NONE;
@@ -135,27 +136,16 @@ public:
 
 		void clear()
 		{
-			unsigned int pc_value = -1;
-			string untouched_instruction = "";
-			struct instruction{
-				//instruction operation code
-				OPCODE op_code = OPCODE::NONE;
-
-				//destination register information
-				Register_Info dest;
-
-				//source 1 register information
-				Register_Info src1;
-		
-				//source 2 register information
-				Register_Info src2;
-				
-				//literal value information
-				int literal_value = 0;
-
-				//memory location for load / store
-				unsigned int memory_location = 0;
-			}instruction;
+			pc_value = INT_MAX;
+			untouched_instruction = "";
+			branch_waiting_to_complete = INT_MAX;
+			instruction.op_code = OPCODE::NONE;
+			instruction.dest.clear();
+			instruction.src1.clear();
+			instruction.src2.clear();
+			instruction.literal_value = 0;
+			instruction.memory_location = 0;
+			instruction.flag = FLAGS::CLEAR;
 		}
 	};
 

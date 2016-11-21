@@ -24,7 +24,7 @@ Global::apexStruct Fetch::run(int (&PC),
 	Global::Forwarding_Info(&Forward_Bus)[Global::FORWARDING_BUSES], 
 	bool(&Stalled_Stages)[Global::TOTAL_STAGES])
 {
-	int ourPC;
+	int ourPC = 0;
 	Stalled_Stages[Global::STALLED_STAGE::FETCH] = false;
 
 	if (Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].updatePC)
@@ -46,6 +46,10 @@ Global::apexStruct Fetch::run(int (&PC),
 	}
 	
 	ourPC = PC - 4000;
+	if (ourPC == 0)
+	{
+		input_file.seekg(std::ios::beg);
+	}
 	
 	Global::apexStruct output_struct;
 

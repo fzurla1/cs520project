@@ -52,6 +52,7 @@ private:
 	ifstream input_file;
 	ifstream& GotoLine(ifstream& file, unsigned int num);
 	Global::apexStruct snapshot_after;
+	int last_pc = 0;
 };
 
 #endif //FETCH_H

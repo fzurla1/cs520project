@@ -215,6 +215,8 @@ Global::apexStruct Decode::run(
 			output_struct.instruction.src1.status = Global::STATUS::VALID;
 			output_struct.instruction.src2.status = Global::STATUS::VALID;
 
+			last_alu_pc = output_struct.pc_value;
+
 			//FOR SRC1
 			//look to reg file for valid data
 			if (Register_File[output_struct.instruction.src1.tag].status == Global::STATUS::VALID)
@@ -313,6 +315,11 @@ Global::apexStruct Decode::run(
 
 			output_struct.instruction.src2.tag = Global::ARCH_REGISTERS::NA;
 			output_struct.instruction.src2.status = Global::STATUS::VALID;
+
+			if (output_struct.instruction.op_code != Global::OPCODE::LOAD)
+			{
+				last_alu_pc = output_struct.pc_value;
+			}
 
 			//FOR SRC1
 			//look to reg file for valid data
@@ -455,6 +462,7 @@ Global::apexStruct Decode::run(
 			output_struct.instruction.dest.status = Global::STATUS::VALID;
 			output_struct.instruction.src1.status = Global::STATUS::VALID;
 			output_struct.instruction.src2.status = Global::STATUS::VALID;
+			output_struct.branch_waiting_to_complete = last_alu_pc;
 			break;
 			//opcode <src1>, #literal
 		case Global::OPCODE::BAL:

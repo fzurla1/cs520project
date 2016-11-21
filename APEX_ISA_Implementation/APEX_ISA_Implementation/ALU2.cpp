@@ -25,10 +25,13 @@ Global::apexStruct ALU2::run(
 	snapshot_before = myStruct;
 
 	//initialize flags
+	Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].flag = Global::FLAGS::CLEAR;
+	/*
 	ALU_Flags[Global::FLAGS::ZERO] = true;
 	ALU_Flags[Global::FLAGS::OVER_FLOW] = false;
 	ALU_Flags[Global::FLAGS::UNDER_FLOW] = false;
 	ALU_Flags[Global::FLAGS::ZERO] = false;
+	*/
 
 	//make sure we have valid data
 	if (myStruct.pc_value != INT_MAX)
@@ -47,12 +50,14 @@ Global::apexStruct ALU2::run(
 					&& (myStruct.instruction.src1.value > INT_MAX - myStruct.instruction.src2.value))
 				{
 					ALU_Flags[Global::FLAGS::OVER_FLOW] = true;
+					Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].flag = Global::FLAGS::OVER_FLOW;
 				}
 				/* underflow */;
 				if ((output_struct.instruction.src2.value < 0)
 					&& (myStruct.instruction.src1.value < INT_MIN - myStruct.instruction.src2.value))
 				{
 					ALU_Flags[Global::FLAGS::UNDER_FLOW] = true;
+					Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].flag = Global::FLAGS::UNDER_FLOW;
 				}
 				output_struct.instruction.dest.value =
 					myStruct.instruction.src1.value + myStruct.instruction.src2.value;
@@ -67,12 +72,14 @@ Global::apexStruct ALU2::run(
 					&& (myStruct.instruction.src1.value > INT_MAX - myStruct.instruction.literal_value))
 				{
 					ALU_Flags[Global::FLAGS::OVER_FLOW] = true;
+					Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].flag = Global::FLAGS::OVER_FLOW;
 				}
 				/* underflow */;
 				if ((output_struct.instruction.literal_value < 0)
 					&& (myStruct.instruction.src1.value < INT_MIN - myStruct.instruction.literal_value))
 				{
 					ALU_Flags[Global::FLAGS::UNDER_FLOW] = true;
+					Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].flag = Global::FLAGS::UNDER_FLOW;
 				}
 				output_struct.instruction.dest.value =
 					myStruct.instruction.src1.value + myStruct.instruction.literal_value;
@@ -87,6 +94,7 @@ Global::apexStruct ALU2::run(
 					&& (myStruct.instruction.src1.value > INT_MAX + myStruct.instruction.src2.value))
 				{
 					ALU_Flags[Global::FLAGS::OVER_FLOW] = true;
+					Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].flag = Global::FLAGS::OVER_FLOW;
 				}
 
 				/* underflow */
@@ -94,6 +102,7 @@ Global::apexStruct ALU2::run(
 					&& (myStruct.instruction.src1.value < INT_MIN + myStruct.instruction.src2.value))
 				{
 					ALU_Flags[Global::FLAGS::UNDER_FLOW] = true;
+					Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].flag = Global::FLAGS::UNDER_FLOW;
 				}
 
 				output_struct.instruction.dest.value =
@@ -109,6 +118,7 @@ Global::apexStruct ALU2::run(
 					&& (myStruct.instruction.src1.value > INT_MAX + myStruct.instruction.literal_value))
 				{
 					ALU_Flags[Global::FLAGS::OVER_FLOW] = true;
+					Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].flag = Global::FLAGS::OVER_FLOW;
 				}
 
 				/* underflow */
@@ -116,6 +126,7 @@ Global::apexStruct ALU2::run(
 					&& (myStruct.instruction.src1.value < INT_MIN + myStruct.instruction.literal_value))
 				{
 					ALU_Flags[Global::FLAGS::UNDER_FLOW] = true;
+					Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].flag = Global::FLAGS::UNDER_FLOW;
 				}
 
 				output_struct.instruction.dest.value =
@@ -132,11 +143,13 @@ Global::apexStruct ALU2::run(
 					|| ((myStruct.instruction.src2.value == -1) && (myStruct.instruction.src1.value == INT_MIN))) //2' comp
 				{
 					ALU_Flags[Global::FLAGS::OVER_FLOW] = true;
+					Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].flag = Global::FLAGS::OVER_FLOW;
 				}
 				/* underflow */
 				if (myStruct.instruction.src1.value < INT_MIN / myStruct.instruction.src2.value)
 				{
 					ALU_Flags[Global::FLAGS::UNDER_FLOW] = true;
+					Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].flag = Global::FLAGS::UNDER_FLOW;
 				}
 
 				output_struct.instruction.dest.value =
@@ -153,11 +166,13 @@ Global::apexStruct ALU2::run(
 					|| ((myStruct.instruction.literal_value == -1) && (myStruct.instruction.src1.value == INT_MIN))) //2' comp
 				{
 					ALU_Flags[Global::FLAGS::OVER_FLOW] = true;
+					Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].flag = Global::FLAGS::OVER_FLOW;
 				}
 				/* underflow */
 				if (myStruct.instruction.src1.value < INT_MIN / myStruct.instruction.literal_value)
 				{
 					ALU_Flags[Global::FLAGS::UNDER_FLOW] = true;
+					Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].flag = Global::FLAGS::UNDER_FLOW;
 				}
 
 				output_struct.instruction.dest.value =
@@ -251,6 +266,7 @@ Global::apexStruct ALU2::run(
 			if (output_struct.instruction.dest.value == 0)
 			{
 				ALU_Flags[Global::FLAGS::ZERO] = true;
+				Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].flag = Global::FLAGS::ZERO;
 			}
 			else
 			{
@@ -262,6 +278,7 @@ Global::apexStruct ALU2::run(
 				&& !ALU_Flags[Global::FLAGS::ZERO])
 			{
 				ALU_Flags[Global::FLAGS::CLEAR] = true;
+				Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].flag = Global::FLAGS::CLEAR;
 			}
 			else
 			{
