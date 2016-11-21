@@ -150,9 +150,24 @@ BRANCH     - BNZ #-16
 Delay STAGE --> No Instruction in Stage
 MEMORY     - SUB R2, R2, R4
 WRITEBACK  - ADD R1, R1, R3
-....
-Flushing Fetch!
-Flushing Decode/RF
-....
 
 Iteration 15
+FETCH      - STORE R0, R1, #0
+DECODE/RF  - ADD R0, R0, R4
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+DELAY      - BNZ #-16
+MEM STAGE --> No Instruction in Stage
+WRITEBACK  - SUB R2, R2, R4
+
+Iteration 16
+DECODE - Src1 not valid, but we cant wait until MEM for this
+FETCH      - ADD R1, R1, R3
+DECODE/RF  - STORE R0, R1, #0
+ALU1       - ADD R0, R0, R4
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEMORY     - BNZ #-16
+Writeback STAGE --> No Instruction in Stage

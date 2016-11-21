@@ -352,7 +352,8 @@ int _tmain(int argc, char* argv[])
 				<< "   display      : display contents of the pipeline" << endl
 				<< "   commands     : display command list" << endl
 				<< "   end          : stop execution" << endl
-				<< endl;
+				<< endl
+				<< ">> ";
 			getline(cin, command);
 			if (command != "")
 			{
@@ -524,220 +525,228 @@ int _tmain(int argc, char* argv[])
 
 					*/
 
+					/*********************
+					 *  EXECUTE STAGES   *
+					 *********************/
+
 					//run writeback
 					HALT = writeBack->run(Register_File, Forward_Bus, Most_Recent_Reg);
 
-					//run memory, since wb cannot stall
-					pipeline_struct_memory = memory->run(Forward_Bus, Stalled_Stages, Memory_Array);
-
-					//as long as memeory is not stalled, run Delay
-					if (!Stalled_Stages[Global::STALLED_STAGE::MEMORY])
+					if (!HALT)
 					{
-						pipeline_struct_delay = delay->run(Stalled_Stages);
-					}
-					//or stall delay
-					else
-					{
-						Stalled_Stages[Global::STALLED_STAGE::DELAY] = true;
-						if (DEBUG)
-							Global::Debug("DELAY STALLED!");
-					}
+						//run memory, since wb cannot stall
+						pipeline_struct_memory = memory->run(Forward_Bus, Stalled_Stages, Memory_Array);
 
-					//as long as DELAY is not stalled, run branch
-					if (!Stalled_Stages[Global::STALLED_STAGE::DELAY])
-					{
-						pipeline_struct_branch = branch->run(PC, Forward_Bus, Stalled_Stages, Register_File[Global::ARCH_REGISTERS::X]);
-					}
-					//or stall branch
-					else
-					{
-						Stalled_Stages[Global::STALLED_STAGE::BRANCH] = true;
-						if (DEBUG)
-							Global::Debug("BRANCH STALLED!");
-					}
-
-					//flush decode if we have to update the PC
-					//fetch already takes care of this internally, no need to 
-					//call it separately
-					if (Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].updatePC)
-					{
-						decode->setPipelineStruct(garbage_struct);
-						Global::Debug("....");
-						Global::Debug("Flushing Fetch!");
-						Global::Debug("Flushing Decode/RF");
-						Global::Debug("....");
-					}
-
-					//As long as memory is not stalled, run ALU2
-					if (!Stalled_Stages[Global::STALLED_STAGE::MEMORY])
-					{
-						pipeline_struct_alu2 = alu2->run(ALU_Flags, Forward_Bus, Stalled_Stages);
-					}
-
-					//or stall ALU2
-					else
-					{
-						Stalled_Stages[Global::STALLED_STAGE::ALU2] = true;
-						if (DEBUG)
-							Global::Debug("ALU2 STALLED!");
-					}
-
-					//as long as ALU2 is not stalled, run ALU1
-					if (!Stalled_Stages[Global::STALLED_STAGE::ALU2])
-					{
-						pipeline_struct_alu1 = alu1->run(Forward_Bus, Stalled_Stages);
-					}
-					//or stall ALU1
-					else
-					{
-						Stalled_Stages[Global::STALLED_STAGE::ALU1] = true;
-						if (DEBUG)
-							Global::Debug("ALU1 STALLED!");
-					}
-
-					//as long as ALU1 and branch is not stalled, decode the instruction
-					if (!Stalled_Stages[Global::STALLED_STAGE::ALU1]
-						&& !Stalled_Stages[Global::STALLED_STAGE::BRANCH])
-					{
-						pipeline_struct_decode = decode->run(Register_File, Forward_Bus, Stalled_Stages, Most_Recent_Reg);
-					}
-					//or stall
-					else
-					{
-						Stalled_Stages[Global::STALLED_STAGE::DECODE_RF] = true;
-						if (DEBUG)
-							Global::Debug("DECODE STALLED!");
-					}
-
-					//as long as decode is not stalled and we still have data to read from the
-					//input file, fetch the next command
-					if (!Stalled_Stages[Global::STALLED_STAGE::DECODE_RF] && !fetch->endOfFile())
-					{
-						pipeline_struct_fetch = fetch->run(PC, Forward_Bus, Stalled_Stages);
-					}
-					//if eof, the feed garbage to the next stage
-					else if (fetch->endOfFile())
-					{
-						pipeline_struct_fetch = garbage_struct;
-						Global::Debug("Input File Complete");
-					}
-					//or we stall
-					else
-					{
-						Stalled_Stages[Global::STALLED_STAGE::FETCH] = true;
-						if (DEBUG)
-							Global::Debug("FETCH STALLED!");
-					}
-
-					if (DEBUG)
-					{
-						if (!Stalled_Stages[Global::STALLED_STAGE::FETCH])
-							fetch->display();
-						else
-							Global::Debug("-- Fetch Stalled --");
-
-						if (!Stalled_Stages[Global::STALLED_STAGE::DECODE_RF])
-							decode->display();
-						else
-							Global::Debug("-- Decode Stalled --");
-
-						if (!Stalled_Stages[Global::STALLED_STAGE::ALU1])
-							alu1->display();
-						else
-							Global::Debug("-- ALU1 Stalled --");
-
-						if (!Stalled_Stages[Global::STALLED_STAGE::ALU2])
-							alu2->display();
-						else
-							Global::Debug("-- ALU2 Stalled --");
-
-						if (!Stalled_Stages[Global::STALLED_STAGE::BRANCH])
-							branch->display();
-						else
-							Global::Debug("-- Branch Stalled --");
-
-						if (!Stalled_Stages[Global::STALLED_STAGE::DELAY])
-							delay->display();
-						else
-							Global::Debug("-- Delay Stalled --");
-
+						//as long as memeory is not stalled, run Delay
 						if (!Stalled_Stages[Global::STALLED_STAGE::MEMORY])
-							memory->display();
-						else
-							Global::Debug("-- Memory Stalled --");
-						writeBack->display();
-					}
-
-					//*************************
-					//set up for the next cycle
-					//*************************
-
-					//as long as memory is not stalled and valid data to pass, move it on
-					//if (memory->hasValidData() && !Stalled_Stages[Global::STALLED_STAGE::MEMORY])
-					if (!Stalled_Stages[Global::STALLED_STAGE::MEMORY])
-					{
-						writeBack->setPipelineStruct(pipeline_struct_memory);
-						pipeline_struct_memory = garbage_struct;
-					}
-					else
-					{
-						writeBack->setPipelineStruct(garbage_struct);
-					}
-
-					//send memory data based on pc value and make sure we ar enot stalled
-					if (!Stalled_Stages[Global::STALLED_STAGE::MEMORY])
-					{
-						if ((pipeline_struct_alu2.pc_value < pipeline_struct_delay.pc_value)
-							//&& alu2->hasValidData()
-							&& !Stalled_Stages[Global::STALLED_STAGE::ALU2])
 						{
-							memory->setPipelineStruct(pipeline_struct_alu2);
-							pipeline_struct_alu2 = garbage_struct;
+							pipeline_struct_delay = delay->run(Stalled_Stages);
 						}
-						else if ((pipeline_struct_delay.pc_value < pipeline_struct_alu2.pc_value)
-							//&& delay->hasValidData()
+						//or stall delay
+						else
+						{
+							Stalled_Stages[Global::STALLED_STAGE::DELAY] = true;
+							if (DEBUG)
+								Global::Debug("DELAY STALLED!");
+						}
+
+						//as long as DELAY is not stalled, run branch
+						if (!Stalled_Stages[Global::STALLED_STAGE::DELAY])
+						{
+							pipeline_struct_branch = branch->run(PC, Forward_Bus, Stalled_Stages, Register_File[Global::ARCH_REGISTERS::X]);
+						}
+						//or stall branch
+						else
+						{
+							Stalled_Stages[Global::STALLED_STAGE::BRANCH] = true;
+							if (DEBUG)
+								Global::Debug("BRANCH STALLED!");
+						}
+
+						//flush decode if we have to update the PC
+						//fetch already takes care of this internally, no need to 
+						//call it separately
+						if (Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].updatePC)
+						{
+							decode->setPipelineStruct(garbage_struct);
+							Global::Debug("....");
+							Global::Debug("Flushing Fetch!");
+							Global::Debug("Flushing Decode/RF");
+							Global::Debug("....");
+						}
+
+						//As long as memory is not stalled, run ALU2
+						if (!Stalled_Stages[Global::STALLED_STAGE::MEMORY])
+						{
+							pipeline_struct_alu2 = alu2->run(ALU_Flags, Forward_Bus, Stalled_Stages);
+						}
+
+						//or stall ALU2
+						else
+						{
+							Stalled_Stages[Global::STALLED_STAGE::ALU2] = true;
+							if (DEBUG)
+								Global::Debug("ALU2 STALLED!");
+						}
+
+						//as long as ALU2 is not stalled, run ALU1
+						if (!Stalled_Stages[Global::STALLED_STAGE::ALU2])
+						{
+							pipeline_struct_alu1 = alu1->run(Forward_Bus, Stalled_Stages);
+						}
+						//or stall ALU1
+						else
+						{
+							Stalled_Stages[Global::STALLED_STAGE::ALU1] = true;
+							if (DEBUG)
+								Global::Debug("ALU1 STALLED!");
+						}
+
+						//as long as ALU1 and branch is not stalled, decode the instruction
+						if (!Stalled_Stages[Global::STALLED_STAGE::ALU1]
+							&& !Stalled_Stages[Global::STALLED_STAGE::BRANCH])
+						{
+							pipeline_struct_decode = decode->run(Register_File, Forward_Bus, Stalled_Stages, Most_Recent_Reg);
+						}
+						//or stall
+						else
+						{
+							Stalled_Stages[Global::STALLED_STAGE::DECODE_RF] = true;
+							if (DEBUG)
+								Global::Debug("DECODE STALLED!");
+						}
+
+						//as long as decode is not stalled and we still have data to read from the
+						//input file, fetch the next command
+						if (!Stalled_Stages[Global::STALLED_STAGE::DECODE_RF]
+							&& !fetch->endOfFile()
+							&& (pipeline_struct_decode.instruction.op_code != Global::OPCODE::HALT))
+						{
+							pipeline_struct_fetch = fetch->run(PC, Forward_Bus, Stalled_Stages);
+						}
+						//if eof, the feed garbage to the next stage
+						else if (fetch->endOfFile())
+						{
+							pipeline_struct_fetch = garbage_struct;
+							Global::Debug("Input File Complete");
+						}
+						//or we stall
+						else
+						{
+							Stalled_Stages[Global::STALLED_STAGE::FETCH] = true;
+							if (DEBUG)
+								Global::Debug("FETCH STALLED!");
+						}
+
+						if (DEBUG)
+						{
+							if (!Stalled_Stages[Global::STALLED_STAGE::FETCH])
+								fetch->display();
+							else
+								Global::Debug("-- Fetch Stalled --");
+
+							if (!Stalled_Stages[Global::STALLED_STAGE::DECODE_RF])
+								decode->display();
+							else
+								Global::Debug("-- Decode Stalled --");
+
+							if (!Stalled_Stages[Global::STALLED_STAGE::ALU1])
+								alu1->display();
+							else
+								Global::Debug("-- ALU1 Stalled --");
+
+							if (!Stalled_Stages[Global::STALLED_STAGE::ALU2])
+								alu2->display();
+							else
+								Global::Debug("-- ALU2 Stalled --");
+
+							if (!Stalled_Stages[Global::STALLED_STAGE::BRANCH])
+								branch->display();
+							else
+								Global::Debug("-- Branch Stalled --");
+
+							if (!Stalled_Stages[Global::STALLED_STAGE::DELAY])
+								delay->display();
+							else
+								Global::Debug("-- Delay Stalled --");
+
+							if (!Stalled_Stages[Global::STALLED_STAGE::MEMORY])
+								memory->display();
+							else
+								Global::Debug("-- Memory Stalled --");
+							writeBack->display();
+						}
+
+						//*************************
+						//set up for the next cycle
+						//*************************
+
+						//as long as memory is not stalled and valid data to pass, move it on
+						//if (memory->hasValidData() && !Stalled_Stages[Global::STALLED_STAGE::MEMORY])
+						if (!Stalled_Stages[Global::STALLED_STAGE::MEMORY])
+						{
+							writeBack->setPipelineStruct(pipeline_struct_memory);
+							pipeline_struct_memory = garbage_struct;
+						}
+						else
+						{
+							writeBack->setPipelineStruct(garbage_struct);
+						}
+
+						//send memory data based on pc value and make sure we ar enot stalled
+						if (!Stalled_Stages[Global::STALLED_STAGE::MEMORY])
+						{
+							if ((pipeline_struct_alu2.pc_value < pipeline_struct_delay.pc_value)
+								//&& alu2->hasValidData()
+								&& !Stalled_Stages[Global::STALLED_STAGE::ALU2])
+							{
+								memory->setPipelineStruct(pipeline_struct_alu2);
+								pipeline_struct_alu2 = garbage_struct;
+							}
+							else if ((pipeline_struct_delay.pc_value < pipeline_struct_alu2.pc_value)
+								//&& delay->hasValidData()
+								&& !Stalled_Stages[Global::STALLED_STAGE::DELAY])
+							{
+								memory->setPipelineStruct(pipeline_struct_delay);
+								pipeline_struct_delay = garbage_struct;
+							}
+							else
+							{
+								memory->setPipelineStruct(garbage_struct);
+							}
+						}
+
+						//if not stalled, pass branch output to delay
+						if (!Stalled_Stages[Global::STALLED_STAGE::BRANCH]
 							&& !Stalled_Stages[Global::STALLED_STAGE::DELAY])
+							//&& branch->hasValidData())
 						{
-							memory->setPipelineStruct(pipeline_struct_delay);
-							pipeline_struct_delay = garbage_struct;
+							delay->setPipelineStruct(pipeline_struct_branch);
+							pipeline_struct_branch = garbage_struct;
 						}
-						else
+						//or as long as delay is not stalled, bubble
+						else if (!Stalled_Stages[Global::STALLED_STAGE::DELAY])
 						{
-							memory->setPipelineStruct(garbage_struct);
+							delay->setPipelineStruct(garbage_struct);
 						}
-					}
 
-					//if not stalled, pass branch output to delay
-					if (!Stalled_Stages[Global::STALLED_STAGE::BRANCH]
-						&& !Stalled_Stages[Global::STALLED_STAGE::DELAY])
-						//&& branch->hasValidData())
-					{
-						delay->setPipelineStruct(pipeline_struct_branch);
-						pipeline_struct_branch = garbage_struct;
-					}
-					//or as long as delay is not stalled, bubble
-					else if (!Stalled_Stages[Global::STALLED_STAGE::DELAY])
-					{
-						delay->setPipelineStruct(garbage_struct);
-					}
+						//as long as we are not stalled, pass data
+						if (!Stalled_Stages[Global::STALLED_STAGE::ALU1]
+							&& !Stalled_Stages[Global::STALLED_STAGE::ALU2])
+							//&& alu1->hasValidData())
+						{
+							alu2->setPipelineStruct(pipeline_struct_alu1);
+							pipeline_struct_alu1 = garbage_struct;
+						}
+						//if alu2 is not stalled, just pass in bubble
+						else if (!Stalled_Stages[Global::STALLED_STAGE::ALU2])
+						{
+							alu2->setPipelineStruct(garbage_struct);
+						}
 
-					//as long as we are not stalled, pass data
-					if (!Stalled_Stages[Global::STALLED_STAGE::ALU1]
-						&& !Stalled_Stages[Global::STALLED_STAGE::ALU2])
-						//&& alu1->hasValidData())
-					{
-						alu2->setPipelineStruct(pipeline_struct_alu1);
-						pipeline_struct_alu1 = garbage_struct;
-					}
-					//if alu2 is not stalled, just pass in bubble
-					else if (!Stalled_Stages[Global::STALLED_STAGE::ALU2])
-					{
-						alu2->setPipelineStruct(garbage_struct);
-					}
-					
-					//based on opcode....
-					switch (pipeline_struct_decode.instruction.op_code)
-					{
+						//based on opcode....
+						switch (pipeline_struct_decode.instruction.op_code)
+						{
 						case Global::OPCODE::ADD:
 						case Global::OPCODE::ADDL:
 						case Global::OPCODE::AND:
@@ -756,8 +765,8 @@ int _tmain(int argc, char* argv[])
 						case Global::OPCODE::STORE:
 							//if for the ALU, and we are not stalled, or branching, 
 							//set up ALU1 with the output of code
-							if (!Stalled_Stages[Global::STALLED_STAGE::DECODE_RF] 
-								&& !Stalled_Stages[Global::STALLED_STAGE::ALU1] 
+							if (!Stalled_Stages[Global::STALLED_STAGE::DECODE_RF]
+								&& !Stalled_Stages[Global::STALLED_STAGE::ALU1]
 								&& !Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].updatePC)
 								//&& decode->hasValidData())
 							{
@@ -766,7 +775,7 @@ int _tmain(int argc, char* argv[])
 							}
 							//feed in bubble if we are not stalled, the branch was taken
 							//or if code does not have valid data (bubble)
-							else if (!Stalled_Stages[Global::STALLED_STAGE::ALU1] 
+							else if (!Stalled_Stages[Global::STALLED_STAGE::ALU1]
 								|| Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].updatePC)
 								//|| !decode->hasValidData())
 							{
@@ -774,7 +783,7 @@ int _tmain(int argc, char* argv[])
 							}
 
 							//set branch to bubble
-							if (!Stalled_Stages[Global::STALLED_STAGE::BRANCH] )
+							if (!Stalled_Stages[Global::STALLED_STAGE::BRANCH])
 							{
 								branch->setPipelineStruct(garbage_struct);
 							}
@@ -785,12 +794,12 @@ int _tmain(int argc, char* argv[])
 						case Global::OPCODE::JUMP:
 							//if for the branch, and we are not stalled, or branching, 
 							//set up branch with the output of code
-							if (!Stalled_Stages[Global::STALLED_STAGE::DECODE_RF] 
-								&& !Stalled_Stages[Global::STALLED_STAGE::BRANCH] 
+							if (!Stalled_Stages[Global::STALLED_STAGE::DECODE_RF]
+								&& !Stalled_Stages[Global::STALLED_STAGE::BRANCH]
 								&& !Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].updatePC)
 								//&& decode->hasValidData())
 							{
-								branch->setPipelineStruct(pipeline_struct_decode);	
+								branch->setPipelineStruct(pipeline_struct_decode);
 								pipeline_struct_decode = garbage_struct;
 							}
 							//feed in bubble if we are not stalled
@@ -805,71 +814,66 @@ int _tmain(int argc, char* argv[])
 							}
 							break;
 						default:
-							/*
+							break;
+						}
+
+
+						//as long as decode is not stalled, and we are not updating
+						// the PC from a branch, and we still have data to read
+						//from fetch, move the fetch output to the input of decode
+						if (!Stalled_Stages[Global::STALLED_STAGE::DECODE_RF]
+							&& !fetch->endOfFile()
+							&& !HALT)
+						{
+							decode->setPipelineStruct(pipeline_struct_fetch);
+							pipeline_struct_fetch = garbage_struct;
+							PC++;
+						}
+						//or if we are not stalled, then feed in garbage (bubble)
+						else if (!Stalled_Stages[Global::STALLED_STAGE::DECODE_RF] || HALT)
+						{
+							decode->setPipelineStruct(garbage_struct);
+						}
+
+
+						//flush decode if we have to update the PC
+						//fetch already takes care of this internally, no need to 
+						//call it separately
+						if (Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].updatePC)
+						{
 							alu1->setPipelineStruct(garbage_struct);
 							branch->setPipelineStruct(garbage_struct);
-							*/
-							break;
-					}
-					
+						}
 
-					//as long as decode is not stalled, and we are not updating
-					// the PC from a branch, and we still have data to read
-					//from fetch, move the fetch output to the input of decode
-					if (!Stalled_Stages[Global::STALLED_STAGE::DECODE_RF]
-						&& !Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].updatePC
-						&& !fetch->endOfFile())
-					{
-						decode->setPipelineStruct(pipeline_struct_fetch);
-						pipeline_struct_fetch = garbage_struct;
-						PC++;
-					}
-					//or if we are not stalled, then feed in garbage (bubble)
-					else if (!Stalled_Stages[Global::STALLED_STAGE::DECODE_RF])
-					{
-						decode->setPipelineStruct(garbage_struct);
-					}
-
-
-					//flush decode if we have to update the PC
-					//fetch already takes care of this internally, no need to 
-					//call it separately
-					if (Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].updatePC)
-					{
-						decode->setPipelineStruct(garbage_struct);
-						Global::Debug("....");
-						Global::Debug("Flushing Fetch!");
-						Global::Debug("Flushing Decode/RF");
-						Global::Debug("....");
-					}
-					
-					//see if we have any valid data to be
-					//able to flush pipeline to completion
-					if (decode->hasValidData() 
-						|| alu1->hasValidData() 
-						|| alu2->hasValidData()
-						|| branch->hasValidData()
-						|| delay->hasValidData()
-						|| memory->hasValidData()
-						|| writeBack->hasValidData())
-					{
-						pipelineHasData = true;
+						//see if we have any valid data to be
+						//able to flush pipeline to completion
+						if (decode->hasValidData()
+							|| alu1->hasValidData()
+							|| alu2->hasValidData()
+							|| branch->hasValidData()
+							|| delay->hasValidData()
+							|| memory->hasValidData()
+							|| writeBack->hasValidData())
+						{
+							pipelineHasData = true;
+						}
+						else
+						{
+							pipelineHasData = false;
+						}
 					}
 					else
 					{
-						pipelineHasData = false;
+						cout << endl
+							<< "Program encounted a HALT" << endl
+							<< endl
+							<< "Please re-initialize the program" << endl
+							<< endl;
 					}
 
 					n--;
 					iteration++;
 				} //!HALT && n > 0
-
-				if (HALT)
-				{
-					cout << endl
-						<< "Program encounted a HALT" << endl
-						<< endl;
-				}
 			} // command == simulate n
 		} //command != "end"
 	}
