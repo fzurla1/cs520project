@@ -51,6 +51,11 @@ bool WriteBack::hasValidData()
 	return (myStruct.pc_value != INT_MAX);
 }
 
+string WriteBack::getInstruction()
+{
+	return myStruct.untouched_instruction;
+}
+
 void WriteBack::display()
 {
 	//make sure we have valid data

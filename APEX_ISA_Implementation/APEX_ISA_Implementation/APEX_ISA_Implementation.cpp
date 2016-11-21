@@ -29,7 +29,8 @@
 #include "Memory.h"
 #include "WriteBack.h"
 
-#define DEBUG 1
+#define DEBUG_INPUT 0
+#define DEBUG_OUTPUT 1
 
 using namespace std;
 
@@ -203,7 +204,7 @@ void displayRegisterFile()
 
 	for (int x = 0; x < Global::ARCH_REGISTER_COUNT; x++)
 	{
-		Global::Debug("R" + Global::toString(Global::ARCH_REGISTERS(x)));
+		Global::Debug(Global::toString(Global::ARCH_REGISTERS(x)));
 		Global::Debug("   status : " + Global::toString(Register_File[x].status));
 		Global::Debug("   value  : " + to_string(Register_File[x].value));
 	}
@@ -266,7 +267,7 @@ void user_interface() //char * input_file, char * output_file)
 		<< endl;
 
 
-	if (!DEBUG)
+	if (!DEBUG_INPUT)
 	{
 		while (infile_name == "")
 		{
@@ -281,7 +282,9 @@ void user_interface() //char * input_file, char * output_file)
 
 	fetch->setFile(infile_name);
 
-	if (!DEBUG)
+	cout << endl;
+
+	if (!DEBUG_INPUT)
 	{
 
 		cout << "please enter output file (or blank): ";
@@ -290,7 +293,7 @@ void user_interface() //char * input_file, char * output_file)
 
 	if (outfile_name == "")
 	{
-		cout << endl << "using default output file: apex_output_date_time.txt" << endl;
+		cout << endl << "using default output file: apex_output[date_time].txt" << endl;
 		outfile_name = "apex_output[";
 			
 		// current date/time based on current system
@@ -370,32 +373,62 @@ int _tmain(int argc, char* argv[])
 
 			if (command == "commands")
 			{
-				cout << "Available commands:" << endl
-					<< "   initialize   : initialize pipeline" << endl
-					<< "   simulate <n> : simulate n number of pipeline steps" << endl
-					<< "   display      : display contents of the pipeline" << endl
-					<< "   commands     : display command list" << endl
-					<< "   end          : stop execution" << endl
-					<< endl;
+				system("cls");
 			}
 
 			if (command == "display" )
 			{
 				cout << "Writing pipeline stages..." << endl;
+				/*
 				Global::Debug("Writing pipeline stages...");
-				fetch->display();
-				decode->display();
-				alu1->display();
-				alu2->display();
-				branch->display();
-				delay->display();
-				memory->display();
+				if (!Stalled_Stages[Global::STALLED_STAGE::FETCH])
+					fetch->display();
+				else
+					Global::Debug("-- Fetch Stalled -- ");
+
+				if (!Stalled_Stages[Global::STALLED_STAGE::DECODE_RF])
+					decode->display();
+				else
+					Global::Debug("-- Decode Stalled -- " + decode->getInstruction());
+
+				if (!Stalled_Stages[Global::STALLED_STAGE::ALU1])
+					alu1->display();
+				else
+					Global::Debug("-- ALU1 Stalled -- " + alu1->getInstruction());
+
+				if (!Stalled_Stages[Global::STALLED_STAGE::ALU2])
+					alu2->display();
+				else
+					Global::Debug("-- ALU2 Stalled -- " + alu2->getInstruction());
+
+				if (!Stalled_Stages[Global::STALLED_STAGE::BRANCH])
+					branch->display();
+				else
+					Global::Debug("-- Branch Stalled -- " + branch->getInstruction());
+
+				if (!Stalled_Stages[Global::STALLED_STAGE::DELAY])
+					delay->display();
+				else
+					Global::Debug("-- Delay Stalled -- " + delay->getInstruction());
+
+				if (!Stalled_Stages[Global::STALLED_STAGE::MEMORY])
+					memory->display();
+				else
+					Global::Debug("-- Memory Stalled -- " + memory->getInstruction());
 				writeBack->display();
+				*/
+				cout << "Writing pipeline stages Complete" << endl
+					<< endl;
+				//Global::Debug("Writing pipeline stages Complete");
+				cout << "Writing Register File Contents..." << endl;
 				displayRegisterFile();
+				cout << "Writing Register File Contents Complete" << endl
+					<< endl
+					<< "Writing Memory Contents..." << endl;
 				displayMemory();
-				displayStalledStages();
-				cout << "Writing pipeline stages Complete" << endl;
-				Global::Debug("Writing pipeline stages Complete");
+				cout << "Writing Memory Contents Complete" << endl;
+				string cmd = "notepad.exe " + Global::getOutFile();
+				system(cmd.c_str());
 			}
 
 #pragma endregion //BASIC COMMANDS
@@ -416,114 +449,6 @@ int _tmain(int argc, char* argv[])
 				{
 					Global::Debug("\nIteration " + to_string(iteration));
 					//start pipeline
-
-					/*
-					//as long as decode is not stalled and we still have data to read from the
-					//input file, fetch the next command
-					if (!Stalled_Stages[Global::STALLED_STAGE::DECODE_RF] && !fetch->endOfFile())
-					{
-
-						pipeline_struct_fetch = fetch->run(PC, Forward_Bus, Stalled_Stages);
-						if (DEBUG)
-							fetch->display();
-					}
-					//if eof, the feed garbage to the next stage
-					else if (fetch->endOfFile())
-					{
-						pipeline_struct_fetch = garbage_struct;
-						Global::Debug("Input File Complete");
-					}
-					//or we stall
-					else
-					{
-						Stalled_Stages[Global::STALLED_STAGE::FETCH] = true;
-						if (DEBUG)
-							Global::Debug("FETCH STALLED!");
-					}
-
-					//as long as ALU1 and branch is not stalled, decode the instruction
-					if (!Stalled_Stages[Global::STALLED_STAGE::ALU1]
-						&& !Stalled_Stages[Global::STALLED_STAGE::BRANCH])
-					{
-						pipeline_struct_decode = decode->run(Register_File, Forward_Bus, Stalled_Stages, Most_Recent_Reg);
-						if (DEBUG)
-							decode->display();
-					}
-					//or stall
-					else
-					{
-						Stalled_Stages[Global::STALLED_STAGE::DECODE_RF] = true;
-						if (DEBUG)
-							Global::Debug("DECODE STALLED!");
-					}
-
-					//as long as ALU2 is not stalled, run ALU1
-					if (!Stalled_Stages[Global::STALLED_STAGE::ALU2])
-					{
-						pipeline_struct_alu1 = alu1->run(Forward_Bus, Stalled_Stages);
-						if (DEBUG)
-							alu1->display();
-					}
-					//or stall ALU1
-					else
-					{
-						Stalled_Stages[Global::STALLED_STAGE::ALU1] = true;
-						if (DEBUG)
-							Global::Debug("ALU1 STALLED!");
-					}
-
-					//As long as memory is not stalled, run ALU2
-					if (!Stalled_Stages[Global::STALLED_STAGE::MEMORY])
-					{
-						pipeline_struct_alu2 = alu2->run(ALU_Flags, Forward_Bus, Stalled_Stages);
-						if (DEBUG)
-							alu2->display();
-					}
-
-					//or stall ALU2
-					else
-					{
-						Stalled_Stages[Global::STALLED_STAGE::ALU2] = true;
-						if (DEBUG)
-							Global::Debug("ALU2 STALLED!");
-					}
-
-					//as long as DELAY is not stalled, run branch
-					if (!Stalled_Stages[Global::STALLED_STAGE::DELAY])
-					{
-						pipeline_struct_branch = branch->run(PC, Forward_Bus, Stalled_Stages, Register_File[Global::ARCH_REGISTERS::X]);
-						if (DEBUG)
-							branch->display();
-					}
-					//or stall branch
-					else
-					{
-						Stalled_Stages[Global::STALLED_STAGE::BRANCH] = true;
-						if (DEBUG)
-							Global::Debug("BRANCH STALLED!");
-					}
-
-					//as long as memeory is not stalled, run Delay
-					if (!Stalled_Stages[Global::STALLED_STAGE::MEMORY])
-					{
-						pipeline_struct_delay = delay->run(Stalled_Stages);
-						if (DEBUG)
-							delay->display();
-					}
-					//or stall delay
-					else
-					{
-						Stalled_Stages[Global::STALLED_STAGE::DELAY] = true;
-						if (DEBUG)
-							Global::Debug("DELAY STALLED!");
-					}
-					
-					//run memory, since wb cannot stall
-					pipeline_struct_memory = memory->run(Forward_Bus, Stalled_Stages, Memory_Array);
-					if (DEBUG)
-						memory->display();
-
-					*/
 
 					/*********************
 					 *  EXECUTE STAGES   *
@@ -546,8 +471,6 @@ int _tmain(int argc, char* argv[])
 						else
 						{
 							Stalled_Stages[Global::STALLED_STAGE::DELAY] = true;
-							if (DEBUG)
-								Global::Debug("DELAY STALLED!");
 						}
 
 						//as long as DELAY is not stalled, run branch
@@ -559,8 +482,6 @@ int _tmain(int argc, char* argv[])
 						else
 						{
 							Stalled_Stages[Global::STALLED_STAGE::BRANCH] = true;
-							if (DEBUG)
-								Global::Debug("BRANCH STALLED!");
 						}
 
 						//flush decode if we have to update the PC
@@ -572,7 +493,12 @@ int _tmain(int argc, char* argv[])
 							Global::Debug("....");
 							Global::Debug("Flushing Fetch!");
 							Global::Debug("Flushing Decode/RF");
-							Global::Debug("....");
+							if (!Stalled_Stages[Global::STALLED_STAGE::ALU1])
+							{
+								alu1->setPipelineStruct(garbage_struct);
+								Global::Debug("Flushing ALU1");
+							}
+							Global::Debug("...."); 
 						}
 
 						//As long as memory is not stalled, run ALU2
@@ -585,8 +511,6 @@ int _tmain(int argc, char* argv[])
 						else
 						{
 							Stalled_Stages[Global::STALLED_STAGE::ALU2] = true;
-							if (DEBUG)
-								Global::Debug("ALU2 STALLED!");
 						}
 
 						//as long as ALU2 is not stalled, run ALU1
@@ -598,24 +522,11 @@ int _tmain(int argc, char* argv[])
 						else
 						{
 							Stalled_Stages[Global::STALLED_STAGE::ALU1] = true;
-							if (DEBUG)
-								Global::Debug("ALU1 STALLED!");
 						}
 
-						//as long as ALU1 and branch is not stalled, decode the instruction
-						if (!Stalled_Stages[Global::STALLED_STAGE::ALU1]
-							&& !Stalled_Stages[Global::STALLED_STAGE::BRANCH])
-						{
-							pipeline_struct_decode = decode->run(Register_File, Forward_Bus, Stalled_Stages, Most_Recent_Reg);
-						}
-						//or stall
-						else
-						{
-							Stalled_Stages[Global::STALLED_STAGE::DECODE_RF] = true;
-							if (DEBUG)
-								Global::Debug("DECODE STALLED!");
-						}
-
+						//Decode handles delays based on OPCODE internally and update Stalled_Stages
+						pipeline_struct_decode = decode->run(Register_File, Forward_Bus, Stalled_Stages, Most_Recent_Reg);
+						
 						//as long as decode is not stalled and we still have data to read from the
 						//input file, fetch the next command
 						if (!Stalled_Stages[Global::STALLED_STAGE::DECODE_RF]
@@ -634,46 +545,44 @@ int _tmain(int argc, char* argv[])
 						else
 						{
 							Stalled_Stages[Global::STALLED_STAGE::FETCH] = true;
-							if (DEBUG)
-								Global::Debug("FETCH STALLED!");
 						}
 
-						if (DEBUG)
+						if (DEBUG_OUTPUT)
 						{
 							if (!Stalled_Stages[Global::STALLED_STAGE::FETCH])
 								fetch->display();
 							else
-								Global::Debug("-- Fetch Stalled --");
+								Global::Debug("-- Fetch Stalled -- ");
 
 							if (!Stalled_Stages[Global::STALLED_STAGE::DECODE_RF])
 								decode->display();
 							else
-								Global::Debug("-- Decode Stalled --");
+								Global::Debug("-- Decode Stalled -- " + decode->getInstruction());
 
 							if (!Stalled_Stages[Global::STALLED_STAGE::ALU1])
 								alu1->display();
 							else
-								Global::Debug("-- ALU1 Stalled --");
+								Global::Debug("-- ALU1 Stalled -- " + alu1->getInstruction());
 
 							if (!Stalled_Stages[Global::STALLED_STAGE::ALU2])
 								alu2->display();
 							else
-								Global::Debug("-- ALU2 Stalled --");
+								Global::Debug("-- ALU2 Stalled -- " + alu2->getInstruction());
 
 							if (!Stalled_Stages[Global::STALLED_STAGE::BRANCH])
 								branch->display();
 							else
-								Global::Debug("-- Branch Stalled --");
+								Global::Debug("-- Branch Stalled -- " + branch->getInstruction());
 
 							if (!Stalled_Stages[Global::STALLED_STAGE::DELAY])
 								delay->display();
 							else
-								Global::Debug("-- Delay Stalled --");
+								Global::Debug("-- Delay Stalled -- " + delay->getInstruction());
 
 							if (!Stalled_Stages[Global::STALLED_STAGE::MEMORY])
 								memory->display();
 							else
-								Global::Debug("-- Memory Stalled --");
+								Global::Debug("-- Memory Stalled -- " + memory->getInstruction());
 							writeBack->display();
 						}
 

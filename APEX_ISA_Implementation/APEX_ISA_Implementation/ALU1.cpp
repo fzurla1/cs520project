@@ -31,61 +31,6 @@ Global::apexStruct ALU1::run( Global::Forwarding_Info(&Forward_Bus)[Global::FORW
 			//assume not stalled
 			Stalled_Stages[Global::STALLED_STAGE::ALU1] = false;
 
-			/*
-			//check source registers
-			if (output_struct.instruction.src1.status == Global::STATUS::INVALID)
-			{
-				if (Forward_Bus[Global::FROM_ALU2].reg_info.tag = output_struct.instruction.src1.tag)
-				{
-					Forward_Bus[Global::FROM_ALU2].reg_info.value = output_struct.instruction.src1.value;
-					output_struct.instruction.src1.status = Global::STATUS::VALID;
-				}
-
-				else if (Forward_Bus[Global::FROM_MEMORY].reg_info.tag = output_struct.instruction.src1.tag)
-				{
-					Forward_Bus[Global::FROM_MEMORY].reg_info.value = output_struct.instruction.src1.value;
-					output_struct.instruction.src1.status = Global::STATUS::VALID;
-				}
-
-				else if (Forward_Bus[Global::FROM_WRITEBACK].reg_info.tag = output_struct.instruction.src1.tag)
-				{
-					Forward_Bus[Global::FROM_WRITEBACK].reg_info.value = output_struct.instruction.src1.value;
-					output_struct.instruction.src1.status = Global::STATUS::VALID;
-				}
-
-				else
-				{
-					output_struct.instruction.src1.status = Global::STATUS::INVALID;
-				}
-			}
-
-			if (output_struct.instruction.src2.status == Global::STATUS::INVALID)
-			{
-				if (Forward_Bus[Global::FROM_ALU2].reg_info.tag = output_struct.instruction.src2.tag)
-				{
-					Forward_Bus[Global::FROM_ALU2].reg_info.value = output_struct.instruction.src2.value;
-					output_struct.instruction.src2.status = Global::STATUS::VALID;
-				}
-
-				else if (Forward_Bus[Global::FROM_MEMORY].reg_info.tag = output_struct.instruction.src2.tag)
-				{
-					Forward_Bus[Global::FROM_MEMORY].reg_info.value = output_struct.instruction.src2.value;
-					output_struct.instruction.src2.status = Global::STATUS::VALID;
-				}
-
-				else if (Forward_Bus[Global::FROM_WRITEBACK].reg_info.tag = output_struct.instruction.src2.tag)
-				{
-					Forward_Bus[Global::FROM_WRITEBACK].reg_info.value = output_struct.instruction.src2.value;
-					output_struct.instruction.src2.status = Global::STATUS::VALID;
-				}
-
-				else
-				{
-					output_struct.instruction.src2.status = Global::STATUS::INVALID;
-				}
-			}
-			*/
-
 			//verify source registers are valid to proceed
 			if (((output_struct.instruction.src1.status == Global::STATUS::VALID) && (output_struct.instruction.src2.status == Global::STATUS::VALID))
 				|| ((output_struct.instruction.op_code == Global::OPCODE::STORE) && (output_struct.instruction.src2.status == Global::STATUS::VALID)))
@@ -117,6 +62,11 @@ void ALU1::setPipelineStruct(Global::apexStruct input_struct)
 bool ALU1::hasValidData()
 {
 	return (myStruct.pc_value != INT_MAX);
+}
+
+string ALU1::getInstruction()
+{
+	return myStruct.untouched_instruction;
 }
 
 void ALU1::display()

@@ -40,6 +40,11 @@ bool Delay::hasValidData()
 	return (myStruct.pc_value != INT_MAX);
 }
 
+string Delay::getInstruction()
+{
+	return myStruct.untouched_instruction;
+}
+
 void Delay::display()
 {
 	//make sure we have valid data

@@ -1,0 +1,303 @@
+
+Iteration 1
+FETCH      - MOVC R0, #0
+Decode/RF STAGE --> No Instruction in Stage
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+Iteration 2
+FETCH      - MOVC R1, #25
+DECODE/RF  - MOVC R0, #0
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+Iteration 3
+FETCH      - MOVC R2, #5
+DECODE/RF  - MOVC R1, #25
+ALU1       - MOVC R0, #0
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+Iteration 4
+FETCH      - MOVC R3, #1
+DECODE/RF  - MOVC R2, #5
+ALU1       - MOVC R1, #25
+ALU2       - MOVC R0, #0
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+Iteration 5
+FETCH      - MOVC R4, #0
+DECODE/RF  - MOVC R3, #1
+ALU1       - MOVC R2, #5
+ALU2       - MOVC R1, #25
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEMORY     - MOVC R0, #0
+Writeback STAGE --> No Instruction in Stage
+
+Iteration 6
+FETCH      - MOVC R5, #1
+DECODE/RF  - MOVC R4, #0
+ALU1       - MOVC R3, #1
+ALU2       - MOVC R2, #5
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEMORY     - MOVC R1, #25
+WRITEBACK  - MOVC R0, #0
+
+Iteration 7
+FETCH      - MOVC R6, #100
+DECODE/RF  - MOVC R5, #1
+ALU1       - MOVC R4, #0
+ALU2       - MOVC R3, #1
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEMORY     - MOVC R2, #5
+WRITEBACK  - MOVC R1, #25
+
+Iteration 8
+FETCH      - MOVC R11, #36
+DECODE/RF  - MOVC R6, #100
+ALU1       - MOVC R5, #1
+ALU2       - MOVC R4, #0
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEMORY     - MOVC R3, #1
+WRITEBACK  - MOVC R2, #5
+
+Iteration 9
+FETCH      - MOVC R12, #4
+DECODE/RF  - MOVC R11, #36
+ALU1       - MOVC R6, #100
+ALU2       - MOVC R5, #1
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEMORY     - MOVC R4, #0
+WRITEBACK  - MOVC R3, #1
+
+Iteration 10
+FETCH      - ADD R0, R0, R2
+DECODE/RF  - MOVC R12, #4
+ALU1       - MOVC R11, #36
+ALU2       - MOVC R6, #100
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEMORY     - MOVC R5, #1
+WRITEBACK  - MOVC R4, #0
+
+Iteration 11
+FETCH      - MUL R6, R1, R3
+DECODE/RF  - ADD R0, R0, R2
+ALU1       - MOVC R12, #4
+ALU2       - MOVC R11, #36
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEMORY     - MOVC R6, #100
+WRITEBACK  - MOVC R5, #1
+
+Iteration 12
+FETCH      - SUB R7, R6, R0
+DECODE/RF  - MUL R6, R1, R3
+ALU1       - ADD R0, R0, R2
+ALU2       - MOVC R12, #4
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEMORY     - MOVC R11, #36
+WRITEBACK  - MOVC R6, #100
+
+Iteration 13
+DECODE STALLED!- Src1 not valid!
+-- Fetch Stalled -- 
+-- Decode Stalled -- SUB R7, R6, R0
+ALU1       - MUL R6, R1, R3
+ALU2       - ADD R0, R0, R2
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEMORY     - MOVC R12, #4
+WRITEBACK  - MOVC R11, #36
+
+Iteration 14
+FETCH      - BNZ #12
+DECODE/RF  - SUB R7, R6, R0
+ALU 1 STAGE --> No Instruction in Stage
+ALU2       - MUL R6, R1, R3
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEMORY     - ADD R0, R0, R2
+WRITEBACK  - MOVC R12, #4
+
+Iteration 15
+FETCH      - MOVC R10, #4000
+DECODE/RF  - BNZ #12
+ALU1       - SUB R7, R6, R0
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEMORY     - MUL R6, R1, R3
+WRITEBACK  - ADD R0, R0, R2
+
+-- Register File --
+R0
+   status : VALID
+   value  : 5
+R1
+   status : VALID
+   value  : 25
+R2
+   status : VALID
+   value  : 5
+R3
+   status : VALID
+   value  : 1
+R4
+   status : VALID
+   value  : 0
+R5
+   status : VALID
+   value  : 1
+R6
+   status : INVALID
+   value  : 100
+R7
+   status : INVALID
+   value  : 4294967295
+R8
+   status : INVALID
+   value  : 4294967295
+R9
+   status : INVALID
+   value  : 4294967295
+R10
+   status : INVALID
+   value  : 4294967295
+R11
+   status : VALID
+   value  : 36
+R12
+   status : VALID
+   value  : 4
+R13
+   status : INVALID
+   value  : 4294967295
+R14
+   status : INVALID
+   value  : 4294967295
+R15
+   status : INVALID
+   value  : 4294967295
+
+-- Memory Locations --
+Memory[0] = 0
+Memory[1] = 0
+Memory[2] = 0
+Memory[3] = 0
+Memory[4] = 0
+Memory[5] = 0
+Memory[6] = 0
+Memory[7] = 0
+Memory[8] = 0
+Memory[9] = 0
+Memory[10] = 0
+Memory[11] = 0
+Memory[12] = 0
+Memory[13] = 0
+Memory[14] = 0
+Memory[15] = 0
+Memory[16] = 0
+Memory[17] = 0
+Memory[18] = 0
+Memory[19] = 0
+Memory[20] = 0
+Memory[21] = 0
+Memory[22] = 0
+Memory[23] = 0
+Memory[24] = 0
+Memory[25] = 0
+Memory[26] = 0
+Memory[27] = 0
+Memory[28] = 0
+Memory[29] = 0
+Memory[30] = 0
+Memory[31] = 0
+Memory[32] = 0
+Memory[33] = 0
+Memory[34] = 0
+Memory[35] = 0
+Memory[36] = 0
+Memory[37] = 0
+Memory[38] = 0
+Memory[39] = 0
+Memory[40] = 0
+Memory[41] = 0
+Memory[42] = 0
+Memory[43] = 0
+Memory[44] = 0
+Memory[45] = 0
+Memory[46] = 0
+Memory[47] = 0
+Memory[48] = 0
+Memory[49] = 0
+Memory[50] = 0
+Memory[51] = 0
+Memory[52] = 0
+Memory[53] = 0
+Memory[54] = 0
+Memory[55] = 0
+Memory[56] = 0
+Memory[57] = 0
+Memory[58] = 0
+Memory[59] = 0
+Memory[60] = 0
+Memory[61] = 0
+Memory[62] = 0
+Memory[63] = 0
+Memory[64] = 0
+Memory[65] = 0
+Memory[66] = 0
+Memory[67] = 0
+Memory[68] = 0
+Memory[69] = 0
+Memory[70] = 0
+Memory[71] = 0
+Memory[72] = 0
+Memory[73] = 0
+Memory[74] = 0
+Memory[75] = 0
+Memory[76] = 0
+Memory[77] = 0
+Memory[78] = 0
+Memory[79] = 0
+Memory[80] = 0
+Memory[81] = 0
+Memory[82] = 0
+Memory[83] = 0
+Memory[84] = 0
+Memory[85] = 0
+Memory[86] = 0
+Memory[87] = 0
+Memory[88] = 0
+Memory[89] = 0
+Memory[90] = 0
+Memory[91] = 0
+Memory[92] = 0
+Memory[93] = 0
+Memory[94] = 0
+Memory[95] = 0
+Memory[96] = 0
+Memory[97] = 0
+Memory[98] = 0
+Memory[99] = 0

@@ -94,6 +94,11 @@ bool Branch::hasValidData()
 	return (myStruct.pc_value != INT_MAX);
 }
 
+string Branch::getInstruction()
+{
+	return myStruct.untouched_instruction;
+}
+
 void Branch::display()
 {
 	//make sure we have valid data

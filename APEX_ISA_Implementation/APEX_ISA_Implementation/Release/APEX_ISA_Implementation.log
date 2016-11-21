@@ -1,0 +1,48 @@
+﻿Build started 11/21/2016 12:11:29 AM.
+     1>Project "C:\Users\Frank\Documents\GitHub\cs520project\APEX_ISA_Implementation\APEX_ISA_Implementation\APEX_ISA_Implementation.vcxproj" on node 2 (Rebuild target(s)).
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /Zi /nologo /W3 /WX- /sdl /O2 /Oi /Oy- /GL /D WIN32 /D NDEBUG /D _CONSOLE /D _LIB /D _UNICODE /D UNICODE /Gm- /EHsc /MD /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Yc"stdafx.h" /Fp"Release\APEX_ISA_Implementation.pch" /Fo"Release\\" /Fd"Release\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt stdafx.cpp
+         stdafx.cpp
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /Zi /nologo /W3 /WX- /sdl /O2 /Oi /Oy- /GL /D WIN32 /D NDEBUG /D _CONSOLE /D _LIB /D _UNICODE /D UNICODE /Gm- /EHsc /MD /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Yu"stdafx.h" /Fp"Release\APEX_ISA_Implementation.pch" /Fo"Release\\" /Fd"Release\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt ALU1.cpp ALU2.cpp APEX_ISA_Implementation.cpp Branch.cpp Decode.cpp Delay.cpp Fetch.cpp Global.cpp Memory.cpp WriteBack.cpp
+         ALU1.cpp
+         ALU2.cpp
+     1>ALU2.cpp(66): warning C4018: '>' : signed/unsigned mismatch
+     1>ALU2.cpp(73): warning C4018: '<' : signed/unsigned mismatch
+     1>ALU2.cpp(112): warning C4018: '>' : signed/unsigned mismatch
+     1>ALU2.cpp(120): warning C4018: '<' : signed/unsigned mismatch
+     1>ALU2.cpp(158): warning C4018: '>' : signed/unsigned mismatch
+     1>ALU2.cpp(166): warning C4018: '<' : signed/unsigned mismatch
+         APEX_ISA_Implementation.cpp
+     1>APEX_ISA_Implementation.cpp(13): warning C4627: '#include "APEX_ISA_Implementation.h"': skipped when looking for precompiled header use
+                 Add directive to 'stdafx.h' or rebuild precompiled header
+         Branch.cpp
+         Decode.cpp
+         Delay.cpp
+         Fetch.cpp
+     1>Fetch.cpp(17): warning C4018: '<' : signed/unsigned mismatch
+         Global.cpp
+         Memory.cpp
+         WriteBack.cpp
+       ResourceCompile:
+         C:\Program Files (x86)\Windows Kits\8.1\bin\x86\rc.exe /D _UNICODE /D UNICODE /l"0x0409" /nologo /fo"Release\APEX_ISA_Implementation.res" APEX_ISA_Implementation.rc 
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Frank\Documents\GitHub\cs520project\APEX_ISA_Implementation\Release\APEX_ISA_Implementation.exe" /INCREMENTAL:NO /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\Frank\Documents\GitHub\cs520project\APEX_ISA_Implementation\Release\APEX_ISA_Implementation.pdb" /SUBSYSTEM:CONSOLE /OPT:REF /OPT:ICF /LTCG /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Frank\Documents\GitHub\cs520project\APEX_ISA_Implementation\Release\APEX_ISA_Implementation.lib" /MACHINE:X86 /SAFESEH Release\APEX_ISA_Implementation.res
+         Release\ALU1.obj
+         Release\ALU2.obj
+         Release\APEX_ISA_Implementation.obj
+         Release\Branch.obj
+         Release\Decode.obj
+         Release\Delay.obj
+         Release\Fetch.obj
+         Release\Global.obj
+         Release\Memory.obj
+         Release\stdafx.obj
+         Release\WriteBack.obj
+         Generating code
+         Finished generating code
+         APEX_ISA_Implementation.vcxproj -> C:\Users\Frank\Documents\GitHub\cs520project\APEX_ISA_Implementation\Release\APEX_ISA_Implementation.exe
+     1>Done Building Project "C:\Users\Frank\Documents\GitHub\cs520project\APEX_ISA_Implementation\APEX_ISA_Implementation\APEX_ISA_Implementation.vcxproj" (Rebuild target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:04.78

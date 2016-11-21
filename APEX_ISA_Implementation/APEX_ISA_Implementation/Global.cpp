@@ -7,8 +7,11 @@ using namespace std;
 
 ofstream fout;
 
+string output_file_name;
+
 void Global::setOutFile(string filename)
 {
+	output_file_name = filename;
 	fout.open(filename);// .c_str(), std::ios::out);
 	if (!fout)
 	{
@@ -18,6 +21,11 @@ void Global::setOutFile(string filename)
 	{
 		cout << "File " + filename + " opened successfully." << endl;
 	}
+}
+
+string Global::getOutFile()
+{
+	return output_file_name;
 }
 
 void Global::closeFile()

@@ -26,12 +26,6 @@ Global::apexStruct ALU2::run(
 
 	//initialize flags
 	Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].flag = Global::FLAGS::CLEAR;
-	/*
-	ALU_Flags[Global::FLAGS::ZERO] = true;
-	ALU_Flags[Global::FLAGS::OVER_FLOW] = false;
-	ALU_Flags[Global::FLAGS::UNDER_FLOW] = false;
-	ALU_Flags[Global::FLAGS::ZERO] = false;
-	*/
 
 	//make sure we have valid data
 	if (myStruct.pc_value != INT_MAX)
@@ -305,6 +299,12 @@ bool ALU2::hasValidData()
 	return (myStruct.pc_value != INT_MAX);
 
 }
+
+string ALU2::getInstruction()
+{
+	return myStruct.untouched_instruction;
+}
+
 void ALU2::display()
 {
 	//make sure we have valid data

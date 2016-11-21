@@ -81,6 +81,11 @@ bool Memory::hasValidData()
 	return (myStruct.pc_value != INT_MAX);
 }
 
+string Memory::getInstruction()
+{
+	return myStruct.untouched_instruction;
+}
+
 void Memory::display()
 {
 	//make sure we have valid data

@@ -162,6 +162,7 @@ public:
 
 	//functions
 	static void setOutFile(string filename);
+	static string getOutFile();
 	static void closeFile();
 	static void Debug(string s1);
 

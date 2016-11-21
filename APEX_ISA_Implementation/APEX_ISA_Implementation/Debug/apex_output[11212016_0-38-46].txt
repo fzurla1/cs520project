@@ -61,9 +61,8 @@ WRITEBACK  - MOVC R0, #0
 
 Iteration 7
 DECODE STALLED!- Src2 not valid!
-FETCH STALLED!
--- Fetch Stalled --
--- Decode Stalled --
+-- Fetch Stalled -- 
+-- Decode Stalled -- ADD R0, R0, R4
 ALU1       - MOVC R4, #1
 ALU2       - MOVC R3, #4
 Branch STAGE --> No Instruction in Stage
@@ -123,13 +122,11 @@ MEMORY     - STORE R0, R1, #0
 WRITEBACK  - ADD R0, R0, R4
 
 Iteration 13
-DECODE STALLED!
-FETCH STALLED!
--- Fetch Stalled --
--- Decode Stalled --
+FETCH      - MOVC R5, #0
+DECODE/RF  - MOVC R2, #10
 ALU 1 STAGE --> No Instruction in Stage
 ALU2       - SUB R2, R2, R4
--- Branch Stalled --
+-- Branch Stalled -- BNZ #-16
 Delay STAGE --> No Instruction in Stage
 MEMORY     - ADD R1, R1, R3
 WRITEBACK  - STORE R0, R1, #0
@@ -139,6 +136,7 @@ Iteration 14
 ....
 Flushing Fetch!
 Flushing Decode/RF
+Flushing ALU1
 ....
  -- BRANCH TAKEN! -- 
  -- New PC = 4020 -- 
@@ -171,3 +169,155 @@ Branch STAGE --> No Instruction in Stage
 Delay STAGE --> No Instruction in Stage
 MEMORY     - BNZ #-16
 Writeback STAGE --> No Instruction in Stage
+
+-- Register File --
+R0
+   status : INVALID
+   value  : 1
+R1
+   status : VALID
+   value  : 68
+R2
+   status : VALID
+   value  : 9
+R3
+   status : VALID
+   value  : 4
+R4
+   status : VALID
+   value  : 1
+R5
+   status : INVALID
+   value  : 4294967295
+R6
+   status : INVALID
+   value  : 4294967295
+R7
+   status : INVALID
+   value  : 4294967295
+R8
+   status : INVALID
+   value  : 4294967295
+R9
+   status : INVALID
+   value  : 4294967295
+R10
+   status : INVALID
+   value  : 4294967295
+R11
+   status : INVALID
+   value  : 4294967295
+R12
+   status : INVALID
+   value  : 4294967295
+R13
+   status : INVALID
+   value  : 4294967295
+R14
+   status : INVALID
+   value  : 4294967295
+R15
+   status : INVALID
+   value  : 4294967295
+
+-- Memory Locations --
+Memory[0] = 0
+Memory[1] = 0
+Memory[2] = 0
+Memory[3] = 0
+Memory[4] = 0
+Memory[5] = 0
+Memory[6] = 0
+Memory[7] = 0
+Memory[8] = 0
+Memory[9] = 0
+Memory[10] = 0
+Memory[11] = 0
+Memory[12] = 0
+Memory[13] = 0
+Memory[14] = 0
+Memory[15] = 0
+Memory[16] = 1
+Memory[17] = 0
+Memory[18] = 0
+Memory[19] = 0
+Memory[20] = 0
+Memory[21] = 0
+Memory[22] = 0
+Memory[23] = 0
+Memory[24] = 0
+Memory[25] = 0
+Memory[26] = 0
+Memory[27] = 0
+Memory[28] = 0
+Memory[29] = 0
+Memory[30] = 0
+Memory[31] = 0
+Memory[32] = 0
+Memory[33] = 0
+Memory[34] = 0
+Memory[35] = 0
+Memory[36] = 0
+Memory[37] = 0
+Memory[38] = 0
+Memory[39] = 0
+Memory[40] = 0
+Memory[41] = 0
+Memory[42] = 0
+Memory[43] = 0
+Memory[44] = 0
+Memory[45] = 0
+Memory[46] = 0
+Memory[47] = 0
+Memory[48] = 0
+Memory[49] = 0
+Memory[50] = 0
+Memory[51] = 0
+Memory[52] = 0
+Memory[53] = 0
+Memory[54] = 0
+Memory[55] = 0
+Memory[56] = 0
+Memory[57] = 0
+Memory[58] = 0
+Memory[59] = 0
+Memory[60] = 0
+Memory[61] = 0
+Memory[62] = 0
+Memory[63] = 0
+Memory[64] = 0
+Memory[65] = 0
+Memory[66] = 0
+Memory[67] = 0
+Memory[68] = 0
+Memory[69] = 0
+Memory[70] = 0
+Memory[71] = 0
+Memory[72] = 0
+Memory[73] = 0
+Memory[74] = 0
+Memory[75] = 0
+Memory[76] = 0
+Memory[77] = 0
+Memory[78] = 0
+Memory[79] = 0
+Memory[80] = 0
+Memory[81] = 0
+Memory[82] = 0
+Memory[83] = 0
+Memory[84] = 0
+Memory[85] = 0
+Memory[86] = 0
+Memory[87] = 0
+Memory[88] = 0
+Memory[89] = 0
+Memory[90] = 0
+Memory[91] = 0
+Memory[92] = 0
+Memory[93] = 0
+Memory[94] = 0
+Memory[95] = 0
+Memory[96] = 0
+Memory[97] = 0
+Memory[98] = 0
+Memory[99] = 0

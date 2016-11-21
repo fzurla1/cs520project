@@ -34,6 +34,12 @@ public:
 	bool hasValidData();
 
 	/// <summary>
+	///	This function will:
+	///	return the raw instruction string
+	/// </summary>
+	string getInstruction();
+
+	/// <summary>
 	///	displays current status of pipeline stage
 	/// </summary>
 	void display();
