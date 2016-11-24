@@ -1,4 +1,4 @@
-﻿Build started 11/21/2016 10:10:28 AM.
+﻿Build started 11/21/2016 11:05:23 AM.
      1>Project "C:\Users\Frank\Documents\GitHub\cs520project\APEX_ISA_Implementation\APEX_ISA_Implementation\APEX_ISA_Implementation.vcxproj" on node 2 (Rebuild target(s)).
      1>ClCompile:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _LIB /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Yc"stdafx.h" /Fp"Debug\APEX_ISA_Implementation.pch" /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt stdafx.cpp
@@ -18,7 +18,6 @@
          ALU2.cpp
          ALU1.cpp
          Generating Code...
-     1>cl : Command line warning D9028: minimal rebuild failure, reverting to normal build
        ResourceCompile:
          C:\Program Files (x86)\Windows Kits\8.1\bin\x86\rc.exe /D _UNICODE /D UNICODE /l"0x0409" /nologo /fo"Debug\APEX_ISA_Implementation.res" APEX_ISA_Implementation.rc 
        Link:
@@ -39,4 +38,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:05.50
+Time Elapsed 00:00:05.00
