@@ -21,8 +21,8 @@ public:
 	///	1) Read the forward bus for missing register values
 	///	2) update the Global::apexStruct for the ALU2 phase
 	/// </summary>
-	Global::apexStruct run(	Global::Forwarding_Info(&Forward_Bus)[Global::FORWARDING_BUSES],
-		bool(&Stalled_Stages)[Global::TOTAL_STAGES]);
+	Global::apexStruct run(	Global::Forwarding_Info(&Forward_Bus)[Global::FINAL_FORWARD_TYPE_TOTAL],
+		bool(&Stalled_Stages)[Global::FINAL_STALLED_STAGE_TOTAL]);
 
 	/// <summary>
 	///	This function will:

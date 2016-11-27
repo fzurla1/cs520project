@@ -29,7 +29,7 @@
 #include "Memory.h"
 #include "WriteBack.h"
 
-#define DEBUG_INPUT 0
+#define DEBUG_INPUT 1
 #define DEBUG_OUTPUT 1
 
 using namespace std;
@@ -40,22 +40,33 @@ using namespace std;
 int PC = 4000;
 
 //stalled stages
-bool Stalled_Stages[Global::TOTAL_STAGES];
+bool Stalled_Stages[Global::STALLED_STAGE::FINAL_STALLED_STAGE_TOTAL];
 
 //flags from ALU
-bool ALU_Flags[Global::ALU_FLAG_COUNT];
+bool ALU_Flags[Global::FLAGS::FINAL_FLAGS_TOTAL];
 
 //Register file
-Global::Register_Info Register_File[Global::ARCH_REGISTER_COUNT];
+//Global::Register_Info Register_File[Global::FINAL_ARCH_REGISTERS_ITEM];
+Global::Register_Info Register_File[Global::REGISTERS::FINAL_REGISTERS_TOTAL];
 
 //forwarding bus
-Global::Forwarding_Info Forward_Bus[Global::FORWARDING_BUSES];
+//Global::Forwarding_Info Forward_Bus[Global::FINAL_FORWARD_TYPE_TOTAL];
+Global::Forwarding_Info Forward_Bus[Global::FORWARD_TYPE::FINAL_FORWARD_TYPE_TOTAL];
 
 //Memory - 4 bytes wide, 0 to 3999
 int Memory_Array[Global::MEMORY_SIZE];
 
 //contains PC values
-int Most_Recent_Reg[Global::ARCH_REGISTER_COUNT];
+//int Most_Recent_Reg[Global::FINAL_ARCH_REGISTERS_ITEM];
+
+//Reorder Buffer (ROB)
+Global::Reorder_Buffer ROB;
+
+//Front End Rename Table (RAT)
+Global::Rename_Table Front_End_RAT;
+
+//Back End Rename Table (RAT)
+Global::Rename_Table Back_End_RAT;
 
 //identify when instructions are still in the pipeline
 bool pipelineHasData = true;
@@ -87,7 +98,7 @@ int iteration = 1;
 #pragma region "INITIALIZE FUNCTIONS" 
 void initialize_flags()
 {
-	for (int x = 0; x < Global::ALU_FLAG_COUNT; x++)
+	for (int x = 0; x < Global::FLAGS::FINAL_FLAGS_TOTAL; x++)
 	{
 		ALU_Flags[x] = false;
 	}
@@ -95,15 +106,16 @@ void initialize_flags()
 
 void initialize_forwarding_bus()
 {
-	for (int x = 0; x < Global::FORWARDING_BUSES; x++)
+	for (int x = 0; x < Global::FORWARD_TYPE::FINAL_FORWARD_TYPE_TOTAL; x++)
 	{
 		Forward_Bus[x].flag = Global::FLAGS::CLEAR;
 		Forward_Bus[x].opcode = Global::OPCODE::NONE;
 		Forward_Bus[x].pc_value = -1;
 		Forward_Bus[x].updatePC = false;
 		Forward_Bus[x].target = INT_MAX;
-		Forward_Bus[x].reg_info.status = Global::STATUS::INVALID;
-		Forward_Bus[x].reg_info.tag = Global::ARCH_REGISTERS::NA;
+		Forward_Bus[x].tag = Global::REGISTERS::UNA;
+		Forward_Bus[x].reg_info.status = Global::REGISTER_ALLOCATION::REG_UNALLOCATED;
+		//Forward_Bus[x].reg_info.tag = Global::ARCH_REGISTERS::NA;
 		Forward_Bus[x].reg_info.value = INT_MAX;
 	}
 }
@@ -118,29 +130,46 @@ void initialize_memory()
 
 void initialize_Register_File()
 {
-	for (int x = 0; x < Global::ARCH_REGISTER_COUNT; x++)
+	for (int x = 0; x < Global::REGISTERS::FINAL_REGISTERS_TOTAL; x++)
 	{
-		Register_File[x].status = Global::STATUS::VALID;
-		Register_File[x].tag = Global::ARCH_REGISTERS(x);
+		Register_File[x].status = Global::REGISTER_ALLOCATION::ALLOC_COMMIT;
+		//Register_File[x].tag = Global::ARCH_REGISTERS(x);
 		Register_File[x].value = 0;
 		
 	}
 }
 
+/*
 void initialize_most_recent()
 {
-	for (int x = 0; x < Global::ARCH_REGISTER_COUNT; x++)
+	for (int x = 0; x < Global::FINAL_ARCH_REGISTERS_ITEM; x++)
 	{
 		Most_Recent_Reg[x] = Global::ARCH_REGISTERS::NA;
 	}
 }
+*/
 
 void initialize_stalled_stages()
 {
-	for (int x = 0; x < Global::TOTAL_STAGES; x++)
+	for (int x = 0; x < Global::STALLED_STAGE::FINAL_STALLED_STAGE_TOTAL; x++)
 	{
 		Stalled_Stages[x] = false;
 	}
+}
+
+void initialize_rob()
+{
+	ROB.head = 0;
+	ROB.tail = 0;
+	for (int x = 0; x < Global::ROB_SIZE; x++)
+	{
+		ROB.entries[x].clear();
+	}
+}
+
+void initialize_rename_table(){
+	Front_End_RAT.clear();
+	Back_End_RAT.clear();
 }
 
 void initialize_pipeline()
@@ -161,10 +190,20 @@ void initialize_pipeline()
 		<< "..." << endl;
 	initialize_memory();
 	cout << "Initializing Memory Complete" << endl;
+	cout << "Initializing Reorder Buffer" << endl
+		<< "..." << endl;
+	initialize_rob();
+	cout << "Initializing Reorder Buffer" << endl;
+	cout << "Initializing Rename Table" << endl
+		<< "..." << endl;
+	initialize_rename_table();
+	cout << "Initializing Rename Table" << endl;
+	/*
 	cout << "Resetting History" << endl
 		<< "..." << endl;
 	initialize_most_recent();
 	cout << "Resetting History Complete" << endl;
+	*/
 	cout << "Resetting PC" << endl
 		<< "..." << endl;
 	PC = 4000;
@@ -202,9 +241,11 @@ void displayRegisterFile()
 	Global::Debug("");
 	Global::Debug("-- Register File --");
 
-	for (int x = 0; x < Global::ARCH_REGISTER_COUNT; x++)
+	//for (int x = 0; x < Global::FINAL_ARCH_REGISTERS_ITEM; x++)
+	for (int x = 0; x < Global::REGISTERS::FINAL_REGISTERS_TOTAL; x++)
 	{
-		Global::Debug(Global::toString(Global::ARCH_REGISTERS(x)));
+		//Global::Debug(Global::toString(Global::ARCH_REGISTERS(x));
+		Global::Debug(Global::toString(Global::REGISTERS(x)));
 		Global::Debug("   status : " + Global::toString(Register_File[x].status));
 		Global::Debug("   value  : " + to_string(Register_File[x].value));
 	}
@@ -221,11 +262,6 @@ void displayMemory()
 	}
 }
 
-void displayMostRecentlyUsed()
-{
-
-}
-
 void displayStalledStages()
 {
 	Global::Debug("");
@@ -239,6 +275,17 @@ void displayStalledStages()
 	Global::Debug("MEMORY		: " + to_string(Stalled_Stages[Global::STALLED_STAGE::MEMORY]));
 	Global::Debug("WRITEBACK	: " + to_string(Stalled_Stages[Global::STALLED_STAGE::WRITEBACK]));
 	Global::Debug("");
+}
+
+void displayROB()
+{
+	Global::Debug("-- ROB Information --");
+	Global::Debug("  HEAD = " + to_string(ROB.head));
+	Global::Debug("  TAIL = " + to_string(ROB.tail));
+	for (int x = ROB.head; x <= ROB.tail; x++)
+	{
+
+	}
 }
 #pragma endregion
 
@@ -431,7 +478,7 @@ int _tmain(int argc, char* argv[])
 				system(cmd.c_str());
 			}
 
-#pragma endregion //BASIC COMMANDS
+#pragma endregion
 
 #pragma region SIMULATION
 			string substr = command.substr(0, 8);
@@ -455,7 +502,7 @@ int _tmain(int argc, char* argv[])
 					 *********************/
 
 					//run writeback
-					HALT = writeBack->run(Register_File, Forward_Bus, Most_Recent_Reg);
+					HALT = writeBack->run(Register_File, Forward_Bus, Back_End_RAT);
 
 					if (!HALT)
 					{
@@ -476,7 +523,7 @@ int _tmain(int argc, char* argv[])
 						//as long as DELAY is not stalled, run branch
 						if (!Stalled_Stages[Global::STALLED_STAGE::DELAY])
 						{
-							pipeline_struct_branch = branch->run(PC, Forward_Bus, Stalled_Stages, Register_File[Global::ARCH_REGISTERS::X]);
+							pipeline_struct_branch = branch->run(PC, Forward_Bus, Stalled_Stages, Register_File[Global::REGISTERS::X]);
 						}
 						//or stall branch
 						else
@@ -525,7 +572,7 @@ int _tmain(int argc, char* argv[])
 						}
 
 						//Decode handles delays based on OPCODE internally and update Stalled_Stages
-						pipeline_struct_decode = decode->run(Register_File, Forward_Bus, Stalled_Stages, Most_Recent_Reg);
+						pipeline_struct_decode = decode->run(Register_File, Forward_Bus, Stalled_Stages, ROB, Front_End_RAT);
 						
 						//as long as decode is not stalled and we still have data to read from the
 						//input file, fetch the next command

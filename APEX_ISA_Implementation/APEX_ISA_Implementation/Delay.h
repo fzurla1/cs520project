@@ -14,7 +14,7 @@ public:
 	///	This function does nothing. if memory is stalled, it stalls
 	/// other than that, it simply holds the data for the next round.
 	/// </summary>
-	Global::apexStruct run(bool (&Stalled_Stages)[Global::TOTAL_STAGES]);
+	Global::apexStruct run(bool (&Stalled_Stages)[Global::FINAL_STALLED_STAGE_TOTAL]);
 
 	/// <summary>
 	///	This function will:

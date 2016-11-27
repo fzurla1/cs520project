@@ -10,7 +10,7 @@ Delay::~Delay()
 {
 }
 
-Global::apexStruct Delay::run(bool (&Stalled_Stages)[Global::TOTAL_STAGES])
+Global::apexStruct Delay::run(bool (&Stalled_Stages)[Global::FINAL_STALLED_STAGE_TOTAL])
 {
 	Global::apexStruct output_struct;
 

@@ -11,9 +11,10 @@ WriteBack::~WriteBack()
 }
 
 bool WriteBack::run(
-	Global::Register_Info(&Register_File)[Global::ARCH_REGISTER_COUNT],
-	Global::Forwarding_Info(&Forward_Bus)[Global::FORWARDING_BUSES],
-	int(&Most_Recent_Reg)[Global::ARCH_REGISTER_COUNT])
+	Global::Register_Info(&Register_File)[Global::FINAL_REGISTERS_TOTAL],
+	Global::Forwarding_Info(&Forward_Bus)[Global::FINAL_FORWARD_TYPE_TOTAL],
+	//int(&Most_Recent_Reg)[Global::FINAL_ARCH_REGISTERS_ITEM]);
+	Global::Rename_Table(&Back_End_RAT))
 {
 	bool HALT = false;
 	snapshot_before = myStruct;

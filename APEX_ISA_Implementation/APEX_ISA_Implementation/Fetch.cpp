@@ -14,15 +14,15 @@ Fetch::~Fetch()
 
 ifstream& Fetch::GotoLine(ifstream& file, unsigned int num){
 	file.seekg(std::ios::beg);
-	for (int i = 0; i < num; ++i){
+	for (unsigned int i = 0; i < num; ++i){
 		file.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 	}
 	return file;
 }
 
 Global::apexStruct Fetch::run(int (&PC), 
-	Global::Forwarding_Info(&Forward_Bus)[Global::FORWARDING_BUSES], 
-	bool(&Stalled_Stages)[Global::TOTAL_STAGES])
+	Global::Forwarding_Info(&Forward_Bus)[Global::FINAL_FORWARD_TYPE_TOTAL], 
+	bool(&Stalled_Stages)[Global::FINAL_STALLED_STAGE_TOTAL])
 {
 	int ourPC = 0;
 	Stalled_Stages[Global::STALLED_STAGE::FETCH] = false;

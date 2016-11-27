@@ -17,9 +17,9 @@ ALU2::~ALU2()
 }
 
 Global::apexStruct ALU2::run(
-	bool(&ALU_Flags)[Global::ALU_FLAG_COUNT],
-	Global::Forwarding_Info(&Forward_Bus)[Global::FORWARDING_BUSES],
-	bool(&Stalled_Stages)[Global::TOTAL_STAGES])
+	bool(&ALU_Flags)[Global::FINAL_FLAGS_TOTAL],
+	Global::Forwarding_Info(&Forward_Bus)[Global::FINAL_FORWARD_TYPE_TOTAL],
+	bool(&Stalled_Stages)[Global::FINAL_STALLED_STAGE_TOTAL])
 {
 	Global::apexStruct output_struct = myStruct;
 	snapshot_before = myStruct;

@@ -14,8 +14,8 @@ Memory::~Memory()
 //at this point, memory location must already be computed, therefore, src1 value must be known.
 //this mean that we could potentially still require the 1st operand for a store command
 Global::apexStruct Memory::run(
-	Global::Forwarding_Info(&Forward_Bus)[Global::FORWARDING_BUSES],
-	bool (&Stalled_Stages)[Global::TOTAL_STAGES],
+	Global::Forwarding_Info(&Forward_Bus)[Global::FINAL_FORWARD_TYPE_TOTAL],
+	bool (&Stalled_Stages)[Global::FINAL_STALLED_STAGE_TOTAL],
 	int (&Memory_Array)[Global::MEMORY_SIZE])
 {
 	Global::apexStruct output_struct = myStruct;

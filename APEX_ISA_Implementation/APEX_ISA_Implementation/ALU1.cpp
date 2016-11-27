@@ -16,8 +16,8 @@ ALU1::~ALU1()
 //	This function will:
 //	1) Read the forward bus for missing register values
 //	2) update the apexStruct for the ALU2 phase
-Global::apexStruct ALU1::run( Global::Forwarding_Info(&Forward_Bus)[Global::FORWARDING_BUSES],
-	bool(&Stalled_Stages)[Global::TOTAL_STAGES])
+Global::apexStruct ALU1::run( Global::Forwarding_Info(&Forward_Bus)[Global::FINAL_FORWARD_TYPE_TOTAL],
+	bool(&Stalled_Stages)[Global::FINAL_STALLED_STAGE_TOTAL])
 {
 	Global::apexStruct output_struct = myStruct;
 	snapshot_before = myStruct;

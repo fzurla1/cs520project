@@ -16,10 +16,12 @@ public:
 	/// to the forwarding bus for data. if data is still not valid, stall.
 	/// </summary>
 	Global::apexStruct run(
-		Global::Register_Info(&Register_File)[Global::ARCH_REGISTER_COUNT],
-		Global::Forwarding_Info(&Forward_Bus)[Global::FORWARDING_BUSES],
-		bool(&Stalled_Stages)[Global::TOTAL_STAGES],
-		int (&Most_Recent_Reg)[Global::ARCH_REGISTER_COUNT]);
+		Global::Register_Info(&Register_File)[Global::REGISTERS::FINAL_REGISTERS_TOTAL],
+		Global::Forwarding_Info(&Forward_Bus)[Global::FORWARD_TYPE::FINAL_FORWARD_TYPE_TOTAL],
+		bool(&Stalled_Stages)[Global::STALLED_STAGE::FINAL_STALLED_STAGE_TOTAL],
+		//int(&Most_Recent_Reg)[Global::REGISTERS::FINAL_REGISTERS_TOTAL],
+		Global::Reorder_Buffer(&ROB),
+		Global::Rename_Table(&Front_End_RAT));
 
 	/// <summary>
 	///	This function will:

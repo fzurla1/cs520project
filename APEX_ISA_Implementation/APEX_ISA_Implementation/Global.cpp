@@ -134,6 +134,7 @@ string Global::toString(FLAGS flag)
 	return out;
 }
 
+/*
 //Architectural Register Types
 string Global::toString(ARCH_REGISTERS reg)
 {
@@ -196,6 +197,19 @@ string Global::toString(ARCH_REGISTERS reg)
 	}
 	return out;
 }
+*/
+
+//Registers
+string Global::toString(REGISTERS reg)
+{
+	string out = "U" + int(reg);
+
+	if (reg == REGISTERS::UNA)
+		out = "UNA";
+	else if (reg == REGISTERS::X)
+		out = "X";
+	return out;
+}
 
 //Forwarding Types
 string Global::toString(FORWARD_TYPE frwd)
@@ -238,6 +252,20 @@ string Global::toString(STATUS stat)
 		out = "INVALID";
 		break;
 	}
+	return out;
+}
+
+//ROB allocation status
+string Global::toString(ROB_ALLOCATION stat)
+{
+	string out = "";
+	return out;
+}
+
+//Register allocation status
+string Global::toString(REGISTER_ALLOCATION stat)
+{
+	string out = "";
 	return out;
 }
 

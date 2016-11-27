@@ -10,11 +10,20 @@ using namespace std;
 class Global
 {
 public:
+	//constants
+	//static const int ALU_FLAG_COUNT = 3;
+	//static const int FORWARDING_BUSES = 4;
+	//static const int ARCH_REGISTER_COUNT = 16;
+	//static const int REGISTER_COUNT = 32;
+	static const int MEMORY_SIZE = 4000;
+	//static const int TOTAL_STAGES = 8;
+	static const int ROB_SIZE = 64;
 
 	//register status flags
 	enum STATUS{
 		INVALID,
-		VALID
+		VALID,
+		FINAL_STATUS_TOTAL
 	};
 
 	//possible instruction OPCODEs
@@ -31,7 +40,8 @@ public:
 		//Control instructions
 		BZ,		BNZ,
 		JUMP,	BAL,
-		HALT,	NONE
+		HALT,	NONE,
+		FINAL_OPCODE_TOTAL
 	};
 
 	//ALU flags
@@ -39,7 +49,8 @@ public:
 		ZERO,
 		OVER_FLOW,
 		UNDER_FLOW,
-		CLEAR
+		CLEAR,
+		FINAL_FLAGS_TOTAL
 	};
 
 	//available architecture registers
@@ -48,7 +59,23 @@ public:
 		R4, R5, R6, R7,
 		R8, R9, R10, R11,
 		R12, R13, R14, R15,
-		X,NA
+		X,
+		FINAL_ARCH_REGISTERS_ITEM,
+		NA
+	};
+
+	//unified registers
+	enum REGISTERS{
+		U0, U1, U2, U3, U4, 
+		U5, U6, U7, U8, U9, 
+		U10, U11, U12, U13, U14, 
+		U15, U16, U17, U18, U19, 
+		U20, U21, U22, U23, U24, 
+		U25, U26, U27, U28, U29,
+		U30, U31, U32,
+		X,
+		FINAL_REGISTERS_TOTAL,
+		UNA
 	};
 
 	//forwarding types
@@ -56,7 +83,8 @@ public:
 		FROM_ALU2,
 		FROM_BRANCH,
 		FROM_MEMORY,
-		FROM_WRITEBACK
+		FROM_WRITEBACK,
+		FINAL_FORWARD_TYPE_TOTAL
 	};
 
 	//stages that can stall
@@ -68,26 +96,67 @@ public:
 		BRANCH,
 		DELAY,
 		MEMORY,
-		WRITEBACK
+		WRITEBACK,
+		FINAL_STALLED_STAGE_TOTAL
+	};
+
+	//ROB entry allocation status
+	enum ROB_ALLOCATION{
+		//ROB entry unallocated
+		ROB_UNALLOCATED,
+		//ROB entry waiting for execution
+		WAITING,
+		//ROB entry executing
+		EXECUTING,
+		//ROB entry completed executing
+		COMPLETE,
+		FINAL_ROB_ALLOCATION_TOTAL
+	};
+
+	enum REGISTER_ALLOCATION{
+		//register is unallocated
+		REG_UNALLOCATED,
+		//register is allocated, but not committed
+		ALLOC_NO_COMMIT,
+		//register is allocated, and committed
+		ALLOC_COMMIT,
+		FINAL_REGISTER_ALLOCATION_TOTAL
+	};
+
+	//type of instruction in ROB
+	enum INSTRUCTION_TYPE{
+		REG_TO_REG_TYPE,
+		LOAD_TYPE,
+		STORE_TYPE,
+		BRANCH_TYPE,
+		NONE_TYPE,
+		FINAL_INSTRUCTION_TYPE_TOTAL
+	};
+
+	enum SOURCES{
+		REGISTER_FILE,
+		ROB,
+		FINAL_SOURCES_TOTAL
 	};
 
 	//generic register information
 	struct Register_Info{
-		ARCH_REGISTERS tag = ARCH_REGISTERS::NA;
+		REGISTERS tag = REGISTERS::UNA;
 		unsigned int value = -1;
-		STATUS status = STATUS::INVALID;
+		REGISTER_ALLOCATION status = REGISTER_ALLOCATION::ALLOC_COMMIT;
 		
 		void clear()
 		{
-			tag = ARCH_REGISTERS::NA;
+			//tag = ARCH_REGISTERS::NA;
 			value = -1;
-			status = STATUS::INVALID;
+			status = REGISTER_ALLOCATION::ALLOC_COMMIT;
 		}
 	};
 
 	//structure used in forwarding bus
 	struct Forwarding_Info{
 		int pc_value = 0;
+		REGISTERS tag = REGISTERS::UNA;
 		Register_Info reg_info;
 		//flags
 		FLAGS flag = FLAGS::CLEAR;
@@ -106,6 +175,73 @@ public:
 		}
 	};
 
+	struct Source_Struct{
+		int value = 0;
+		STATUS status = STATUS::INVALID;
+		REGISTERS tag = REGISTERS::UNA;
+		int rob_loc = -1;
+
+		void clear()
+		{
+			value = 0;
+			status = STATUS::INVALID;
+			tag = REGISTERS::UNA;
+			rob_loc = -1;
+		}
+	};
+
+	//ROB entry
+	struct ROB_Entry{
+		int pc_value = 0;
+		INSTRUCTION_TYPE type = INSTRUCTION_TYPE::NONE_TYPE;
+		REGISTERS destReg = REGISTERS::UNA;
+		int result = 0;
+		FLAGS flags = FLAGS::CLEAR;
+		ROB_ALLOCATION alloc = ROB_ALLOCATION::ROB_UNALLOCATED;
+		int saved_RAT_entry = 0;
+		
+		void clear()
+		{
+			pc_value = 0;
+			type = INSTRUCTION_TYPE::NONE_TYPE;
+			destReg = REGISTERS::UNA;
+			result = 0;
+			flags = FLAGS::CLEAR;
+			alloc = ROB_ALLOCATION::ROB_UNALLOCATED;
+			saved_RAT_entry = 0;
+		}
+	};
+
+	//Reorder Buffer (ROB)
+	struct Reorder_Buffer{
+		//head pointer of ROB
+		int head = 0;
+
+		//tail pointer of ROB
+		int tail = 0;
+
+		ROB_Entry entries[ROB_SIZE];
+	};
+
+	//rename table containing the current stand-in for an
+	//input architectural register is a register within the
+	//ARF (src bit = 0) or a slot within the ROB (src_bit=1)
+	struct Rename_Table{
+		REGISTERS reg[ARCH_REGISTERS::FINAL_ARCH_REGISTERS_ITEM];
+		int rob_loc[ARCH_REGISTERS::FINAL_ARCH_REGISTERS_ITEM];
+		SOURCES src_bit[ARCH_REGISTERS::FINAL_ARCH_REGISTERS_ITEM];
+
+		void clear()
+		{
+			for (int x = 0; x < ARCH_REGISTERS::FINAL_ARCH_REGISTERS_ITEM; x++)
+			{
+				reg[x] = REGISTERS::UNA;
+				rob_loc[x] = -1;
+				src_bit[x] = SOURCES::REGISTER_FILE;
+			}
+		}
+	};
+
 	//APEX structure to get passed between stages
 	struct apexStruct{
 		int pc_value = INT_MAX;
@@ -116,13 +252,13 @@ public:
 			OPCODE op_code = OPCODE::NONE;
 
 			//destination register information
-			Register_Info dest;
+			Source_Struct dest;
 			
 			//source 1 register information
-			Register_Info src1;
+			Source_Struct src1;
 			
 			//source 2 register information
-			Register_Info src2;
+			Source_Struct src2;
 			
 			//literal value information
 			int literal_value = 0;
@@ -153,13 +289,6 @@ public:
 	
 	int PC; //program counter
 
-	//constants
-	static const int ALU_FLAG_COUNT = 3;
-	static const int FORWARDING_BUSES = 4;
-	static const int ARCH_REGISTER_COUNT = 16;
-	static const int MEMORY_SIZE = 4000;
-	static const int TOTAL_STAGES = 8;
-
 	//functions
 	static void setOutFile(string filename);
 	static string getOutFile();
@@ -169,9 +298,12 @@ public:
 	//used for debug - set enums to string for easier debugging and output
 	static string toString(OPCODE opcode);
 	static string toString(FLAGS flag);
-	static string toString(ARCH_REGISTERS reg);
+	//static string toString(ARCH_REGISTERS reg);
+	static string toString(REGISTERS reg);
 	static string toString(FORWARD_TYPE frwd);
 	static string toString(STATUS stat);
+	static string toString(ROB_ALLOCATION stat);
+	static string toString(REGISTER_ALLOCATION stat);
 	static string toString(STALLED_STAGE stage);
 
 private:

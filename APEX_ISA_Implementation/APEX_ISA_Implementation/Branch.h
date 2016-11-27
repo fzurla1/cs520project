@@ -17,8 +17,8 @@ public:
 	/// </summary>
 	Global::apexStruct run(
 		int PC,
-		Global::Forwarding_Info(&Forward_Bus)[Global::FORWARDING_BUSES],
-		bool(&Stalled_Stages)[Global::TOTAL_STAGES],
+		Global::Forwarding_Info(&Forward_Bus)[Global::FINAL_FORWARD_TYPE_TOTAL],
+		bool(&Stalled_Stages)[Global::FINAL_STALLED_STAGE_TOTAL],
 		Global::Register_Info(&X));
 
 	/// <summary>
