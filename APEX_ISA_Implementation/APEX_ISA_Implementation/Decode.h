@@ -16,7 +16,8 @@ public:
 	/// to the forwarding bus for data. if data is still not valid, stall.
 	/// </summary>
 	Global::apexStruct run(
-		Global::Register_Info(&Register_File)[Global::REGISTERS::FINAL_REGISTERS_TOTAL],
+		Global::Register_Info *Register_File,
+		int URF_SIZE,
 		Global::Forwarding_Info(&Forward_Bus)[Global::FORWARD_TYPE::FINAL_FORWARD_TYPE_TOTAL],
 		bool(&Stalled_Stages)[Global::STALLED_STAGE::FINAL_STALLED_STAGE_TOTAL],
 		//int(&Most_Recent_Reg)[Global::REGISTERS::FINAL_REGISTERS_TOTAL],

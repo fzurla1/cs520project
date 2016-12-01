@@ -206,7 +206,7 @@ string Global::toString(REGISTERS reg)
 
 	if (reg == REGISTERS::UNA)
 		out = "UNA";
-	else if (reg == REGISTERS::X)
+	else if (reg == REGISTERS::UX)
 		out = "X";
 	return out;
 }

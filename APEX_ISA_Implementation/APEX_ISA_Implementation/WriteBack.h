@@ -15,9 +15,10 @@ public:
 	/// and state if we reached a HALt
 	/// </summary>
 	bool run(
-		Global::Register_Info(&Register_File)[Global::FINAL_REGISTERS_TOTAL],
 		Global::Forwarding_Info(&Forward_Bus)[Global::FINAL_FORWARD_TYPE_TOTAL],
 		//int(&Most_Recent_Reg)[Global::FINAL_ARCH_REGISTERS_ITEM]);
+		Global::Reorder_Buffer(&ROB),
+		Global::Register_Info * Register_File,
 		Global::Rename_Table(&Back_End_RAT));
 
 	/// <summary>

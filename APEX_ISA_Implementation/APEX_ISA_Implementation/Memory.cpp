@@ -45,7 +45,7 @@ Global::apexStruct Memory::run(
 
 					//write bogus info into forward bus
 					Forward_Bus[Global::FROM_MEMORY].pc_value = -1;
-					Forward_Bus[Global::FROM_MEMORY].reg_info.tag = Global::ARCH_REGISTERS::NA;
+					Forward_Bus[Global::FROM_MEMORY].reg_info.tag = Global::REGISTERS::UNA;
 					Forward_Bus[Global::FROM_MEMORY].reg_info.value = -1;
 				}
 				else
@@ -59,7 +59,7 @@ Global::apexStruct Memory::run(
 
 				//write bogus info into forward bus
 				Forward_Bus[Global::FROM_MEMORY].pc_value = -1;
-				Forward_Bus[Global::FROM_MEMORY].reg_info.tag = Global::ARCH_REGISTERS::NA;
+				Forward_Bus[Global::FROM_MEMORY].reg_info.tag = Global::REGISTERS::UNA;
 				Forward_Bus[Global::FROM_MEMORY].reg_info.value = -1;
 			}
 		}

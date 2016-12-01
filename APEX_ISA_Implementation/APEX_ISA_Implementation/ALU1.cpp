@@ -75,58 +75,6 @@ void ALU1::display()
 	if (myStruct.pc_value != INT_MAX)
 	{
 		Global::Debug("ALU1       - " + snapshot_before.untouched_instruction);
-		/*
-		Global::Debug("\n--- ALU1 stage display ---\n - ENTERING STAGE -");
-		Global::Debug("pc                  : " + to_string(4000 + ((snapshot_before.pc_value -4000)* 4)));
-		Global::Debug("raw instruction     : " + snapshot_before.untouched_instruction);
-		
-		Global::Debug("op code             : " + Global::toString(snapshot_before.instruction.op_code));
-		Global::Debug("destination reg tag : " + Global::toString(snapshot_before.instruction.dest.tag));
-		Global::Debug("destination value   : not ready");
-		Global::Debug("source 1 reg tag    : " + Global::toString(snapshot_before.instruction.src1.tag));
-		Global::Debug("source 1 reg valid  : " + Global::toString(snapshot_before.instruction.src1.status));
-
-		if (snapshot_before.instruction.src1.status == Global::STATUS::INVALID)
-			Global::Debug("source 1 reg value  : invalid!");
-		else
-			Global::Debug("source 1 reg value  : " + to_string(snapshot_before.instruction.src1.value));
-
-		Global::Debug("source 2 reg tag    : " + Global::toString(snapshot_before.instruction.src2.tag));
-		Global::Debug("source 2 reg valid  : " + Global::toString(snapshot_before.instruction.src2.status));
-
-		if (!snapshot_before.instruction.src2.status)
-			Global::Debug("source 2 reg value  : invalid!");
-		else
-			Global::Debug("source 2 reg value  : " + to_string(snapshot_before.instruction.src2.value));
-
-		Global::Debug("literal             : " + to_string(snapshot_before.instruction.literal_value));
-		Global::Debug(".....................");
-
-		Global::Debug(" - EXITING STAGE -");
-		Global::Debug("pc                  : " + to_string(4000 + ((snapshot_after.pc_value - 4000) * 4)));
-		Global::Debug("op code             : " + Global::toString(snapshot_after.instruction.op_code));
-		Global::Debug("destination reg tag : " + Global::toString(snapshot_after.instruction.dest.tag));
-		Global::Debug("destination value   : not ready");
-		Global::Debug("source 1 reg tag    : " + Global::toString(snapshot_after.instruction.src1.tag));
-		Global::Debug("source 1 reg valid  : " + Global::toString(snapshot_after.instruction.src1.status));
-
-		if (!snapshot_after.instruction.src1.status)
-			Global::Debug("source 1 reg value  : invalid!");
-		else
-			Global::Debug("source 1 reg value  : " + to_string(snapshot_after.instruction.src1.value));
-
-		Global::Debug("source 2 reg tag    : " + Global::toString(snapshot_after.instruction.src2.tag));
-		Global::Debug("source 2 reg valid  : " + Global::toString(snapshot_after.instruction.src2.status));
-
-		if (!snapshot_after.instruction.src2.status)
-			Global::Debug("source 2 reg value  : invalid!");
-		else
-			Global::Debug("source 2 reg value  : " + to_string(snapshot_after.instruction.src2.value));
-
-		Global::Debug("literal             : " + to_string(snapshot_after.instruction.literal_value));
-
-		Global::Debug("--- END ALU1 stage display ---");
-		*/
 	}
 	else
 	{

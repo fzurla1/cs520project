@@ -17,7 +17,7 @@ public:
 	//static const int REGISTER_COUNT = 32;
 	static const int MEMORY_SIZE = 4000;
 	//static const int TOTAL_STAGES = 8;
-	static const int ROB_SIZE = 64;
+	static const int ROB_SIZE = 40;
 
 	//register status flags
 	enum STATUS{
@@ -73,8 +73,8 @@ public:
 		U20, U21, U22, U23, U24, 
 		U25, U26, U27, U28, U29,
 		U30, U31, U32,
-		X,
 		FINAL_REGISTERS_TOTAL,
+		UX,
 		UNA
 	};
 
@@ -141,15 +141,15 @@ public:
 
 	//generic register information
 	struct Register_Info{
-		REGISTERS tag = REGISTERS::UNA;
+		int tag = -1;
 		unsigned int value = -1;
-		REGISTER_ALLOCATION status = REGISTER_ALLOCATION::ALLOC_COMMIT;
+		REGISTER_ALLOCATION status = REGISTER_ALLOCATION::REG_UNALLOCATED;
 		
 		void clear()
 		{
-			//tag = ARCH_REGISTERS::NA;
+			tag = -1;
 			value = -1;
-			status = REGISTER_ALLOCATION::ALLOC_COMMIT;
+			status = REGISTER_ALLOCATION::REG_UNALLOCATED;
 		}
 	};
 
@@ -178,14 +178,14 @@ public:
 	struct Source_Struct{
 		int value = 0;
 		STATUS status = STATUS::INVALID;
-		REGISTERS tag = REGISTERS::UNA;
+		int tag = -1;
 		int rob_loc = -1;
 
 		void clear()
 		{
 			value = 0;
 			status = STATUS::INVALID;
-			tag = REGISTERS::UNA;
+			tag = -1;
 			rob_loc = -1;
 		}
 	};
@@ -194,7 +194,8 @@ public:
 	struct ROB_Entry{
 		int pc_value = 0;
 		INSTRUCTION_TYPE type = INSTRUCTION_TYPE::NONE_TYPE;
-		REGISTERS destReg = REGISTERS::UNA;
+		int destReg = -1;
+		ARCH_REGISTERS destArchReg = ARCH_REGISTERS::NA;
 		int result = 0;
 		FLAGS flags = FLAGS::CLEAR;
 		ROB_ALLOCATION alloc = ROB_ALLOCATION::ROB_UNALLOCATED;
@@ -204,7 +205,8 @@ public:
 		{
 			pc_value = 0;
 			type = INSTRUCTION_TYPE::NONE_TYPE;
-			destReg = REGISTERS::UNA;
+			destReg = -1;
+			destArchReg = ARCH_REGISTERS::NA;
 			result = 0;
 			flags = FLAGS::CLEAR;
 			alloc = ROB_ALLOCATION::ROB_UNALLOCATED;
@@ -227,7 +229,7 @@ public:
 	//input architectural register is a register within the
 	//ARF (src bit = 0) or a slot within the ROB (src_bit=1)
 	struct Rename_Table{
-		REGISTERS reg[ARCH_REGISTERS::FINAL_ARCH_REGISTERS_ITEM];
+		int reg[ARCH_REGISTERS::FINAL_ARCH_REGISTERS_ITEM];
 		int rob_loc[ARCH_REGISTERS::FINAL_ARCH_REGISTERS_ITEM];
 		SOURCES src_bit[ARCH_REGISTERS::FINAL_ARCH_REGISTERS_ITEM];
 
@@ -235,7 +237,7 @@ public:
 		{
 			for (int x = 0; x < ARCH_REGISTERS::FINAL_ARCH_REGISTERS_ITEM; x++)
 			{
-				reg[x] = REGISTERS::UNA;
+				reg[x] = -1;
 				rob_loc[x] = -1;
 				src_bit[x] = SOURCES::REGISTER_FILE;
 			}
@@ -247,6 +249,7 @@ public:
 		int pc_value = INT_MAX;
 		string untouched_instruction = "";
 		int branch_waiting_to_complete = INT_MAX; //instruction that branch is dependent on
+		INSTRUCTION_TYPE type = INSTRUCTION_TYPE::NONE_TYPE;
 		struct instruction{
 			//instruction operation code
 			OPCODE op_code = OPCODE::NONE;
@@ -275,6 +278,7 @@ public:
 			pc_value = INT_MAX;
 			untouched_instruction = "";
 			branch_waiting_to_complete = INT_MAX;
+			type = INSTRUCTION_TYPE::NONE_TYPE;
 			instruction.op_code = OPCODE::NONE;
 			instruction.dest.clear();
 			instruction.src1.clear();

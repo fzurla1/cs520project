@@ -39,21 +39,6 @@ Global::apexStruct ALU2::run(
 			{
 #pragma region "ADD"
 			case Global::OPCODE::ADD:
-				/* overflow
-				if ((output_struct.instruction.src2.value > 0)
-					&& (myStruct.instruction.src1.value > INT_MAX - myStruct.instruction.src2.value))
-				{
-					ALU_Flags[Global::FLAGS::OVER_FLOW] = true;
-					Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].flag = Global::FLAGS::OVER_FLOW;
-				}
-				/* underflow
-				if ((output_struct.instruction.src2.value < 0)
-					&& (myStruct.instruction.src1.value < INT_MIN - myStruct.instruction.src2.value))
-				{
-					ALU_Flags[Global::FLAGS::UNDER_FLOW] = true;
-					Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].flag = Global::FLAGS::UNDER_FLOW;
-				}
-				*/
 				output_struct.instruction.dest.value =
 					myStruct.instruction.src1.value + myStruct.instruction.src2.value;
 
@@ -62,21 +47,6 @@ Global::apexStruct ALU2::run(
 
 #pragma region "ADD w/ literal"
 			case Global::OPCODE::ADDL:
-				/* overflow 
-				if ((output_struct.instruction.literal_value > 0)
-					&& (myStruct.instruction.src1.value > INT_MAX - myStruct.instruction.literal_value))
-				{
-					ALU_Flags[Global::FLAGS::OVER_FLOW] = true;
-					Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].flag = Global::FLAGS::OVER_FLOW;
-				}
-				/* underflow 
-				if ((output_struct.instruction.literal_value < 0)
-					&& (myStruct.instruction.src1.value < INT_MIN - myStruct.instruction.literal_value))
-				{
-					ALU_Flags[Global::FLAGS::UNDER_FLOW] = true;
-					Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].flag = Global::FLAGS::UNDER_FLOW;
-				}
-				*/
 				output_struct.instruction.dest.value =
 					myStruct.instruction.src1.value + myStruct.instruction.literal_value;
 
@@ -85,23 +55,6 @@ Global::apexStruct ALU2::run(
 
 #pragma region "SUB"
 			case Global::OPCODE::SUB:
-				/* overflow 
-				if ((myStruct.instruction.src2.value < 0)
-					&& (myStruct.instruction.src1.value > INT_MAX + myStruct.instruction.src2.value))
-				{
-					ALU_Flags[Global::FLAGS::OVER_FLOW] = true;
-					Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].flag = Global::FLAGS::OVER_FLOW;
-				}
-
-				/* underflow 
-				if ((myStruct.instruction.src2.value > 0)
-					&& (myStruct.instruction.src1.value < INT_MIN + myStruct.instruction.src2.value))
-				{
-					ALU_Flags[Global::FLAGS::UNDER_FLOW] = true;
-					Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].flag = Global::FLAGS::UNDER_FLOW;
-				}
-				*/
-
 				output_struct.instruction.dest.value =
 					myStruct.instruction.src1.value - myStruct.instruction.src2.value;
 
@@ -110,22 +63,6 @@ Global::apexStruct ALU2::run(
 
 #pragma region "SUB w/ lieral"
 			case Global::OPCODE::SUBL:
-				/* overflow
-				if ((myStruct.instruction.literal_value < 0)
-					&& (myStruct.instruction.src1.value > INT_MAX + myStruct.instruction.literal_value))
-				{
-					ALU_Flags[Global::FLAGS::OVER_FLOW] = true;
-					Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].flag = Global::FLAGS::OVER_FLOW;
-				}
-
-				/* underflow
-				if ((myStruct.instruction.literal_value > 0)
-					&& (myStruct.instruction.src1.value < INT_MIN + myStruct.instruction.literal_value))
-				{
-					ALU_Flags[Global::FLAGS::UNDER_FLOW] = true;
-					Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].flag = Global::FLAGS::UNDER_FLOW;
-				}
-				*/
 
 				output_struct.instruction.dest.value =
 					myStruct.instruction.src1.value - myStruct.instruction.literal_value;
@@ -135,21 +72,6 @@ Global::apexStruct ALU2::run(
 
 #pragma region "MUL"
 			case Global::OPCODE::MUL:
-				/* overflow 
-				if ((myStruct.instruction.src1.value > INT_MAX / myStruct.instruction.src2.value)
-					|| ((myStruct.instruction.src1.value == -1) && (myStruct.instruction.src2.value == INT_MIN)) //2's comp
-					|| ((myStruct.instruction.src2.value == -1) && (myStruct.instruction.src1.value == INT_MIN))) //2' comp
-				{
-					ALU_Flags[Global::FLAGS::OVER_FLOW] = true;
-					Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].flag = Global::FLAGS::OVER_FLOW;
-				}
-				/* underflow 
-				if (myStruct.instruction.src1.value < INT_MIN / myStruct.instruction.src2.value)
-				{
-					ALU_Flags[Global::FLAGS::UNDER_FLOW] = true;
-					Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].flag = Global::FLAGS::UNDER_FLOW;
-				}
-				*/
 
 				output_struct.instruction.dest.value =
 					myStruct.instruction.src1.value * myStruct.instruction.src2.value;
@@ -159,21 +81,6 @@ Global::apexStruct ALU2::run(
 
 #pragma region "MUL w/ literal"
 			case Global::OPCODE::MULL:
-				/* overflow
-				if ((myStruct.instruction.src1.value > INT_MAX / myStruct.instruction.literal_value)
-					|| ((myStruct.instruction.src1.value == -1) && (myStruct.instruction.literal_value == INT_MIN)) //2's comp
-					|| ((myStruct.instruction.literal_value == -1) && (myStruct.instruction.src1.value == INT_MIN))) //2' comp
-				{
-					ALU_Flags[Global::FLAGS::OVER_FLOW] = true;
-					Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].flag = Global::FLAGS::OVER_FLOW;
-				}
-				/* underflow
-				if (myStruct.instruction.src1.value < INT_MIN / myStruct.instruction.literal_value)
-				{
-					ALU_Flags[Global::FLAGS::UNDER_FLOW] = true;
-					Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].flag = Global::FLAGS::UNDER_FLOW;
-				}
-				*/
 
 				output_struct.instruction.dest.value =
 					myStruct.instruction.src1.value * myStruct.instruction.literal_value;
@@ -273,9 +180,7 @@ Global::apexStruct ALU2::run(
 				ALU_Flags[Global::FLAGS::ZERO] = false;
 			}
 
-			if (!ALU_Flags[Global::FLAGS::OVER_FLOW]
-				&& !ALU_Flags[Global::FLAGS::UNDER_FLOW]
-				&& !ALU_Flags[Global::FLAGS::ZERO])
+			if (!ALU_Flags[Global::FLAGS::ZERO])
 			{
 				ALU_Flags[Global::FLAGS::CLEAR] = true;
 				Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].flag = Global::FLAGS::CLEAR;
@@ -303,7 +208,6 @@ void ALU2::setPipelineStruct(Global::apexStruct input_struct)
 bool ALU2::hasValidData()
 {
 	return (myStruct.pc_value != INT_MAX);
-
 }
 
 string ALU2::getInstruction()
@@ -317,35 +221,6 @@ void ALU2::display()
 	if (myStruct.pc_value != INT_MAX)
 	{
 		Global::Debug("ALU2       - " + snapshot_before.untouched_instruction);
-		/*
-		Global::Debug("\n--- ALU2 stage display ---\n - ENTERING STAGE -");
-		Global::Debug("pc                  : " + to_string(4000 + ((snapshot_before.pc_value - 4000) * 4)));
-		Global::Debug("raw instruction     : " + snapshot_before.untouched_instruction);
-		Global::Debug("op code             : " + Global::toString(snapshot_before.instruction.op_code));
-		Global::Debug("destination reg tag : " + Global::toString(snapshot_before.instruction.dest.tag));
-		Global::Debug("destination value   : not ready");
-		Global::Debug("source 1 reg tag    : " + Global::toString(snapshot_before.instruction.src1.tag));
-		Global::Debug("source 1 reg valid  : " + Global::toString(snapshot_before.instruction.src1.status));
-		Global::Debug("source 1 reg value  : " + to_string(snapshot_before.instruction.src1.value));
-		Global::Debug("source 2 reg tag    : " + Global::toString(snapshot_before.instruction.src2.tag));
-		Global::Debug("source 2 reg valid  : " + Global::toString(snapshot_before.instruction.src2.status));
-		Global::Debug("source 2 reg value  : " + to_string(snapshot_before.instruction.src2.value));
-		Global::Debug("literal             : " + to_string(snapshot_before.instruction.literal_value));
-		Global::Debug(".....................");
-		Global::Debug(" - EXITING STAGE -");
-		Global::Debug("pc                  : " + to_string(4000 + ((snapshot_after.pc_value - 4000) * 4)));
-		Global::Debug("op code             : " + Global::toString(snapshot_after.instruction.op_code));
-		Global::Debug("destination reg tag : " + Global::toString(snapshot_after.instruction.dest.tag));
-		Global::Debug("destination value   : " + to_string(snapshot_after.instruction.dest.value));
-		Global::Debug("source 1 reg tag    : " + Global::toString(snapshot_after.instruction.src1.tag));
-		Global::Debug("source 1 reg valid  : " + Global::toString(snapshot_after.instruction.src1.status));
-		Global::Debug("source 1 reg value  : " + to_string(snapshot_after.instruction.src1.value));
-		Global::Debug("source 2 reg tag    : " + Global::toString(snapshot_after.instruction.src2.tag));
-		Global::Debug("source 2 reg valid  : " + Global::toString(snapshot_after.instruction.src2.status));
-		Global::Debug("source 2 reg value  : " + to_string(snapshot_after.instruction.src2.value));
-		Global::Debug("literal             : " + to_string(snapshot_after.instruction.literal_value));
-		Global::Debug("--- END ALU2 stage display ---");
-		*/
 	}
 	else
 	{

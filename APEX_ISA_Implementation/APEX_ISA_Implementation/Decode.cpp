@@ -18,7 +18,8 @@ Decode::~Decode()
 }
 
 Global::apexStruct Decode::run(
-	Global::Register_Info(&Register_File)[Global::REGISTERS::FINAL_REGISTERS_TOTAL],
+	Global::Register_Info *Register_File,
+	int URF_SIZE,
 	Global::Forwarding_Info(&Forward_Bus)[Global::FORWARD_TYPE::FINAL_FORWARD_TYPE_TOTAL],
 	bool(&Stalled_Stages)[Global::STALLED_STAGE::FINAL_STALLED_STAGE_TOTAL],
 	//int(&Most_Recent_Reg)[Global::REGISTERS::FINAL_REGISTERS_TOTAL],
@@ -334,37 +335,8 @@ Global::apexStruct Decode::run(
 						}
 					}
 				}
-
-				//set up destination
-				//1) find a register that is unallocated
-				//2) mark as allocated, but not committed
-				//3) update FE RAT with register and mark source bit as ROB
-				//4) create new entry in ROB
-				//5) move tail
-				for (int x = 0; x < Global::REGISTERS::FINAL_REGISTERS_TOTAL; x++)
-				{
-					//1
-					if (Register_File[x].status == Global::REGISTER_ALLOCATION::REG_UNALLOCATED)
-					{
-						//2
-						Register_File[x].status = Global::REGISTER_ALLOCATION::ALLOC_NO_COMMIT;
-						//3
-						Front_End_RAT.reg[arch_dest] = Global::REGISTERS(x);
-						Front_End_RAT.src_bit[arch_dest] = Global::SOURCES::ROB;
-						Front_End_RAT.rob_loc[arch_dest] = ROB.tail;
-						//4
-						ROB.entries[ROB.tail].alloc = Global::ROB_ALLOCATION::WAITING;
-						ROB.entries[ROB.tail].destReg = Global::REGISTERS(x);
-						ROB.entries[ROB.tail].flags = Global::FLAGS::CLEAR;
-						ROB.entries[ROB.tail].pc_value = myStruct.pc_value;
-						ROB.entries[ROB.tail].result = 0;
-						ROB.entries[ROB.tail].type = Global::INSTRUCTION_TYPE::REG_TO_REG_TYPE;
-						//5
-						ROB.tail = (ROB.tail + 1) % Global::ROB_SIZE;
-						break;
-					}
-				}
 				destination = ALU;
+				output_struct.type = Global::INSTRUCTION_TYPE::REG_TO_REG_TYPE;
 				break;
 
 			//opcode <dest>, <src1>, #literal
@@ -446,45 +418,15 @@ Global::apexStruct Decode::run(
 						}
 					}
 				}
-
-				//set up destination
-				//1) find a register that is unallocated
-				//2) mark as allocated, but not committed
-				//3) update FE RAT with register and mark source bit as ROB
-				//4) create new entry in ROB
-				//5) move tail
-				for (int x = 0; x < Global::REGISTERS::FINAL_REGISTERS_TOTAL; x++)
-				{
-					//1
-					if (Register_File[x].status == Global::REGISTER_ALLOCATION::REG_UNALLOCATED)
-					{
-						//2
-						Register_File[x].status = Global::REGISTER_ALLOCATION::ALLOC_NO_COMMIT;
-						//3
-						Front_End_RAT.reg[arch_dest] = Global::REGISTERS(x);
-						Front_End_RAT.src_bit[arch_dest] = Global::SOURCES::ROB;
-						Front_End_RAT.rob_loc[arch_dest] = ROB.tail;
-						//4
-						ROB.entries[ROB.tail].alloc = Global::ROB_ALLOCATION::WAITING;
-						ROB.entries[ROB.tail].destReg = Global::REGISTERS(x);
-						ROB.entries[ROB.tail].flags = Global::FLAGS::CLEAR;
-						ROB.entries[ROB.tail].pc_value = myStruct.pc_value;
-						ROB.entries[ROB.tail].result = 0;
-						if (output_struct.instruction.op_code != Global::OPCODE::LOAD)
-						{
-							ROB.entries[ROB.tail].type = Global::INSTRUCTION_TYPE::REG_TO_REG_TYPE;
-						}
-						else
-						{
-							ROB.entries[ROB.tail].type = Global::INSTRUCTION_TYPE::LOAD_TYPE;
-						}
-						//5
-						ROB.tail = (ROB.tail + 1) % Global::ROB_SIZE;
-						break;
-					}
-				}
-
 				destination = ALU;
+				if (output_struct.instruction.op_code != Global::OPCODE::LOAD)
+				{
+					output_struct.type = Global::INSTRUCTION_TYPE::REG_TO_REG_TYPE;
+				}
+				else
+				{
+					output_struct.type = Global::INSTRUCTION_TYPE::LOAD_TYPE;
+				}
 				break;
 		
 			case Global::OPCODE::STORE:
@@ -611,6 +553,7 @@ Global::apexStruct Decode::run(
 				}
 
 				destination = ALU;
+				output_struct.type = Global::INSTRUCTION_TYPE::STORE_TYPE;
 				break;
 
 			case Global::OPCODE::BNZ:
@@ -623,6 +566,7 @@ Global::apexStruct Decode::run(
 				output_struct.instruction.src1.status = Global::STATUS::VALID;
 				output_struct.instruction.src2.status = Global::STATUS::VALID;
 				output_struct.branch_waiting_to_complete = last_alu_pc;
+				output_struct.type = Global::INSTRUCTION_TYPE::BRANCH_TYPE;
 				break;
 				//opcode <src1>, #literal
 			case Global::OPCODE::BAL:
@@ -632,17 +576,25 @@ Global::apexStruct Decode::run(
 				iss >> s_literal;
 				s_literal = s_literal.substr(1, s_literal.length());
 
-				output_struct.instruction.dest.tag = Global::REGISTERS(atoi(s_dest.c_str()));
+				arch_dest = atoi(s_dest.c_str());
 
-				output_struct.instruction.src1.tag = Global::REGISTERS::UNA;
+				output_struct.instruction.src1.tag = -1;
 				output_struct.instruction.src1.status = Global::STATUS::VALID;
 
-				output_struct.instruction.src2.tag = Global::REGISTERS::UNA;
+				output_struct.instruction.src2.tag = -1;
 				output_struct.instruction.src2.status = Global::STATUS::VALID;
 
 				output_struct.instruction.literal_value = atoi(s_literal.c_str());
 
 				destination = BRANCH;
+				if (output_struct.instruction.op_code == Global::OPCODE::BAL)
+				{
+					output_struct.type = Global::INSTRUCTION_TYPE::BRANCH_TYPE;
+				}
+				else
+				{
+					output_struct.type = Global::INSTRUCTION_TYPE::REG_TO_REG_TYPE;
+				}
 				break;
 			case Global::OPCODE::JUMP:
 				iss >> s_dest;
@@ -650,6 +602,7 @@ Global::apexStruct Decode::run(
 				iss >> s_literal;
 				s_literal = s_literal.substr(1, s_literal.length());
 
+				/*
 				output_struct.instruction.dest.tag = Global::ARCH_REGISTERS::NA;
 
 				output_struct.instruction.src1.tag = Global::ARCH_REGISTERS::X;
@@ -658,10 +611,12 @@ Global::apexStruct Decode::run(
 
 				output_struct.instruction.src2.tag = Global::ARCH_REGISTERS::NA;
 				output_struct.instruction.src2.status = Global::STATUS::VALID;
+				*/
 
 				output_struct.instruction.literal_value = atoi(s_literal.c_str());
 
 				destination = BRANCH;
+				output_struct.type = Global::INSTRUCTION_TYPE::BRANCH_TYPE;
 			default:
 				break;
 
@@ -675,37 +630,60 @@ Global::apexStruct Decode::run(
 		//set up the destination information within the register file and most recently used array
 		output_struct.instruction.dest.status = Global::STATUS::INVALID;
 
-		if ((output_struct.instruction.src1.status == Global::STATUS::VALID) 
-			&& (output_struct.instruction.src2.status == Global::STATUS::VALID))
+		//set up ROB entry
+		//set up destination
+		//1) find a register that is unallocated
+		//2) mark as allocated, but not committed
+		//3) update FE RAT with register and mark source bit as ROB
+		//4) create new entry in ROB
+		//5) move tail
+		bool entry_made = false;
+		for (int x = 0; x < URF_SIZE; x++)
 		{
-			Register_File[output_struct.instruction.dest.tag].status = output_struct.instruction.dest.status;
-			if (output_struct.instruction.dest.tag != Global::ARCH_REGISTERS::NA)
+			//1
+			if (Register_File[x].status == Global::REGISTER_ALLOCATION::REG_UNALLOCATED)
 			{
-				Most_Recent_Reg[output_struct.instruction.dest.tag] = output_struct.pc_value;
+				//if not a branch or store instruction, set up the register file and FE RAT
+				if ((output_struct.type != Global::INSTRUCTION_TYPE::BRANCH_TYPE)
+					|| (output_struct.type != Global::INSTRUCTION_TYPE::STORE_TYPE))
+				{
+					//2
+					Register_File[x].status = Global::REGISTER_ALLOCATION::ALLOC_NO_COMMIT;
+					//3
+					Front_End_RAT.reg[arch_dest] = x;
+					Front_End_RAT.src_bit[arch_dest] = Global::SOURCES::ROB;
+					Front_End_RAT.rob_loc[arch_dest] = ROB.tail;
+				}
+				//4
+				ROB.entries[ROB.tail].alloc = Global::ROB_ALLOCATION::WAITING;
+				ROB.entries[ROB.tail].destReg = Global::REGISTERS(x);
+				ROB.entries[ROB.tail].destArchReg = Global::ARCH_REGISTERS(arch_dest);
+				ROB.entries[ROB.tail].flags = Global::FLAGS::CLEAR;
+				ROB.entries[ROB.tail].pc_value = myStruct.pc_value;
+				ROB.entries[ROB.tail].result = 0;
+				if (output_struct.instruction.op_code != Global::OPCODE::LOAD)
+				{
+					ROB.entries[ROB.tail].type = Global::INSTRUCTION_TYPE::REG_TO_REG_TYPE;
+				}
+				else
+				{
+					ROB.entries[ROB.tail].type = Global::INSTRUCTION_TYPE::LOAD_TYPE;
+				}
+				//5
+				ROB.tail = (ROB.tail + 1) % Global::ROB_SIZE;
+
+				entry_made = true;
+				break;
 			}
 		}
 
-		//figure out if we should stall based on OPCODE
-		//if ALU1 is stalled, and the next instruction is for ALU1, stall
-		if ((destination == ALU)
-			&& (Stalled_Stages[Global::STALLED_STAGE::ALU1] == true))
+		if (!entry_made)
 		{
 			Stalled_Stages[Global::STALLED_STAGE::DECODE_RF] = true;
+			cout << endl
+				<< "No available ROB entries" << endl
+				<< endl;
 		}
-
-		//else if Branch is stalled, and the next instruction is for Branch, stall
-		else if ((destination == BRANCH)
-			&& (Stalled_Stages[Global::STALLED_STAGE::BRANCH] == true))
-		{
-			Stalled_Stages[Global::STALLED_STAGE::DECODE_RF] = true;
-		}
-
-		if (Stalled_Stages[Global::STALLED_STAGE::DECODE_RF] == true)
-		{
-			myStruct = output_struct;
-		}
-
-		//look for values from forward bus first, then from register file
 
 	}
 	snapshot_after = output_struct;
@@ -733,57 +711,6 @@ void Decode::display()
 	if (snapshot_before.pc_value != INT_MAX)
 	{
 		Global::Debug("DECODE/RF  - " + snapshot_before.untouched_instruction);
-		/*
-		Global::Debug("\n--- Decode/RF stage display ---\n - ENTERING STAGE -");
-		Global::Debug("pc                  : " + to_string(4000 + ((snapshot_before.pc_value - 4000) * 4)));
-		Global::Debug("raw instruction     : " + snapshot_before.untouched_instruction);
-		Global::Debug("op code             : " + Global::toString(snapshot_before.instruction.op_code));
-		Global::Debug("destination reg tag : " + Global::toString(snapshot_before.instruction.dest.tag));
-		Global::Debug("destination value   : not ready");
-		Global::Debug("source 1 reg tag    : " + Global::toString(snapshot_before.instruction.src1.tag));
-		Global::Debug("source 1 reg valid  : " + Global::toString(snapshot_before.instruction.src1.status));
-
-		if (snapshot_before.instruction.src1.status == Global::STATUS::INVALID)
-			Global::Debug("source 1 reg value  : invalid!");
-		else
-			Global::Debug("source 1 reg value  : " + to_string(snapshot_before.instruction.src1.value));
-
-		Global::Debug("source 2 reg tag    : " + Global::toString(snapshot_before.instruction.src2.tag));
-		Global::Debug("source 2 reg valid  : " + Global::toString(snapshot_before.instruction.src2.status));
-
-		if (!snapshot_before.instruction.src2.status)
-			Global::Debug("source 2 reg value  : invalid!");
-		else
-			Global::Debug("source 2 reg value  : " + to_string(snapshot_before.instruction.src2.value));
-
-		Global::Debug("literal             : " + to_string(snapshot_before.instruction.literal_value));
-		Global::Debug(".....................");
-
-		Global::Debug(" - EXITING STAGE -");
-		Global::Debug("pc                  : " + to_string(4000 + ((snapshot_after.pc_value - 4000) * 4)));
-		Global::Debug("op code             : " + Global::toString(snapshot_after.instruction.op_code));
-		Global::Debug("destination reg tag : " + Global::toString(snapshot_after.instruction.dest.tag));
-		Global::Debug("destination value   : not ready");
-		Global::Debug("source 1 reg tag    : " + Global::toString(snapshot_after.instruction.src1.tag));
-		Global::Debug("source 1 reg valid  : " + Global::toString(snapshot_after.instruction.src1.status));
-
-		if (!snapshot_after.instruction.src1.status)
-			Global::Debug("source 1 reg value  : invalid!");
-		else
-			Global::Debug("source 1 reg value  : " + to_string(snapshot_after.instruction.src1.value));
-
-		Global::Debug("source 2 reg tag    : " + Global::toString(snapshot_after.instruction.src2.tag));
-		Global::Debug("source 2 reg valid  : " + Global::toString(snapshot_after.instruction.src2.status));
-
-		if (!snapshot_after.instruction.src2.status)
-			Global::Debug("source 2 reg value  : invalid!");
-		else
-			Global::Debug("source 2 reg value  : " + to_string(snapshot_after.instruction.src2.value));
-
-		Global::Debug("literal             : " + to_string(snapshot_after.instruction.literal_value));
-
-		Global::Debug("--- END Decode/RF stage display ---");
-		*/
 	}
 	else
 	{

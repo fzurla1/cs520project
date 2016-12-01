@@ -32,6 +32,8 @@
 #define DEBUG_INPUT 1
 #define DEBUG_OUTPUT 1
 
+#define DEFAULT_URF_SIZE 32
+
 using namespace std;
 
 //--------VARIABLES--------//
@@ -46,8 +48,8 @@ bool Stalled_Stages[Global::STALLED_STAGE::FINAL_STALLED_STAGE_TOTAL];
 bool ALU_Flags[Global::FLAGS::FINAL_FLAGS_TOTAL];
 
 //Register file
-//Global::Register_Info Register_File[Global::FINAL_ARCH_REGISTERS_ITEM];
-Global::Register_Info Register_File[Global::REGISTERS::FINAL_REGISTERS_TOTAL];
+int urf_size = DEFAULT_URF_SIZE;
+Global::Register_Info * Register_File;
 
 //forwarding bus
 //Global::Forwarding_Info Forward_Bus[Global::FINAL_FORWARD_TYPE_TOTAL];
@@ -130,12 +132,9 @@ void initialize_memory()
 
 void initialize_Register_File()
 {
-	for (int x = 0; x < Global::REGISTERS::FINAL_REGISTERS_TOTAL; x++)
+	for (int x = 0; x < urf_size; x++)
 	{
-		Register_File[x].status = Global::REGISTER_ALLOCATION::ALLOC_COMMIT;
-		//Register_File[x].tag = Global::ARCH_REGISTERS(x);
-		Register_File[x].value = 0;
-		
+		Register_File[x].clear();
 	}
 }
 
@@ -380,9 +379,14 @@ int _tmain(int argc, char* argv[])
 	char * input_file_name = NULL;
 	char * output_file_name = NULL;
 	string command = "",
-		tempS = "";
+		tempS = "",
+		substr = "";
 
 	int n = 0;
+
+	Register_File = new Global::Register_Info[DEFAULT_URF_SIZE];
+
+	bool sim_started = false;
 
 #pragma endregion //LOCAL VARIABLES
 
@@ -392,16 +396,28 @@ int _tmain(int argc, char* argv[])
 	{
 		while (command != "end")
 		{
+			substr = "";
 
 			cout << endl
 				<< endl
 				<< endl
 				<< "Available commands:" << endl
-				<< "   initialize   : initialize pipeline" << endl
-				<< "   simulate <n> : simulate n number of pipeline steps" << endl
-				<< "   display      : display contents of the pipeline" << endl
-				<< "   commands     : display command list" << endl
-				<< "   end          : stop execution" << endl
+				<< "   initialize             : initialize pipeline" << endl
+				<< "   simulate <n>           : simulate n number of pipeline steps" << endl 
+				<< "   Set_URF_size <n>       : before simulation, set the number of registers" << endl
+				<< "   Print_map_tables       : prints front end rename table and "<<endl
+				<< "                            back-end alias table" << endl
+				<< "   Print_IQ               : prints issue quque entries and their status" << endl
+				<< "   Print_ROB              : prints current ROB contents" << endl
+				<< "   Print_URF              : prints contents of URF and status" << endl
+				<< "   Print_Memory <a1> <a2> : prints out memory ranging from a1 to a2" << endl
+				<< "   Print_Stats            : prints the IPC realized up to this point, " << endl
+				<< "                            number of cycles which dispatched was stalled, " << endl
+				<< "                            number of cycles for which no issues have taken place," << endl
+				<< "                            number of LOAD and STORE instructions committed" << endl
+				<< "   display                : display contents of the pipeline" << endl
+				<< "   commands               : display command list" << endl
+				<< "   end                    : stop execution" << endl
 				<< endl
 				<< ">> ";
 			getline(cin, command);
@@ -478,10 +494,48 @@ int _tmain(int argc, char* argv[])
 				system(cmd.c_str());
 			}
 
+			if (command == "print_map_tables")
+			{
+
+			}
+
+			if (command == "print_iq")
+			{
+
+			}
+
+			if (command == "print_rob")
+			{
+
+			}
+
+			if (command == "print_urf")
+			{
+
+			}
+
+			if (command == "print_stats")
+			{
+
+			}
+
+			substr = command.substr(0, 8);
+
+			if ((substr.compare(0, 8, "set_urf_") == 0) //command is set urf size
+				&& (!sim_started))
+			{
+				tempS = command.substr(13, command.length() - 12);
+				urf_size = atoi(tempS.c_str());
+				Register_File = new Global::Register_Info[urf_size];
+			}
+			else
+			{
+				cout << "** ERROR - cannot set URF size once simulation has started! **" << endl;
+			}
+
 #pragma endregion
 
 #pragma region SIMULATION
-			string substr = command.substr(0, 8);
 
 			if (substr.compare(0, 8, "simulate") == 0) //command is simulate
 			{
@@ -502,10 +556,12 @@ int _tmain(int argc, char* argv[])
 					 *********************/
 
 					//run writeback
-					HALT = writeBack->run(Register_File, Forward_Bus, Back_End_RAT);
+					//HALT = writeBack->run(Register_File, Forward_Bus, Back_End_RAT);
+					HALT = writeBack->run(Forward_Bus, ROB, Register_File, Back_End_RAT);
 
 					if (!HALT)
 					{
+						/*
 						//run memory, since wb cannot stall
 						pipeline_struct_memory = memory->run(Forward_Bus, Stalled_Stages, Memory_Array);
 
@@ -523,7 +579,7 @@ int _tmain(int argc, char* argv[])
 						//as long as DELAY is not stalled, run branch
 						if (!Stalled_Stages[Global::STALLED_STAGE::DELAY])
 						{
-							pipeline_struct_branch = branch->run(PC, Forward_Bus, Stalled_Stages, Register_File[Global::REGISTERS::X]);
+							pipeline_struct_branch = branch->run(PC, Forward_Bus, Stalled_Stages, Register_File[Global::REGISTERS::UX]);
 						}
 						//or stall branch
 						else
@@ -570,9 +626,10 @@ int _tmain(int argc, char* argv[])
 						{
 							Stalled_Stages[Global::STALLED_STAGE::ALU1] = true;
 						}
+						*/
 
 						//Decode handles delays based on OPCODE internally and update Stalled_Stages
-						pipeline_struct_decode = decode->run(Register_File, Forward_Bus, Stalled_Stages, ROB, Front_End_RAT);
+						pipeline_struct_decode = decode->run(Register_File, urf_size, Forward_Bus, Stalled_Stages, ROB, Front_End_RAT);
 						
 						//as long as decode is not stalled and we still have data to read from the
 						//input file, fetch the next command
