@@ -93,33 +93,4 @@ bool Fetch::endOfFile()
 void Fetch::display()
 {
 	Global::Debug("FETCH      - " + snapshot_after.untouched_instruction);
-	/*
-	Global::Debug("\n--- Fetch stage display ---\n - ENTERING STAGE -");
-	Global::Debug("pc                  : " + to_string(4000 + ((snapshot_after.pc_value - 4000) * 4)));
-	Global::Debug("op code             : N/A");
-	Global::Debug("destination reg tag : N/A");
-	Global::Debug("destination value   : N/A");
-	Global::Debug("source 1 reg tag    : N/A");
-	Global::Debug("source 1 reg valid  : N/A");
-	Global::Debug("source 1 reg value  : N/A");
-	Global::Debug("source 2 reg tag    : N/A");
-	Global::Debug("source 2 reg valid  : N/A");
-	Global::Debug("source 2 reg value  : N/A");
-	Global::Debug("literal             : N/A");
-	Global::Debug(".....................");
-	Global::Debug(" - EXITING STAGE -");
-	Global::Debug("pc                  : " + to_string(4000 + ((snapshot_after.pc_value - 4000) * 4)));
-	Global::Debug("raw instruction     : " + snapshot_after.untouched_instruction);
-	Global::Debug("op code             : N/A");
-	Global::Debug("destination reg tag : N/A");
-	Global::Debug("destination value   : N/A");
-	Global::Debug("source 1 reg tag    : N/A");
-	Global::Debug("source 1 reg valid  : N/A");
-	Global::Debug("source 1 reg value  : N/A");
-	Global::Debug("source 2 reg tag    : N/A");
-	Global::Debug("source 2 reg valid  : N/A");
-	Global::Debug("source 2 reg value  : N/A");
-	Global::Debug("literal             : N/A");
-	Global::Debug("--- END FETCH stage display ---");
-	*/
 }

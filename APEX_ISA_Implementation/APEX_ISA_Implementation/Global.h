@@ -82,6 +82,7 @@ public:
 	enum FORWARD_TYPE{
 		FROM_ALU2,
 		FROM_BRANCH,
+		FROM_MULTIPLY,
 		FROM_MEMORY,
 		FROM_WRITEBACK,
 		FINAL_FORWARD_TYPE_TOTAL
@@ -95,6 +96,7 @@ public:
 		ALU2,
 		BRANCH,
 		DELAY,
+		MULTIPLY,
 		MEMORY,
 		WRITEBACK,
 		FINAL_STALLED_STAGE_TOTAL
@@ -176,14 +178,14 @@ public:
 	};
 
 	struct Source_Struct{
-		int value = 0;
+		int value = -1;
 		STATUS status = STATUS::INVALID;
 		int tag = -1;
 		int rob_loc = -1;
 
 		void clear()
 		{
-			value = 0;
+			value = -1;
 			status = STATUS::INVALID;
 			tag = -1;
 			rob_loc = -1;
@@ -192,25 +194,25 @@ public:
 
 	//ROB entry
 	struct ROB_Entry{
-		int pc_value = 0;
+		int pc_value = -1;
 		INSTRUCTION_TYPE type = INSTRUCTION_TYPE::NONE_TYPE;
 		int destReg = -1;
 		ARCH_REGISTERS destArchReg = ARCH_REGISTERS::NA;
-		int result = 0;
+		int result = -1;
 		FLAGS flags = FLAGS::CLEAR;
 		ROB_ALLOCATION alloc = ROB_ALLOCATION::ROB_UNALLOCATED;
-		int saved_RAT_entry = 0;
+		int saved_RAT_entry = -1;
 		
 		void clear()
 		{
-			pc_value = 0;
+			pc_value = -1;
 			type = INSTRUCTION_TYPE::NONE_TYPE;
 			destReg = -1;
 			destArchReg = ARCH_REGISTERS::NA;
-			result = 0;
+			result = -1;
 			flags = FLAGS::CLEAR;
 			alloc = ROB_ALLOCATION::ROB_UNALLOCATED;
-			saved_RAT_entry = 0;
+			saved_RAT_entry = -1;
 		}
 	};
 

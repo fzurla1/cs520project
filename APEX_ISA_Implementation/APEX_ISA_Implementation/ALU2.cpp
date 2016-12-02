@@ -17,9 +17,10 @@ ALU2::~ALU2()
 }
 
 Global::apexStruct ALU2::run(
-	bool(&ALU_Flags)[Global::FINAL_FLAGS_TOTAL],
 	Global::Forwarding_Info(&Forward_Bus)[Global::FINAL_FORWARD_TYPE_TOTAL],
-	bool(&Stalled_Stages)[Global::FINAL_STALLED_STAGE_TOTAL])
+	bool(&Stalled_Stages)[Global::FINAL_STALLED_STAGE_TOTAL],
+	Global::Register_Info *Register_File,
+	Global::Reorder_Buffer(&ROB))
 {
 	Global::apexStruct output_struct = myStruct;
 	snapshot_before = myStruct;
@@ -30,13 +31,8 @@ Global::apexStruct ALU2::run(
 	//make sure we have valid data
 	if (myStruct.pc_value != INT_MAX)
 	{
-		if (!Stalled_Stages[Global::STALLED_STAGE::MEMORY])
+		switch (myStruct.instruction.op_code)
 		{
-			//assume we are not stalled
-			Stalled_Stages[Global::STALLED_STAGE::ALU2] = false;
-
-			switch (myStruct.instruction.op_code)
-			{
 #pragma region "ADD"
 			case Global::OPCODE::ADD:
 				output_struct.instruction.dest.value =
@@ -69,24 +65,6 @@ Global::apexStruct ALU2::run(
 
 				break;
 #pragma endregion 
-
-#pragma region "MUL"
-			case Global::OPCODE::MUL:
-
-				output_struct.instruction.dest.value =
-					myStruct.instruction.src1.value * myStruct.instruction.src2.value;
-
-				break;
-#pragma endregion
-
-#pragma region "MUL w/ literal"
-			case Global::OPCODE::MULL:
-
-				output_struct.instruction.dest.value =
-					myStruct.instruction.src1.value * myStruct.instruction.literal_value;
-
-				break;
-#pragma endregion
 
 #pragma region"ORs"
 			case Global::OPCODE::OR:
@@ -122,14 +100,6 @@ Global::apexStruct ALU2::run(
 #pragma endregion
 
 #pragma region "OTHERS"
-			case Global::OPCODE::LOAD:
-				output_struct.instruction.memory_location =
-					myStruct.instruction.src1.value + myStruct.instruction.literal_value;
-				break;
-			case Global::OPCODE::STORE:
-				output_struct.instruction.memory_location =
-					myStruct.instruction.src2.value + myStruct.instruction.literal_value;
-				break;
 			case Global::OPCODE::MOVC:
 				output_struct.instruction.dest.value = myStruct.instruction.literal_value;
 				break;
@@ -137,63 +107,32 @@ Global::apexStruct ALU2::run(
 
 			default:
 				break;
-			}
+		}
 
-			//forward data
-			switch (output_struct.instruction.op_code)
-			{
-				//forward everything except LOAD and STORE data
-			case Global::OPCODE::ADD:
-			case Global::OPCODE::ADDL:
-			case Global::OPCODE::SUB:
-			case Global::OPCODE::SUBL:
-			case Global::OPCODE::MUL:
-			case Global::OPCODE::MULL:
-			case Global::OPCODE::OR:
-			case Global::OPCODE::ORL:
-			case Global::OPCODE::AND:
-			case Global::OPCODE::ANDL:
-			case Global::OPCODE::EX_OR:
-			case Global::OPCODE::EX_ORL:
-			case Global::OPCODE::MOVC:
-				output_struct.instruction.dest.status = Global::STATUS::VALID;
-				Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].pc_value = output_struct.pc_value;
-				Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].reg_info.tag = output_struct.instruction.dest.tag;
-				Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].reg_info.value = output_struct.instruction.dest.value;
+		output_struct.instruction.dest.status = Global::STATUS::VALID;
+		Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].pc_value = output_struct.pc_value;
+		Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].reg_info.tag = output_struct.instruction.dest.tag;
+		Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].reg_info.value = output_struct.instruction.dest.value;
 
-				break;
+		//Update register file
+		Register_File[output_struct.instruction.dest.tag].status = Global::REGISTER_ALLOCATION::ALLOC_NO_COMMIT;
+		Register_File[output_struct.instruction.dest.tag].value = output_struct.instruction.dest.value;
 
-				//No need to forward anything from the LOAD or STORE instruction at this point
-			case Global::OPCODE::LOAD:
-			case Global::OPCODE::STORE:
-			default:
-				break;
-			}
+		//Update ROB
+		ROB.entries[output_struct.instruction.dest.rob_loc].alloc = Global::ROB_ALLOCATION::COMPLETE;
+		ROB.entries[output_struct.instruction.dest.rob_loc].result = output_struct.instruction.dest.value;
 
-			if (output_struct.instruction.dest.value == 0)
-			{
-				ALU_Flags[Global::FLAGS::ZERO] = true;
-				Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].flag = Global::FLAGS::ZERO;
-			}
-			else
-			{
-				ALU_Flags[Global::FLAGS::ZERO] = false;
-			}
 
-			if (!ALU_Flags[Global::FLAGS::ZERO])
-			{
-				ALU_Flags[Global::FLAGS::CLEAR] = true;
-				Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].flag = Global::FLAGS::CLEAR;
-			}
-			else
-			{
-				ALU_Flags[Global::FLAGS::CLEAR] = false;
-			}
+		if (output_struct.instruction.dest.value == 0)
+		{
+			Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].flag = Global::FLAGS::ZERO;
 		}
 		else
 		{
-			Stalled_Stages[Global::STALLED_STAGE::ALU2] = true;
+			Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].flag = Global::FLAGS::CLEAR;
 		}
+
+		ROB.entries[output_struct.instruction.dest.rob_loc].flags = Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].flag;
 	}
 
 	snapshot_after = output_struct;

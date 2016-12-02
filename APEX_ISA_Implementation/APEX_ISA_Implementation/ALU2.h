@@ -24,9 +24,10 @@ public:
 	/// 4) updates the flags (zero, overflow, underflow, etc)
 	/// </summary>
 	Global::apexStruct run(
-		bool (&ALU_Flags)[Global::FINAL_FLAGS_TOTAL],
 		Global::Forwarding_Info(&Forward_Bus)[Global::FINAL_FORWARD_TYPE_TOTAL],
-		bool (&Stalled_Stages)[Global::FINAL_STALLED_STAGE_TOTAL]);
+		bool (&Stalled_Stages)[Global::FINAL_STALLED_STAGE_TOTAL],
+		Global::Register_Info *Register_File,
+		Global::Reorder_Buffer(&ROB));
 
 	/// <summary>
 	///	This function will:

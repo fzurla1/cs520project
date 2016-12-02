@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "WriteBack.h"
 
+#define MAXSIZE 3
+
 WriteBack::WriteBack()
 {
 }
@@ -32,6 +34,17 @@ bool WriteBack::run(
 		Forward_Bus[Global::FORWARD_TYPE::FROM_WRITEBACK].reg_info.tag = myStruct.instruction.dest.tag;
 		Forward_Bus[Global::FORWARD_TYPE::FROM_WRITEBACK].reg_info.value = myStruct.instruction.dest.value;
 
+		for (int x = 0; x < myStructVector.size(); x++)
+		{
+			Register_File[myStructVector[x].instruction.dest.tag].status = Global::REGISTER_ALLOCATION::ALLOC_NO_COMMIT;
+			Register_File[myStructVector[x].instruction.dest.tag].value = myStructVector[x].instruction.dest.value;
+		}
+		/*
+		//update register file
+		Register_File[ROB.entries[ROB.head].destReg].status = Global::REGISTER_ALLOCATION::ALLOC_COMMIT;
+		Register_File[ROB.entries[ROB.head].destReg].value = ROB.entries[ROB.head].result;
+		*/
+
 		if (myStruct.instruction.op_code == Global::OPCODE::HALT)
 		{
 			HALT = true;
@@ -45,9 +58,7 @@ bool WriteBack::run(
 			Back_End_RAT.rob_loc[ROB.entries[ROB.head].destArchReg] = -1;
 			Back_End_RAT.src_bit[ROB.entries[ROB.head].destArchReg] = Global::SOURCES::REGISTER_FILE;
 
-			//update register file
-			Register_File[ROB.entries[ROB.head].destReg].status = Global::REGISTER_ALLOCATION::ALLOC_COMMIT;
-			Register_File[ROB.entries[ROB.head].destReg].value = ROB.entries[ROB.head].result;
+			
 
 			//update ROB head pointer
 			ROB.head = (ROB.head + 1) % Global::ROB_SIZE;
@@ -58,7 +69,10 @@ bool WriteBack::run(
 
 void WriteBack::setPipelineStruct(Global::apexStruct input_struct)
 {
-	myStruct = input_struct;
+	if (myStructVector.size() < MAXSIZE)
+	{
+		myStructVector.push_back(input_struct);
+	}
 }
 
 bool WriteBack::hasValidData()
@@ -77,32 +91,6 @@ void WriteBack::display()
 	if (myStruct.pc_value != INT_MAX)
 	{
 		Global::Debug("WRITEBACK  - " + snapshot_before.untouched_instruction);
-		/*
-		Global::Debug("\n--- Writeback stage display ---\n - ENTERING STAGE -");
-		Global::Debug("pc                  : " + to_string(4000 + ((snapshot_before.pc_value - 4000) * 4)));
-		Global::Debug("raw instruction     : " + snapshot_before.untouched_instruction);
-		Global::Debug("op code             : " + Global::toString(snapshot_before.instruction.op_code));
-		Global::Debug("destination reg tag : " + Global::toString(snapshot_before.instruction.dest.tag));
-		Global::Debug("destination value   : " + to_string(snapshot_before.instruction.dest.value));
-		Global::Debug("source 1 reg tag    : " + Global::toString(snapshot_before.instruction.src1.tag));
-		Global::Debug("source 1 reg valid  : " + Global::toString(snapshot_before.instruction.src1.status));
-
-		if (snapshot_before.instruction.src1.status == Global::STATUS::INVALID)
-			Global::Debug("source 1 reg value  : invalid!");
-		else
-			Global::Debug("source 1 reg value  : " + to_string(snapshot_before.instruction.src1.value));
-
-		Global::Debug("source 2 reg tag    : " + Global::toString(snapshot_before.instruction.src2.tag));
-		Global::Debug("source 2 reg valid  : " + Global::toString(snapshot_before.instruction.src2.status));
-
-		if (!snapshot_before.instruction.src2.status)
-			Global::Debug("source 2 reg value  : invalid!");
-		else
-			Global::Debug("source 2 reg value  : " + to_string(snapshot_before.instruction.src2.value));
-
-		Global::Debug("literal             : " + to_string(snapshot_before.instruction.literal_value));
-		Global::Debug("--- END Writeback stage display ---");
-		*/
 	}
 	else
 	{

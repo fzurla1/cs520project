@@ -38,12 +38,6 @@ public:
 	void setPipelineStruct(Global::apexStruct input_struct);
 
 	/// <summary>
-	///	This function will:
-	///	return if the stage has valid data
-	/// </summary>
-	bool hasValidData();
-
-	/// <summary>
 	///	displays current status of pipeline stage
 	/// </summary>
 	void display();

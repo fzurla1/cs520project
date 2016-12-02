@@ -24,6 +24,7 @@
 #include "Decode.h"
 #include "ALU1.h"
 #include "ALU2.h"
+#include "Multiply.h"
 #include "Branch.h"
 #include "Delay.h"
 #include "Memory.h"
@@ -77,6 +78,7 @@ Fetch * fetch;
 Decode * decode;
 ALU1 * alu1;
 ALU2 * alu2;
+Multiply * multiply;
 Branch * branch;
 Delay * delay;
 Memory * memory;
@@ -86,6 +88,7 @@ Global::apexStruct pipeline_struct_fetch;
 Global::apexStruct pipeline_struct_decode;
 Global::apexStruct pipeline_struct_alu1;
 Global::apexStruct pipeline_struct_alu2;
+Global::apexStruct pipeline_struct_multiply;
 Global::apexStruct pipeline_struct_branch;
 Global::apexStruct pipeline_struct_delay;
 Global::apexStruct pipeline_struct_memory;
@@ -370,6 +373,7 @@ int _tmain(int argc, char* argv[])
 	decode = new Decode();
 	alu1 = new ALU1();
 	alu2 = new ALU2();
+	multiply = new Multiply();
 	branch = new Branch();
 	delay = new Delay();
 	memory = new Memory();
@@ -389,6 +393,8 @@ int _tmain(int argc, char* argv[])
 	bool sim_started = false;
 
 #pragma endregion //LOCAL VARIABLES
+	
+	initialize_pipeline();
 
 	user_interface();// input_file_name, output_file_name);
 	
@@ -533,9 +539,9 @@ int _tmain(int argc, char* argv[])
 				cout << "** ERROR - cannot set URF size once simulation has started! **" << endl;
 			}
 
-#pragma endregion
+#pragma endregion //BASIC COMMANDS
 
-#pragma region SIMULATION
+/*SIMULATION*/
 
 			if (substr.compare(0, 8, "simulate") == 0) //command is simulate
 			{
@@ -549,7 +555,8 @@ int _tmain(int argc, char* argv[])
 				while (!HALT && n > 0 && pipelineHasData)
 				{
 					Global::Debug("\nIteration " + to_string(iteration));
-					//start pipeline
+
+#pragma region EXECUTE_PIPELINE
 
 					/*********************
 					 *  EXECUTE STAGES   *
@@ -603,30 +610,16 @@ int _tmain(int argc, char* argv[])
 							}
 							Global::Debug("...."); 
 						}
-
-						//As long as memory is not stalled, run ALU2
-						if (!Stalled_Stages[Global::STALLED_STAGE::MEMORY])
-						{
-							pipeline_struct_alu2 = alu2->run(ALU_Flags, Forward_Bus, Stalled_Stages);
-						}
-
-						//or stall ALU2
-						else
-						{
-							Stalled_Stages[Global::STALLED_STAGE::ALU2] = true;
-						}
-
-						//as long as ALU2 is not stalled, run ALU1
-						if (!Stalled_Stages[Global::STALLED_STAGE::ALU2])
-						{
-							pipeline_struct_alu1 = alu1->run(Forward_Bus, Stalled_Stages);
-						}
-						//or stall ALU1
-						else
-						{
-							Stalled_Stages[Global::STALLED_STAGE::ALU1] = true;
-						}
 						*/
+
+						//Run Multiply
+						pipeline_struct_multiply = multiply->run(Forward_Bus, Register_File, ROB);
+
+						//Run AL2
+						pipeline_struct_alu2 = alu2->run(Forward_Bus, Stalled_Stages, Register_File, ROB);
+
+						//Run ALU1
+						pipeline_struct_alu1 = alu1->run(Forward_Bus, Stalled_Stages);
 
 						//Decode handles delays based on OPCODE internally and update Stalled_Stages
 						pipeline_struct_decode = decode->run(Register_File, urf_size, Forward_Bus, Stalled_Stages, ROB, Front_End_RAT);
@@ -651,7 +644,9 @@ int _tmain(int argc, char* argv[])
 						{
 							Stalled_Stages[Global::STALLED_STAGE::FETCH] = true;
 						}
+#pragma endregion //EXECUTE_PIPELINE
 
+#pragma region DEBUG_OUTPUT
 						if (DEBUG_OUTPUT)
 						{
 							if (!Stalled_Stages[Global::STALLED_STAGE::FETCH])
@@ -690,6 +685,7 @@ int _tmain(int argc, char* argv[])
 								Global::Debug("-- Memory Stalled -- " + memory->getInstruction());
 							writeBack->display();
 						}
+#pragma endregion //DEBUG_OUTPUT
 
 						//*************************
 						//set up for the next cycle
@@ -864,6 +860,7 @@ int _tmain(int argc, char* argv[])
 						if (decode->hasValidData()
 							|| alu1->hasValidData()
 							|| alu2->hasValidData()
+							|| multiply->hasValidData()
 							|| branch->hasValidData()
 							|| delay->hasValidData()
 							|| memory->hasValidData()
@@ -895,7 +892,8 @@ int _tmain(int argc, char* argv[])
 			} // command == simulate n
 		} //command != "end"
 	}
-#pragma endregion //SIMULATION
+
+/* END SIMULATION*/
 
 	else
 	{
@@ -911,6 +909,7 @@ int _tmain(int argc, char* argv[])
 	delete decode;
 	delete alu1;
 	delete alu2;
+	delete multiply;
 	delete branch;
 	delete delay;
 	delete memory;

@@ -2,6 +2,7 @@
 #define WRITE_BACK_H
 
 #include "Global.h"
+#include <vector>
 
 class WriteBack
 {
@@ -47,6 +48,7 @@ public:
 private:
 	Global::apexStruct myStruct;
 	Global::apexStruct snapshot_before;
+	vector<Global::apexStruct> myStructVector;
 };
 
 #endif //WRITE_BACK_H
