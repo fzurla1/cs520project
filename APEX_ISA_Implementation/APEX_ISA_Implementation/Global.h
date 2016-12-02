@@ -11,18 +11,17 @@ class Global
 {
 public:
 	//constants
-	//static const int ALU_FLAG_COUNT = 3;
-	//static const int FORWARDING_BUSES = 4;
-	//static const int ARCH_REGISTER_COUNT = 16;
-	//static const int REGISTER_COUNT = 32;
 	static const int MEMORY_SIZE = 4000;
-	//static const int TOTAL_STAGES = 8;
 	static const int ROB_SIZE = 40;
+	static const int MAX_WRITEBACK_SIZE = 3;
 
 	//register status flags
 	enum STATUS{
+		//register data is invalid
 		INVALID,
+		//register data is valid
 		VALID,
+		//count
 		FINAL_STATUS_TOTAL
 	};
 
@@ -115,6 +114,7 @@ public:
 		FINAL_ROB_ALLOCATION_TOTAL
 	};
 
+	//URF allocation
 	enum REGISTER_ALLOCATION{
 		//register is unallocated
 		REG_UNALLOCATED,
@@ -135,6 +135,7 @@ public:
 		FINAL_INSTRUCTION_TYPE_TOTAL
 	};
 
+	//Front End RAT: where data is located
 	enum SOURCES{
 		REGISTER_FILE,
 		ROB,
@@ -177,10 +178,15 @@ public:
 		}
 	};
 
+	//basic struct for info within apexstruct
 	struct Source_Struct{
+		//store value or result
 		int value = -1;
+		//status of source
 		STATUS status = STATUS::INVALID;
+		//URF tag
 		int tag = -1;
+		//location within ROB
 		int rob_loc = -1;
 
 		void clear()
@@ -194,12 +200,19 @@ public:
 
 	//ROB entry
 	struct ROB_Entry{
+		//program counter
 		int pc_value = -1;
+		//type of instruction
 		INSTRUCTION_TYPE type = INSTRUCTION_TYPE::NONE_TYPE;
+		//URF entry
 		int destReg = -1;
+		//arch register entry
 		ARCH_REGISTERS destArchReg = ARCH_REGISTERS::NA;
+		//result
 		int result = -1;
+		//flag
 		FLAGS flags = FLAGS::CLEAR;
+		//ROB allocation
 		ROB_ALLOCATION alloc = ROB_ALLOCATION::ROB_UNALLOCATED;
 		int saved_RAT_entry = -1;
 		
@@ -224,6 +237,7 @@ public:
 		//tail pointer of ROB
 		int tail = 0;
 
+		//entries within the ROB
 		ROB_Entry entries[ROB_SIZE];
 	};
 
@@ -231,8 +245,11 @@ public:
 	//input architectural register is a register within the
 	//ARF (src bit = 0) or a slot within the ROB (src_bit=1)
 	struct Rename_Table{
+		//URF associated with arch register
 		int reg[ARCH_REGISTERS::FINAL_ARCH_REGISTERS_ITEM];
+		//location within ROB for register info, if applicable
 		int rob_loc[ARCH_REGISTERS::FINAL_ARCH_REGISTERS_ITEM];
+		//where data is located: URF or ROB
 		SOURCES src_bit[ARCH_REGISTERS::FINAL_ARCH_REGISTERS_ITEM];
 
 		void clear()
@@ -248,10 +265,14 @@ public:
 
 	//APEX structure to get passed between stages
 	struct apexStruct{
+		//program counter for instruction
 		int pc_value = INT_MAX;
+		//raw instruction
 		string untouched_instruction = "";
 		int branch_waiting_to_complete = INT_MAX; //instruction that branch is dependent on
+		//type of instruction
 		INSTRUCTION_TYPE type = INSTRUCTION_TYPE::NONE_TYPE;
+		//instruction information
 		struct instruction{
 			//instruction operation code
 			OPCODE op_code = OPCODE::NONE;
@@ -295,23 +316,70 @@ public:
 	
 	int PC; //program counter
 
-	//functions
+#pragma region FUNCTIONS
+
+	/// <summary>
+	/// Set output file for debug and display information
+	/// </summary>
 	static void setOutFile(string filename);
+
+	/// <summary>
+	/// Get output file
+	/// </summary>
 	static string getOutFile();
+
+	/// <summary>
+	// Close output file
+	/// </summary>
 	static void closeFile();
+
+	/// <summary>
+	/// General debug information to output file
+	/// </summary>
 	static void Debug(string s1);
 
 	//used for debug - set enums to string for easier debugging and output
+	/// <summary>
+	/// Output OPCODE enum to string
+	/// </summary>
 	static string toString(OPCODE opcode);
+
+	/// <summary>
+	/// Output FLAG enum to string
+	/// </summary>
 	static string toString(FLAGS flag);
 	//static string toString(ARCH_REGISTERS reg);
-	static string toString(REGISTERS reg);
-	static string toString(FORWARD_TYPE frwd);
-	static string toString(STATUS stat);
-	static string toString(ROB_ALLOCATION stat);
-	static string toString(REGISTER_ALLOCATION stat);
-	static string toString(STALLED_STAGE stage);
 
+	/// <summary>
+	/// Output REGISTER enum to string
+	/// </summary>
+	static string toString(REGISTERS reg);
+
+	/// <summary>
+	/// Output FORWARD_TYPE enum to string
+	/// </summary>
+	static string toString(FORWARD_TYPE frwd);
+
+	/// <summary>
+	/// Output STATUS enum to string
+	/// </summary>
+	static string toString(STATUS stat);
+
+	/// <summary>
+	/// Output ROB_ALLOCATION enum to string
+	/// </summary>
+	static string toString(ROB_ALLOCATION stat);
+
+	/// <summary>
+	/// Output REGISTER_ALLOCATION enum to string
+	/// </summary>
+	static string toString(REGISTER_ALLOCATION stat);
+
+	/// <summary>
+	/// Output STALLED_STAGE enum to string
+	/// </summary>
+	static string toString(STALLED_STAGE stage);
+#pragma endregion FUNCTIONS
 private:
 };
 

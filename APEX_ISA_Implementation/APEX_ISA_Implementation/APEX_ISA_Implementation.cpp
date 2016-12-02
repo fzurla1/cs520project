@@ -562,6 +562,35 @@ int _tmain(int argc, char* argv[])
 					 *  EXECUTE STAGES   *
 					 *********************/
 
+					//update ROB
+					if (ROB.head != ROB.tail)
+					{
+						switch (ROB.entries[ROB.head].type)
+						{
+							case Global::INSTRUCTION_TYPE::BRANCH_TYPE:
+								break;
+							case Global::INSTRUCTION_TYPE::LOAD_TYPE:
+								break;
+							case Global::INSTRUCTION_TYPE::REG_TO_REG_TYPE:
+								//update back end RAT
+								Back_End_RAT.reg[ROB.entries[ROB.head].destArchReg] = ROB.entries[ROB.head].destReg;
+								Back_End_RAT.rob_loc[ROB.entries[ROB.head].destArchReg] = -1;
+								Back_End_RAT.src_bit[ROB.entries[ROB.head].destArchReg] = Global::SOURCES::REGISTER_FILE;
+
+								//Mark register file as committed
+								Register_File[ROB.entries[ROB.head].destReg].status = Global::REGISTER_ALLOCATION::ALLOC_COMMIT;
+								Register_File[ROB.entries[ROB.head].destReg].value = ROB.entries[ROB.head].result;
+								break;
+							case Global::INSTRUCTION_TYPE::STORE_TYPE:
+								break;
+							default:
+								break;
+						}
+
+						//update ROB head pointer
+						ROB.head = (ROB.head + 1) % Global::ROB_SIZE;
+					}
+
 					//run writeback
 					//HALT = writeBack->run(Register_File, Forward_Bus, Back_End_RAT);
 					HALT = writeBack->run(Forward_Bus, ROB, Register_File, Back_End_RAT);

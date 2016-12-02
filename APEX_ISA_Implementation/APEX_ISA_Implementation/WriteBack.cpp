@@ -1,8 +1,6 @@
 #include "stdafx.h"
 #include "WriteBack.h"
 
-#define MAXSIZE 3
-
 WriteBack::WriteBack()
 {
 }
@@ -20,48 +18,25 @@ bool WriteBack::run(
 	Global::Rename_Table(&Back_End_RAT))
 {
 	bool HALT = false;
-	snapshot_before = myStruct;
 
-	//make sure we have valid data
-	if (myStruct.pc_value != INT_MAX)
+	for (int x = (myStructVector.size()-1); x <= 0; x--)
 	{
-
-		ROB.entries[myStruct.instruction.dest.rob_loc].alloc = Global::ROB_ALLOCATION::COMPLETE;
-		ROB.entries[myStruct.instruction.dest.rob_loc].result = myStruct.instruction.dest.value;
-		ROB.entries[myStruct.instruction.dest.rob_loc].flags = myStruct.instruction.flag;
-
-		Forward_Bus[Global::FORWARD_TYPE::FROM_WRITEBACK].pc_value = myStruct.pc_value;
-		Forward_Bus[Global::FORWARD_TYPE::FROM_WRITEBACK].reg_info.tag = myStruct.instruction.dest.tag;
-		Forward_Bus[Global::FORWARD_TYPE::FROM_WRITEBACK].reg_info.value = myStruct.instruction.dest.value;
-
-		for (int x = 0; x < myStructVector.size(); x++)
+		//make sure we have valid data
+		if (myStructVector[x].pc_value != INT_MAX)
 		{
+			Forward_Bus[Global::FORWARD_TYPE::FROM_WRITEBACK].pc_value = myStructVector[x].pc_value;
+			Forward_Bus[Global::FORWARD_TYPE::FROM_WRITEBACK].reg_info.tag = myStructVector[x].instruction.dest.tag;
+			Forward_Bus[Global::FORWARD_TYPE::FROM_WRITEBACK].reg_info.value = myStructVector[x].instruction.dest.value;
+
 			Register_File[myStructVector[x].instruction.dest.tag].status = Global::REGISTER_ALLOCATION::ALLOC_NO_COMMIT;
 			Register_File[myStructVector[x].instruction.dest.tag].value = myStructVector[x].instruction.dest.value;
-		}
-		/*
-		//update register file
-		Register_File[ROB.entries[ROB.head].destReg].status = Global::REGISTER_ALLOCATION::ALLOC_COMMIT;
-		Register_File[ROB.entries[ROB.head].destReg].value = ROB.entries[ROB.head].result;
-		*/
 
-		if (myStruct.instruction.op_code == Global::OPCODE::HALT)
-		{
-			HALT = true;
-		}
+			if (myStructVector[x].instruction.op_code == Global::OPCODE::HALT)
+			{
+				HALT = true;
+			}
 
-		//update ROB
-		if (ROB.head != ROB.tail)
-		{
-			//update back end RAT
-			Back_End_RAT.reg[ROB.entries[ROB.head].destArchReg] = ROB.entries[ROB.head].destReg;
-			Back_End_RAT.rob_loc[ROB.entries[ROB.head].destArchReg] = -1;
-			Back_End_RAT.src_bit[ROB.entries[ROB.head].destArchReg] = Global::SOURCES::REGISTER_FILE;
-
-			
-
-			//update ROB head pointer
-			ROB.head = (ROB.head + 1) % Global::ROB_SIZE;
+			myStructVector.pop_back();
 		}
 	}
 	return HALT;
@@ -69,7 +44,7 @@ bool WriteBack::run(
 
 void WriteBack::setPipelineStruct(Global::apexStruct input_struct)
 {
-	if (myStructVector.size() < MAXSIZE)
+	if (myStructVector.size() < Global::MAX_WRITEBACK_SIZE)
 	{
 		myStructVector.push_back(input_struct);
 	}
@@ -77,22 +52,44 @@ void WriteBack::setPipelineStruct(Global::apexStruct input_struct)
 
 bool WriteBack::hasValidData()
 {
-	return (myStruct.pc_value != INT_MAX);
+	bool out = false;
+	for (int x = 0; x < (myStructVector.size() - 1); x++)
+	{
+		if (myStructVector[x].pc_value != INT_MAX)
+		{
+			out = true;
+		}
+	}
+
+	return out;
 }
 
-string WriteBack::getInstruction()
+string* WriteBack::getInstruction()
 {
-	return myStruct.untouched_instruction;
+	int size = myStructVector.size();
+	string * out = new string[myStructVector.size()];
+	for (int x = 0; x < size; x++)
+	{
+		out[x] = myStructVector[x].untouched_instruction;
+	}
+	return out;
 }
 
 void WriteBack::display()
 {
-	//make sure we have valid data
-	if (myStruct.pc_value != INT_MAX)
+	bool has_instruction = false;
+
+	Global::Debug("WRITEBACK  - ");
+
+	for (int x = 0; x < Global::MAX_WRITEBACK_SIZE; x++)
 	{
-		Global::Debug("WRITEBACK  - " + snapshot_before.untouched_instruction);
+		//make sure we have valid data
+		if (myStructVector[x].pc_value != INT_MAX)
+		{
+			Global::Debug("   INSTRUCTION " + to_string(x) + " - " + myStructVector[x].untouched_instruction);
+		}
 	}
-	else
+	if ( !has_instruction)
 	{
 		Global::Debug("Writeback STAGE --> No Instruction in Stage");
 	}

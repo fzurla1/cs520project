@@ -38,7 +38,7 @@ public:
 	///	This function will:
 	///	return the raw instruction string
 	/// </summary>
-	string getInstruction();
+	string* getInstruction();
 
 	/// <summary>
 	///	displays current status of pipeline stage
@@ -46,7 +46,6 @@ public:
 	void display();
 
 private:
-	Global::apexStruct myStruct;
 	Global::apexStruct snapshot_before;
 	vector<Global::apexStruct> myStructVector;
 };
