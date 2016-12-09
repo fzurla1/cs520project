@@ -280,6 +280,20 @@ string Global::toString(ROB_ALLOCATION stat)
 string Global::toString(REGISTER_ALLOCATION stat)
 {
 	string out = "";
+	switch (stat)
+	{
+		case REGISTER_ALLOCATION::ALLOC_COMMIT:
+			out = "ALLOCATED and COMMITTED";
+			break;
+		case REGISTER_ALLOCATION::ALLOC_NO_COMMIT:
+			out = "ALLOCATED and NOT COMMITTED";
+			break;
+		case REGISTER_ALLOCATION::REG_UNALLOCATED:
+			out = "UNALLOCATED";
+			break;
+		default:
+			break;
+	}
 	return out;
 }
 
@@ -353,6 +367,25 @@ string Global::toString(ROB_Entry entry)
 	out += "PC Value = " + to_string(entry.pc_value) + '\n';
 	out += "Result   = " + to_string(entry.result) + '\n';
 	out += "Type     = " + toString(entry.type) + '\n';
+
+	return out;
+}
+
+string Global::toString(SOURCES src)
+{
+	string out = "";
+
+	switch (src)
+	{
+		case SOURCES::REGISTER_FILE:
+			out = "Unified Register File";
+			break;
+		case SOURCES::ROB:
+			out = "Reorder Buffer";
+			break;
+		default:
+			break;
+	}
 
 	return out;
 }

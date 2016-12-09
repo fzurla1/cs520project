@@ -429,6 +429,8 @@ public:
 	/// </summary>
 	static string toString(ROB_Entry entry);
 
+	static string toString(SOURCES src);
+
 #pragma endregion FUNCTIONS
 private:
 };

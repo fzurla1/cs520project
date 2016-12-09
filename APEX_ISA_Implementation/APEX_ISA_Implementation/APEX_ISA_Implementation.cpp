@@ -246,10 +246,35 @@ void displayRegisterFile()
 	Global::Debug("-- Unified Register File --");
 	for (int x = 0; x < urf_size; x++)
 	{
-		Global::Debug("Register[" + to_string(x) + "]:");
+		Global::Debug("Register[U" + to_string(x) + "]:");
 		Global::Debug("  status: " + Global::toString(Register_File[x].status));
-		Global::Debug("  tag   : " + to_string(Register_File[x].tag));
 		Global::Debug("  value : " + to_string(Register_File[x].value));
+	}
+}
+
+void displayFRAT()
+{
+	Global::Debug("");
+	Global::Debug("-- Front-End Rename Table --");
+	for (int x = 0; x < Global::ARCH_REGISTERS::FINAL_ARCH_REGISTERS_ITEM; x++)
+	{
+		Global::Debug("Arch Reg: " + Global::toString(Global::ARCH_REGISTERS(x)));
+		Global::Debug("  URF link : " + to_string(Front_End_RAT.reg[x]));
+		Global::Debug("  ROB Loc  : " + to_string(Front_End_RAT.rob_loc[x]));
+		Global::Debug("  src bit  : " + Global::toString(Front_End_RAT.src_bit[x]));
+	}
+}
+
+void displayRRAT()
+{
+	Global::Debug("");
+	Global::Debug("-- Back-End Rename Table --");
+	for (int x = 0; x < Global::ARCH_REGISTERS::FINAL_ARCH_REGISTERS_ITEM; x++)
+	{
+		Global::Debug("Arch Reg: " + Global::toString(Global::ARCH_REGISTERS(x)));
+		Global::Debug("  URF link : " + to_string(Back_End_RAT.reg[x]));
+		Global::Debug("  ROB Loc  : " + to_string(Front_End_RAT.rob_loc[x]));
+		Global::Debug("  src bit  : " + Global::toString(Front_End_RAT.src_bit[x]));
 	}
 }
 
@@ -538,16 +563,22 @@ int _tmain(int argc, char* argv[])
 			if (command == "print_rob")
 			{
 				displayROB();
+				string cmd = "notepad.exe " + Global::getOutFile();
+				system(cmd.c_str());
 			}
 
 			if (command == "print_urf")
 			{
 				displayRegisterFile();
+				string cmd = "notepad.exe " + Global::getOutFile();
+				system(cmd.c_str());
 			}
 
 			if (command == "print_stats")
 			{
 				displayStats();
+				string cmd = "notepad.exe " + Global::getOutFile();
+				system(cmd.c_str());
 			}
 
 			substr = command.substr(0, 8);
@@ -557,7 +588,7 @@ int _tmain(int argc, char* argv[])
 			{
 				tempS = command.substr(13, command.length() - 12);
 				urf_size = atoi(tempS.c_str());
-				Register_File = new Global::Register_Info[urf_size];
+				Register_File = new Global::Register_Info[urf_size+1];
 			}
 			else
 			{
@@ -590,30 +621,33 @@ int _tmain(int argc, char* argv[])
 					//update ROB
 					if (ROB.head != ROB.tail)
 					{
-						switch (ROB.entries[ROB.head].type)
+						if (ROB.entries[ROB.head].alloc == Global::ROB_ALLOCATION::COMPLETE)
 						{
-							case Global::INSTRUCTION_TYPE::BRANCH_TYPE:
-								break;
-							case Global::INSTRUCTION_TYPE::LOAD_TYPE:
-								break;
-							case Global::INSTRUCTION_TYPE::REG_TO_REG_TYPE:
-								//update back end RAT
-								Back_End_RAT.reg[ROB.entries[ROB.head].destArchReg] = ROB.entries[ROB.head].destReg;
-								Back_End_RAT.rob_loc[ROB.entries[ROB.head].destArchReg] = -1;
-								Back_End_RAT.src_bit[ROB.entries[ROB.head].destArchReg] = Global::SOURCES::REGISTER_FILE;
+							switch (ROB.entries[ROB.head].type)
+							{
+								case Global::INSTRUCTION_TYPE::BRANCH_TYPE:
+									break;
+								case Global::INSTRUCTION_TYPE::LOAD_TYPE:
+									break;
+								case Global::INSTRUCTION_TYPE::REG_TO_REG_TYPE:
+									//update back end RAT
+									Back_End_RAT.reg[ROB.entries[ROB.head].destArchReg] = ROB.entries[ROB.head].destReg;
+									Back_End_RAT.rob_loc[ROB.entries[ROB.head].destArchReg] = -1;
+									Back_End_RAT.src_bit[ROB.entries[ROB.head].destArchReg] = Global::SOURCES::REGISTER_FILE;
 
-								//Mark register file as committed
-								Register_File[ROB.entries[ROB.head].destReg].status = Global::REGISTER_ALLOCATION::ALLOC_COMMIT;
-								Register_File[ROB.entries[ROB.head].destReg].value = ROB.entries[ROB.head].result;
-								break;
-							case Global::INSTRUCTION_TYPE::STORE_TYPE:
-								break;
-							default:
-								break;
+									//Mark register file as committed
+									Register_File[ROB.entries[ROB.head].destReg].status = Global::REGISTER_ALLOCATION::ALLOC_COMMIT;
+									Register_File[ROB.entries[ROB.head].destReg].value = ROB.entries[ROB.head].result;
+									break;
+								case Global::INSTRUCTION_TYPE::STORE_TYPE:
+									break;
+								default:
+									break;
+							}
+
+							//update ROB head pointer
+							ROB.head = (ROB.head + 1) % Global::ROB_SIZE;
 						}
-
-						//update ROB head pointer
-						ROB.head = (ROB.head + 1) % Global::ROB_SIZE;
 					}
 
 					//run writeback
@@ -818,74 +852,74 @@ int _tmain(int argc, char* argv[])
 						//based on opcode....
 						switch (pipeline_struct_dispatch.instruction.op_code)
 						{
-						case Global::OPCODE::ADD:
-						case Global::OPCODE::ADDL:
-						case Global::OPCODE::AND:
-						case Global::OPCODE::ANDL:
-						case Global::OPCODE::EX_OR:
-						case Global::OPCODE::EX_ORL:
-						case Global::OPCODE::MOVC:
-						case Global::OPCODE::MUL:
-						case Global::OPCODE::MULL:
-						case Global::OPCODE::OR:
-						case Global::OPCODE::ORL:
-						case Global::OPCODE::SUB:
-						case Global::OPCODE::SUBL:
-						case Global::OPCODE::HALT:
-						case Global::OPCODE::LOAD:
-						case Global::OPCODE::STORE:
-							//if for the ALU, and we are not stalled, or branching, 
-							//set up ALU1 with the output of code
-							if (!Stalled_Stages[Global::STALLED_STAGE::DECODE_RF]
-								&& !Stalled_Stages[Global::STALLED_STAGE::ALU1]
-								&& !Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].updatePC)
-								//&& decode->hasValidData())
-							{
-								alu1->setPipelineStruct(pipeline_struct_dispatch);
-								pipeline_struct_dispatch = garbage_struct;
-							}
-							//feed in bubble if we are not stalled, the branch was taken
-							//or if code does not have valid data (bubble)
-							else if (!Stalled_Stages[Global::STALLED_STAGE::ALU1]
-								|| Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].updatePC)
-								//|| !decode->hasValidData())
-							{
-								alu1->setPipelineStruct(garbage_struct);
-							}
+							case Global::OPCODE::ADD:
+							case Global::OPCODE::ADDL:
+							case Global::OPCODE::AND:
+							case Global::OPCODE::ANDL:
+							case Global::OPCODE::EX_OR:
+							case Global::OPCODE::EX_ORL:
+							case Global::OPCODE::MOVC:
+							case Global::OPCODE::MUL:
+							case Global::OPCODE::MULL:
+							case Global::OPCODE::OR:
+							case Global::OPCODE::ORL:
+							case Global::OPCODE::SUB:
+							case Global::OPCODE::SUBL:
+							case Global::OPCODE::HALT:
+							case Global::OPCODE::LOAD:
+							case Global::OPCODE::STORE:
+								//if for the ALU, and we are not stalled, or branching, 
+								//set up ALU1 with the output of code
+								if (!Stalled_Stages[Global::STALLED_STAGE::DECODE_RF]
+									&& !Stalled_Stages[Global::STALLED_STAGE::ALU1]
+									&& !Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].updatePC)
+									//&& decode->hasValidData())
+								{
+									alu1->setPipelineStruct(pipeline_struct_dispatch);
+									pipeline_struct_dispatch = garbage_struct;
+								}
+								//feed in bubble if we are not stalled, the branch was taken
+								//or if code does not have valid data (bubble)
+								else if (!Stalled_Stages[Global::STALLED_STAGE::ALU1]
+									|| Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].updatePC)
+									//|| !decode->hasValidData())
+								{
+									alu1->setPipelineStruct(garbage_struct);
+								}
 
-							//set branch to bubble
-							if (!Stalled_Stages[Global::STALLED_STAGE::BRANCH])
-							{
-								branch->setPipelineStruct(garbage_struct);
-							}
-							break;
-						case Global::OPCODE::BAL:
-						case Global::OPCODE::BNZ:
-						case Global::OPCODE::BZ:
-						case Global::OPCODE::JUMP:
-							//if for the branch, and we are not stalled, or branching, 
-							//set up branch with the output of code
-							if (!Stalled_Stages[Global::STALLED_STAGE::DECODE_RF]
-								&& !Stalled_Stages[Global::STALLED_STAGE::BRANCH]
-								&& !Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].updatePC)
-								//&& decode->hasValidData())
-							{
-								branch->setPipelineStruct(pipeline_struct_dispatch);
-								pipeline_struct_dispatch = garbage_struct;
-							}
-							//feed in bubble if we are not stalled
-							else if (!Stalled_Stages[Global::STALLED_STAGE::BRANCH])
-							{
-								branch->setPipelineStruct(garbage_struct);
-							}
-							//set branch to bubble
-							if (!Stalled_Stages[Global::STALLED_STAGE::ALU1])
-							{
-								alu1->setPipelineStruct(garbage_struct);
-							}
-							break;
-						default:
-							break;
+								//set branch to bubble
+								if (!Stalled_Stages[Global::STALLED_STAGE::BRANCH])
+								{
+									branch->setPipelineStruct(garbage_struct);
+								}
+								break;
+							case Global::OPCODE::BAL:
+							case Global::OPCODE::BNZ:
+							case Global::OPCODE::BZ:
+							case Global::OPCODE::JUMP:
+								//if for the branch, and we are not stalled, or branching, 
+								//set up branch with the output of code
+								if (!Stalled_Stages[Global::STALLED_STAGE::DECODE_RF]
+									&& !Stalled_Stages[Global::STALLED_STAGE::BRANCH]
+									&& !Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].updatePC)
+									//&& decode->hasValidData())
+								{
+									branch->setPipelineStruct(pipeline_struct_dispatch);
+									pipeline_struct_dispatch = garbage_struct;
+								}
+								//feed in bubble if we are not stalled
+								else if (!Stalled_Stages[Global::STALLED_STAGE::BRANCH])
+								{
+									branch->setPipelineStruct(garbage_struct);
+								}
+								//set branch to bubble
+								if (!Stalled_Stages[Global::STALLED_STAGE::ALU1])
+								{
+									alu1->setPipelineStruct(garbage_struct);
+								}
+								break;
+							default:
+								break;
 						}
 
 						if (!Stalled_Stages[Global::STALLED_STAGE::DISPATCH])

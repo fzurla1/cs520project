@@ -19,17 +19,17 @@ Global::apexStruct Dispatch::run(
 	Global::Reorder_Buffer(&ROB),
 	Global::Rename_Table(&Front_End_RAT))
 {
-	Global::apexStruct output_struct;
+	Global::apexStruct output_struct = myStruct;
 	snapshot_before = myStruct;
 
 	//For sources not valid, check again in the forward bus, ROB or register file
-	if (myStruct.instruction.src1.status == Global::STATUS::INVALID)
+	if (output_struct.instruction.src1.status == Global::STATUS::INVALID)
 	{
 		output_struct.instruction.src1.status = Global::STATUS::VALID;
 
 		//look to FE RAT for where data is stored
-		if ((Front_End_RAT.src_bit[myStruct.instruction.src1.archreg] == Global::SOURCES::REGISTER_FILE)
-			&& (Register_File[Front_End_RAT.reg[myStruct.instruction.src1.archreg]].status == Global::REGISTER_ALLOCATION::ALLOC_COMMIT))
+		if ((Front_End_RAT.src_bit[output_struct.instruction.src1.archreg] == Global::SOURCES::REGISTER_FILE)
+			&& (Register_File[Front_End_RAT.reg[output_struct.instruction.src1.archreg]].status == Global::REGISTER_ALLOCATION::ALLOC_COMMIT))
 		{
 			output_struct.instruction.src1.value = Register_File[output_struct.instruction.src1.tag].value;
 		}
@@ -40,14 +40,14 @@ Global::apexStruct Dispatch::run(
 		else
 		{
 			//get ROB entry location
-			output_struct.instruction.src1.rob_loc = Front_End_RAT.reg[myStruct.instruction.src1.archreg];
+			output_struct.instruction.src1.rob_loc = Front_End_RAT.reg[output_struct.instruction.src1.archreg];
 
 			//check ROB
 			//if ROB entry is complete, get out data
 			//get ROB entry # from FE RAT ROB location entry based on arch register from src1 input
-			if (ROB.entries[Front_End_RAT.rob_loc[myStruct.instruction.src1.archreg]].alloc == Global::ROB_ALLOCATION::COMPLETE)
+			if (ROB.entries[Front_End_RAT.rob_loc[output_struct.instruction.src1.archreg]].alloc == Global::ROB_ALLOCATION::COMPLETE)
 			{
-				output_struct.instruction.src1.value = ROB.entries[Front_End_RAT.rob_loc[myStruct.instruction.src1.archreg]].result;
+				output_struct.instruction.src1.value = ROB.entries[Front_End_RAT.rob_loc[output_struct.instruction.src1.archreg]].result;
 			}
 			//if the entry is not complete, but it is executing or waiting, check forwarding bus
 			else
@@ -75,12 +75,12 @@ Global::apexStruct Dispatch::run(
 		}
 	}
 
-	if (myStruct.instruction.src2.status == Global::STATUS::INVALID)
+	if (output_struct.instruction.src2.status == Global::STATUS::INVALID)
 	{
 		output_struct.instruction.src2.status = Global::STATUS::VALID;
 
-		if ((Front_End_RAT.src_bit[myStruct.instruction.src2.archreg] == Global::SOURCES::REGISTER_FILE)
-			&& (Register_File[Front_End_RAT.reg[myStruct.instruction.src2.archreg]].status == Global::REGISTER_ALLOCATION::ALLOC_COMMIT))
+		if ((Front_End_RAT.src_bit[output_struct.instruction.src2.archreg] == Global::SOURCES::REGISTER_FILE)
+			&& (Register_File[Front_End_RAT.reg[output_struct.instruction.src2.archreg]].status == Global::REGISTER_ALLOCATION::ALLOC_COMMIT))
 		{
 			output_struct.instruction.src2.value = Register_File[output_struct.instruction.src2.tag].value;
 		}
@@ -91,14 +91,14 @@ Global::apexStruct Dispatch::run(
 		else
 		{
 			//get ROB entry location
-			output_struct.instruction.src2.rob_loc = Front_End_RAT.reg[myStruct.instruction.src2.archreg];
+			output_struct.instruction.src2.rob_loc = Front_End_RAT.reg[output_struct.instruction.src2.archreg];
 
 			//check ROB
 			//if ROB entry is complete, get out data
 			//get ROB entry # from FE RAT ROB location entry based on arch register from src1 input
-			if (ROB.entries[Front_End_RAT.rob_loc[myStruct.instruction.src2.archreg]].alloc == Global::ROB_ALLOCATION::COMPLETE)
+			if (ROB.entries[Front_End_RAT.rob_loc[output_struct.instruction.src2.archreg]].alloc == Global::ROB_ALLOCATION::COMPLETE)
 			{
-				output_struct.instruction.src2.value = ROB.entries[Front_End_RAT.rob_loc[myStruct.instruction.src2.archreg]].result;
+				output_struct.instruction.src2.value = ROB.entries[Front_End_RAT.rob_loc[output_struct.instruction.src2.archreg]].result;
 			}
 			//if the entry is not complete, but it is executing or waiting, check forwarding bus
 			else
