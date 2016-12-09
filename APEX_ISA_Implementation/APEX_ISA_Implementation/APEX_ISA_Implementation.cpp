@@ -2,7 +2,7 @@
  * CS520
  * Fall 2016
  * Professor Kanad Ghose
- * APEX (A Pipeline EXample) emulator Project 1
+ * APEX (A Pipeline EXample) emulator Project 2
  */
 // APEX_ISA_Implementation.cpp : Defines the entry point for the console application.
 //
@@ -22,6 +22,7 @@
 #include "Global.h"
 #include "Fetch.h"
 #include "Decode.h"
+#include "Dispatch.h"
 #include "ALU1.h"
 #include "ALU2.h"
 #include "Multiply.h"
@@ -37,7 +38,7 @@
 
 using namespace std;
 
-//--------VARIABLES--------//
+#pragma region VARIABLES
 
 //program counter
 int PC = 4000;
@@ -71,11 +72,15 @@ Global::Rename_Table Front_End_RAT;
 //Back End Rename Table (RAT)
 Global::Rename_Table Back_End_RAT;
 
+//Program Statistics
+Global::Statistics stats;
+
 //identify when instructions are still in the pipeline
 bool pipelineHasData = true;
 
 Fetch * fetch;
 Decode * decode;
+Dispatch * dispatch;
 ALU1 * alu1;
 ALU2 * alu2;
 Multiply * multiply;
@@ -86,6 +91,7 @@ WriteBack * writeBack;
 
 Global::apexStruct pipeline_struct_fetch;
 Global::apexStruct pipeline_struct_decode;
+Global::apexStruct pipeline_struct_dispatch;
 Global::apexStruct pipeline_struct_alu1;
 Global::apexStruct pipeline_struct_alu2;
 Global::apexStruct pipeline_struct_multiply;
@@ -98,7 +104,7 @@ bool HALT = false;
 
 int iteration = 1;
 
-//-----------FUNCTIONS---------//
+#pragma endregion VARIABLES
 
 #pragma region "INITIALIZE FUNCTIONS" 
 void initialize_flags()
@@ -135,21 +141,11 @@ void initialize_memory()
 
 void initialize_Register_File()
 {
-	for (int x = 0; x < urf_size; x++)
+	for (int x = 0; x < urf_size + 1; x++)
 	{
 		Register_File[x].clear();
 	}
 }
-
-/*
-void initialize_most_recent()
-{
-	for (int x = 0; x < Global::FINAL_ARCH_REGISTERS_ITEM; x++)
-	{
-		Most_Recent_Reg[x] = Global::ARCH_REGISTERS::NA;
-	}
-}
-*/
 
 void initialize_stalled_stages()
 {
@@ -174,8 +170,14 @@ void initialize_rename_table(){
 	Back_End_RAT.clear();
 }
 
+void initialize_stats()
+{
+	stats.clear();
+}
+
 void initialize_pipeline()
 {
+	cout << "-- Initializing Pipeline --" << endl;
 	cout << "Initializing Flags" << endl
 		<< "..." << endl;
 	initialize_flags();
@@ -199,17 +201,10 @@ void initialize_pipeline()
 	cout << "Initializing Rename Table" << endl
 		<< "..." << endl;
 	initialize_rename_table();
-	cout << "Initializing Rename Table" << endl;
-	/*
-	cout << "Resetting History" << endl
-		<< "..." << endl;
-	initialize_most_recent();
-	cout << "Resetting History Complete" << endl;
-	*/
-	cout << "Resetting PC" << endl
-		<< "..." << endl;
-	PC = 4000;
-	cout << "Resetting PC Complete" << endl;
+	cout << "Initializing Rename Table Complete" << endl;
+	cout << "Initializing Statistics" << endl;
+	initialize_stats();
+	cout << "Initializing Statistics Complete" << endl;
 	cout << "Resetting Stalled Stages" << endl
 		<< "..." << endl;
 	initialize_stalled_stages();
@@ -221,12 +216,14 @@ void initialize_pipeline()
 		<< "..." << endl;
 	pipeline_struct_fetch = garbage_struct;
 	pipeline_struct_decode = garbage_struct;
+	pipeline_struct_dispatch = garbage_struct;
 	pipeline_struct_alu1 = garbage_struct;
 	pipeline_struct_alu2 = garbage_struct;
 	pipeline_struct_branch = garbage_struct;
 	pipeline_struct_delay = garbage_struct;
 	pipeline_struct_memory = garbage_struct;
 	decode->setPipelineStruct(garbage_struct);
+	dispatch->setPipelineStruct(garbage_struct);
 	alu1->setPipelineStruct(garbage_struct);
 	alu2->setPipelineStruct(garbage_struct);
 	branch->setPipelineStruct(garbage_struct);
@@ -234,22 +231,25 @@ void initialize_pipeline()
 	memory->setPipelineStruct(garbage_struct);
 	writeBack->setPipelineStruct(garbage_struct);
 	cout << "Resetting Pipeline Stages Complete" << endl;
+	cout << "Resetting PC" << endl
+		<< "..." << endl;
+	PC = 4000;
+	cout << "Resetting PC Complete" << endl;
+	cout << "-- Initialization Complete --" << endl;
 }
-#pragma endregion
+#pragma endregion INITIALIZE FUNCTIONS
 
-#pragma region displays
+#pragma region DISPLAY FUNCTIONS
 void displayRegisterFile()
 {
 	Global::Debug("");
-	Global::Debug("-- Register File --");
-
-	//for (int x = 0; x < Global::FINAL_ARCH_REGISTERS_ITEM; x++)
-	for (int x = 0; x < Global::REGISTERS::FINAL_REGISTERS_TOTAL; x++)
+	Global::Debug("-- Unified Register File --");
+	for (int x = 0; x < urf_size; x++)
 	{
-		//Global::Debug(Global::toString(Global::ARCH_REGISTERS(x));
-		Global::Debug(Global::toString(Global::REGISTERS(x)));
-		Global::Debug("   status : " + Global::toString(Register_File[x].status));
-		Global::Debug("   value  : " + to_string(Register_File[x].value));
+		Global::Debug("Register[" + to_string(x) + "]:");
+		Global::Debug("  status: " + Global::toString(Register_File[x].status));
+		Global::Debug("  tag   : " + to_string(Register_File[x].tag));
+		Global::Debug("  value : " + to_string(Register_File[x].value));
 	}
 }
 
@@ -269,7 +269,8 @@ void displayStalledStages()
 	Global::Debug("");
 	Global::Debug("-- Stalled stages --");
 	Global::Debug("Fetch		: " + to_string(Stalled_Stages[Global::STALLED_STAGE::FETCH]));
-	Global::Debug("DECODE_RF	: " + to_string(Stalled_Stages[Global::STALLED_STAGE::DECODE_RF]));
+	Global::Debug("DECODE/RENAME1	: " + to_string(Stalled_Stages[Global::STALLED_STAGE::DECODE_RF]));
+	Global::Debug("RENAME2/DISPATCH : " + to_string(Stalled_Stages[Global::STALLED_STAGE::DISPATCH]));
 	Global::Debug("ALU1		    : " + to_string(Stalled_Stages[Global::STALLED_STAGE::ALU1]));
 	Global::Debug("ALU2		    : " + to_string(Stalled_Stages[Global::STALLED_STAGE::ALU2]));
 	Global::Debug("BRANCH		: " + to_string(Stalled_Stages[Global::STALLED_STAGE::BRANCH]));
@@ -281,15 +282,39 @@ void displayStalledStages()
 
 void displayROB()
 {
+	Global::Debug("");
 	Global::Debug("-- ROB Information --");
-	Global::Debug("  HEAD = " + to_string(ROB.head));
-	Global::Debug("  TAIL = " + to_string(ROB.tail));
-	for (int x = ROB.head; x <= ROB.tail; x++)
+	Global::Debug("	HEAD: " + to_string(ROB.head));
+	Global::Debug(" TAIL: " + to_string(ROB.tail));
+	for (int x = ROB.head; x != ROB.tail; x++)
 	{
+		Global::Debug("   Entry[" + to_string(x) + "] = ");
+		Global::Debug("      PC Value  : " + to_string(ROB.entries[x].pc_value));
+		Global::Debug("      Allocation: " + Global::toString(ROB.entries[x].alloc));
+		Global::Debug("      Instr Type: " + Global::toString(ROB.entries[x].type));
+		Global::Debug("      Arch Reg  : " + Global::toString(ROB.entries[x].destArchReg));
+		Global::Debug("      URF Reg   : " + to_string(ROB.entries[x].destReg));
+		Global::Debug("      Flags     : " + Global::toString(ROB.entries[x].flags));
+		Global::Debug("      Result    : " + to_string(ROB.entries[x].result));
 
+		if (x == (Global::ROB_SIZE - 1))
+		{
+			x = 0;
+		}
 	}
 }
-#pragma endregion
+
+void displayStats()
+{
+	Global::Debug("");
+	Global::Debug("-- Execution Statistics--");
+	Global::Debug("  IPC realized                            : ");
+	Global::Debug("  # of cycles which dispatched as stalled : " + to_string(stats.dispatch_stall_count));
+	Global::Debug("  # of cycles w/o issue                   : " + to_string(stats.no_issue_count));
+	Global::Debug("  # LOADs committed                       : " + to_string(stats.loads_count));
+	Global::Debug("  # STOREs committed                      : " + to_string(stats.stores_count));
+}
+#pragma endregion DISPLAY FUNCTIONS
 
 string trim(string &str)
 {
@@ -302,6 +327,8 @@ void user_interface() //char * input_file, char * output_file)
 {
 	string	infile_name = "",
 		outfile_name = "";
+
+	bool is_open = false;
 
 	cout << "Welcome to the APEX ISA Implementation for CS520" << endl
 		<< "Project 1" << endl
@@ -361,7 +388,6 @@ void user_interface() //char * input_file, char * output_file)
 	}
 
 	Global::setOutFile(outfile_name);
-	//}
 }
 
 //MAIN PROGRAM
@@ -371,6 +397,7 @@ int _tmain(int argc, char* argv[])
 	
 	fetch = new Fetch();
 	decode = new Decode();
+	dispatch = new Dispatch();
 	alu1 = new ALU1();
 	alu2 = new ALU2();
 	multiply = new Multiply();
@@ -378,8 +405,6 @@ int _tmain(int argc, char* argv[])
 	delay = new Delay();
 	memory = new Memory();
 	writeBack = new WriteBack();
-	ifstream input_file;
-	ofstream output_file;
 	char * input_file_name = NULL;
 	char * output_file_name = NULL;
 	string command = "",
@@ -396,9 +421,9 @@ int _tmain(int argc, char* argv[])
 	
 	initialize_pipeline();
 
-	user_interface();// input_file_name, output_file_name);
+	user_interface();
 	
-	if (input_file)
+	if (fetch->fileIsGood())
 	{
 		while (command != "end")
 		{
@@ -512,17 +537,17 @@ int _tmain(int argc, char* argv[])
 
 			if (command == "print_rob")
 			{
-
+				displayROB();
 			}
 
 			if (command == "print_urf")
 			{
-
+				displayRegisterFile();
 			}
 
 			if (command == "print_stats")
 			{
-
+				displayStats();
 			}
 
 			substr = command.substr(0, 8);
@@ -650,7 +675,10 @@ int _tmain(int argc, char* argv[])
 						//Run ALU1
 						pipeline_struct_alu1 = alu1->run(Forward_Bus, Stalled_Stages);
 
-						//Decode handles delays based on OPCODE internally and update Stalled_Stages
+						//Run Rename2/Dispatch
+						pipeline_struct_dispatch = dispatch->run(Register_File, urf_size, Forward_Bus, Stalled_Stages, ROB, Front_End_RAT);
+
+						//Decode/Rename1 handles delays based on OPCODE internally and update Stalled_Stages
 						pipeline_struct_decode = decode->run(Register_File, urf_size, Forward_Bus, Stalled_Stages, ROB, Front_End_RAT);
 						
 						//as long as decode is not stalled and we still have data to read from the
@@ -686,8 +714,12 @@ int _tmain(int argc, char* argv[])
 							if (!Stalled_Stages[Global::STALLED_STAGE::DECODE_RF])
 								decode->display();
 							else
-								Global::Debug("-- Decode Stalled -- " + decode->getInstruction());
+								Global::Debug("-- Decode/Rename1 Stalled -- " + decode->getInstruction());
 
+							if (!Stalled_Stages[Global::STALLED_STAGE::DISPATCH])
+								dispatch->display();
+							else
+								Global::Debug("-- Rename2/Dispatch Stalled -- " + dispatch->getInstruction());
 							if (!Stalled_Stages[Global::STALLED_STAGE::ALU1])
 								alu1->display();
 							else
@@ -784,7 +816,7 @@ int _tmain(int argc, char* argv[])
 						}
 
 						//based on opcode....
-						switch (pipeline_struct_decode.instruction.op_code)
+						switch (pipeline_struct_dispatch.instruction.op_code)
 						{
 						case Global::OPCODE::ADD:
 						case Global::OPCODE::ADDL:
@@ -809,8 +841,8 @@ int _tmain(int argc, char* argv[])
 								&& !Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].updatePC)
 								//&& decode->hasValidData())
 							{
-								alu1->setPipelineStruct(pipeline_struct_decode);
-								pipeline_struct_decode = garbage_struct;
+								alu1->setPipelineStruct(pipeline_struct_dispatch);
+								pipeline_struct_dispatch = garbage_struct;
 							}
 							//feed in bubble if we are not stalled, the branch was taken
 							//or if code does not have valid data (bubble)
@@ -838,8 +870,8 @@ int _tmain(int argc, char* argv[])
 								&& !Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].updatePC)
 								//&& decode->hasValidData())
 							{
-								branch->setPipelineStruct(pipeline_struct_decode);
-								pipeline_struct_decode = garbage_struct;
+								branch->setPipelineStruct(pipeline_struct_dispatch);
+								pipeline_struct_dispatch = garbage_struct;
 							}
 							//feed in bubble if we are not stalled
 							else if (!Stalled_Stages[Global::STALLED_STAGE::BRANCH])
@@ -856,12 +888,23 @@ int _tmain(int argc, char* argv[])
 							break;
 						}
 
+						if (!Stalled_Stages[Global::STALLED_STAGE::DISPATCH])
+						{
+							dispatch->setPipelineStruct(pipeline_struct_decode);
+							pipeline_struct_decode = garbage_struct;
+							PC++;
+						}
+						//or if we are not stalled, then feed in garbage (bubble)
+						else if (!Stalled_Stages[Global::STALLED_STAGE::DISPATCH])
+						{
+							dispatch->setPipelineStruct(garbage_struct);
+							stats.dispatch_stall_count++;
+						}
 
 						//as long as decode is not stalled, and we are not updating
 						// the PC from a branch, and we still have data to read
 						//from fetch, move the fetch output to the input of decode
 						if (!Stalled_Stages[Global::STALLED_STAGE::DECODE_RF]
-							//&& !fetch->endOfFile()
 							&& !HALT)
 						{
 							decode->setPipelineStruct(pipeline_struct_fetch);
@@ -930,7 +973,7 @@ int _tmain(int argc, char* argv[])
 			<< "EXITING" << endl;
 	}
 
-	input_file.close();
+	fetch->closeFile();
 	Global::closeFile();
 
 	//delete & free up memory
