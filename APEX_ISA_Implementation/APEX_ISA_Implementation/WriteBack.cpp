@@ -3,6 +3,7 @@
 
 WriteBack::WriteBack()
 {
+//	myStructVector.resize(MAX_PORTS);
 }
 
 
@@ -19,7 +20,7 @@ bool WriteBack::run(
 {
 	bool HALT = false;
 
-	for (int x = (myStructVector.size()-1); x <= 0; x--)
+	for (int x = (myStructVector.size()-1); x >= 0; x--)
 	{
 		//make sure we have valid data
 		if (myStructVector[x].pc_value != INT_MAX)
@@ -53,7 +54,7 @@ void WriteBack::setPipelineStruct(Global::apexStruct input_struct)
 bool WriteBack::hasValidData()
 {
 	bool out = false;
-	for (int x = 0; x < (myStructVector.size() - 1); x++)
+	for (int x = (myStructVector.size() - 1); x >= 0; x--)
 	{
 		if (myStructVector[x].pc_value != INT_MAX)
 		{
@@ -68,7 +69,7 @@ string* WriteBack::getInstruction()
 {
 	int size = myStructVector.size();
 	string * out = new string[myStructVector.size()];
-	for (int x = 0; x < size; x++)
+	for (int x = (myStructVector.size() - 1); x >= 0; x--)
 	{
 		out[x] = myStructVector[x].untouched_instruction;
 	}
@@ -81,7 +82,7 @@ void WriteBack::display()
 
 	Global::Debug("WRITEBACK  - ");
 
-	for (int x = 0; x < Global::MAX_WRITEBACK_SIZE; x++)
+	for (int x = (myStructVector.size() - 1); x >= 0; x--)
 	{
 		//make sure we have valid data
 		if (myStructVector[x].pc_value != INT_MAX)

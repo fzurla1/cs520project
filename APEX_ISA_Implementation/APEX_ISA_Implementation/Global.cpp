@@ -28,6 +28,11 @@ string Global::getOutFile()
 	return output_file_name;
 }
 
+bool Global::fileIsGood()
+{
+	return fout.is_open() & fout.good();
+}
+
 void Global::closeFile()
 {
 	fout.close();
@@ -134,7 +139,6 @@ string Global::toString(FLAGS flag)
 	return out;
 }
 
-/*
 //Architectural Register Types
 string Global::toString(ARCH_REGISTERS reg)
 {
@@ -197,7 +201,6 @@ string Global::toString(ARCH_REGISTERS reg)
 	}
 	return out;
 }
-*/
 
 //Registers
 string Global::toString(REGISTERS reg)
@@ -208,6 +211,17 @@ string Global::toString(REGISTERS reg)
 		out = "UNA";
 	else if (reg == REGISTERS::UX)
 		out = "X";
+	return out;
+}
+
+string Global::toString(Register_Info reg)
+{
+	string out = "";
+
+	out += "Status = " + toString(reg.status) + '\n';
+	out += "Tag    = " + to_string(reg.tag) + '\n';
+	out += "Value  = " + to_string(reg.value) + '\n';
+
 	return out;
 }
 
@@ -300,6 +314,45 @@ string Global::toString(STALLED_STAGE stage)
 			out = "WRITEBACK";
 			break;
 	}
+
+	return out;
+}
+
+string Global::toString(INSTRUCTION_TYPE type)
+{
+	string out = "";
+	switch (type)
+	{
+		case INSTRUCTION_TYPE::REG_TO_REG_TYPE:
+			out = "REG_TO_REG";
+			break;
+		case INSTRUCTION_TYPE::LOAD_TYPE:
+			out = "LOAD";
+			break;
+		case INSTRUCTION_TYPE::STORE_TYPE:
+			out = "STORE";
+			break;
+		case INSTRUCTION_TYPE::BRANCH_TYPE:
+			out = "BRANCH";
+			break;
+		default:
+			out = "NONE";
+			break;
+	}
+	return out;
+}
+
+string Global::toString(ROB_Entry entry)
+{
+	string out = "";
+
+	out += "Alloc    = " + toString(entry.alloc) + '\n';
+	out += "Arch Reg = " + toString(entry.destArchReg) + '\n';
+	out += "URF Ref  = " + to_string(entry.destReg) + '\n';
+	out += "Flags    = " + toString(entry.flags) + '\n';
+	out += "PC Value = " + to_string(entry.pc_value) + '\n';
+	out += "Result   = " + to_string(entry.result) + '\n';
+	out += "Type     = " + toString(entry.type) + '\n';
 
 	return out;
 }

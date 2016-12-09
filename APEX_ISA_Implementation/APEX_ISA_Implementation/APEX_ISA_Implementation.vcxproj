@@ -85,6 +85,7 @@
     <ClInclude Include="Branch.h" />
     <ClInclude Include="Decode.h" />
     <ClInclude Include="Delay.h" />
+    <ClInclude Include="Dispatch.h" />
     <ClInclude Include="Fetch.h" />
     <ClInclude Include="Global.h" />
     <ClInclude Include="Memory.h" />
@@ -101,6 +102,7 @@
     <ClCompile Include="Branch.cpp" />
     <ClCompile Include="Decode.cpp" />
     <ClCompile Include="Delay.cpp" />
+    <ClCompile Include="Dispatch.cpp" />
     <ClCompile Include="Fetch.cpp" />
     <ClCompile Include="Global.cpp" />
     <ClCompile Include="Memory.cpp" />

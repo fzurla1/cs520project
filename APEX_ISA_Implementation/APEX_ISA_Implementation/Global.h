@@ -13,7 +13,7 @@ public:
 	//constants
 	static const int MEMORY_SIZE = 4000;
 	static const int ROB_SIZE = 40;
-	static const int MAX_WRITEBACK_SIZE = 3;
+	static const int MAX_WRITEBACK_SIZE = 4;
 
 	//register status flags
 	enum STATUS{
@@ -91,6 +91,7 @@ public:
 	enum STALLED_STAGE{
 		FETCH,
 		DECODE_RF,
+		DISPATCH,
 		ALU1,
 		ALU2,
 		BRANCH,
@@ -186,6 +187,8 @@ public:
 		STATUS status = STATUS::INVALID;
 		//URF tag
 		int tag = -1;
+		//Architectural Register
+		ARCH_REGISTERS archreg = ARCH_REGISTERS::NA;
 		//location within ROB
 		int rob_loc = -1;
 
@@ -194,6 +197,7 @@ public:
 			value = -1;
 			status = STATUS::INVALID;
 			tag = -1;
+			archreg = ARCH_REGISTERS::NA;
 			rob_loc = -1;
 		}
 	};
@@ -263,6 +267,27 @@ public:
 		}
 	};
 
+	//Statistics Structure
+	struct Statistics {
+		//the IPC realized up to the point where this command is invoked
+		int ipc = 0;
+		//the number of cycles for which dispatched has stalled
+		int dispatch_stall_count = 0;
+		// the number of cycles for which no issues have taken place to any function unit
+		int no_issue_count = 0;
+		//number of LOAD and STORE instructions committed (separately).
+		int loads_count = 0;
+		int stores_count = 0;
+
+		void clear()
+		{
+			dispatch_stall_count = 0;
+			no_issue_count = 0;
+			loads_count = 0;
+			stores_count = 0;
+		}
+	};
+
 	//APEX structure to get passed between stages
 	struct apexStruct{
 		//program counter for instruction
@@ -329,6 +354,11 @@ public:
 	static string getOutFile();
 
 	/// <summary>
+	/// If file is good and open
+	/// </summary>
+	static bool fileIsGood();
+
+	/// <summary>
 	// Close output file
 	/// </summary>
 	static void closeFile();
@@ -348,12 +378,21 @@ public:
 	/// Output FLAG enum to string
 	/// </summary>
 	static string toString(FLAGS flag);
-	//static string toString(ARCH_REGISTERS reg);
+	
+	/// <summary>
+	/// Output ARCH_REGISTERS enum to string
+	/// </summary>
+	static string toString(ARCH_REGISTERS reg);
 
 	/// <summary>
 	/// Output REGISTER enum to string
 	/// </summary>
 	static string toString(REGISTERS reg);
+
+	/// <summary>
+	/// Output Register_Info struct to string
+	/// </summary>
+	static string toString(Register_Info reg);
 
 	/// <summary>
 	/// Output FORWARD_TYPE enum to string
@@ -379,6 +418,17 @@ public:
 	/// Output STALLED_STAGE enum to string
 	/// </summary>
 	static string toString(STALLED_STAGE stage);
+
+	/// <summary>
+	/// Output INSTRUCTION_TYPE enum to string
+	/// </summary>
+	static string toString(INSTRUCTION_TYPE type);
+
+	/// <summary>
+	/// Output ROB_Entry struct to string
+	/// </summary>
+	static string toString(ROB_Entry entry);
+
 #pragma endregion FUNCTIONS
 private:
 };

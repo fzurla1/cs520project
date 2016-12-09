@@ -85,9 +85,19 @@ void Fetch::setFile(string filename)
 	}
 }
 
+bool Fetch::fileIsGood()
+{
+	return input_file.is_open() & input_file.good();
+}
+
 bool Fetch::endOfFile()
 {
 	return input_file.eof();
+}
+
+void Fetch::closeFile()
+{
+	input_file.close();
 }
 
 void Fetch::display()

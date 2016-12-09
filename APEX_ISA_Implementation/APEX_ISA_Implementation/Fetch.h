@@ -27,6 +27,14 @@ public:
 
 	/// <summary>
 	///	This function will:
+	///	Return if the file is open and good
+	/// </summary>
+	bool fileIsGood();
+
+	void closeFile();
+
+	/// <summary>
+	///	This function will:
 	///	return if reached end of file
 	/// </summary>
 	bool endOfFile();

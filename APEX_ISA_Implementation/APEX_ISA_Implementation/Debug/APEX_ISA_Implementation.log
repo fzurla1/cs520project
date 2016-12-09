@@ -1,15 +1,15 @@
-﻿Build started 12/2/2016 3:45:07 PM.
+﻿Build started 12/8/2016 10:01:38 PM.
      1>Project "C:\Users\Frank\Documents\GitHub\cs520project\APEX_ISA_Implementation\APEX_ISA_Implementation\APEX_ISA_Implementation.vcxproj" on node 2 (Rebuild target(s)).
      1>ClCompile:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _LIB /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Yc"stdafx.h" /Fp"Debug\APEX_ISA_Implementation.pch" /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt stdafx.cpp
          stdafx.cpp
-         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _LIB /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Yu"stdafx.h" /Fp"Debug\APEX_ISA_Implementation.pch" /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt ALU1.cpp ALU2.cpp APEX_ISA_Implementation.cpp Branch.cpp Decode.cpp Delay.cpp Fetch.cpp Global.cpp Memory.cpp Multiply.cpp WriteBack.cpp
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _LIB /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Yu"stdafx.h" /Fp"Debug\APEX_ISA_Implementation.pch" /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt ALU1.cpp ALU2.cpp APEX_ISA_Implementation.cpp Branch.cpp Decode.cpp Delay.cpp Dispatch.cpp Fetch.cpp Global.cpp Memory.cpp Multiply.cpp WriteBack.cpp
          WriteBack.cpp
-     1>c:\users\frank\documents\github\cs520project\apex_isa_implementation\apex_isa_implementation\writeback.cpp(56): warning C4018: '<' : signed/unsigned mismatch
          Multiply.cpp
          Memory.cpp
          Global.cpp
          Fetch.cpp
+         Dispatch.cpp
          Delay.cpp
          Decode.cpp
          Branch.cpp
@@ -29,6 +29,7 @@
          Debug\Branch.obj
          Debug\Decode.obj
          Debug\Delay.obj
+         Debug\Dispatch.obj
          Debug\Fetch.obj
          Debug\Global.obj
          Debug\Memory.obj
@@ -40,4 +41,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:13.75
+Time Elapsed 00:00:06.61

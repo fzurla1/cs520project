@@ -1,0 +1,11 @@
+
+Iteration 1
+FETCH      - MOVC R0, #0
+Decode/Rename1 STAGE --> No Instruction in Stage
+Rename2/Dispatch STAGE --> No Instruction in Stage
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Delay STAGE --> No Instruction in Stage
+MEM STAGE --> No Instruction in Stage
+WRITEBACK  - 

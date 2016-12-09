@@ -230,11 +230,13 @@ Global::apexStruct Decode::run(
 				//set up source 1
 				output_struct.instruction.src1.status = Global::STATUS::VALID;
 				output_struct.instruction.src1.tag = Front_End_RAT.reg[arch_src1];
+				output_struct.instruction.src1.archreg = Global::ARCH_REGISTERS(arch_src1);
 				output_struct.instruction.src1.rob_loc = -1;
 
 				//set up source 2
 				output_struct.instruction.src2.status = Global::STATUS::VALID;
 				output_struct.instruction.src2.tag = Front_End_RAT.reg[arch_src2];
+				output_struct.instruction.src2.archreg = Global::ARCH_REGISTERS(arch_src2);
 				output_struct.instruction.src2.rob_loc = -1;
 
 				//FOR SRC1
@@ -710,10 +712,10 @@ void Decode::display()
 	//make sure we have valid data
 	if (snapshot_before.pc_value != INT_MAX)
 	{
-		Global::Debug("DECODE/RF  - " + snapshot_before.untouched_instruction);
+		Global::Debug("Decode/Rename1  - " + snapshot_before.untouched_instruction);
 	}
 	else
 	{
-		Global::Debug("Decode/RF STAGE --> No Instruction in Stage");
+		Global::Debug("Decode/Rename1 STAGE --> No Instruction in Stage");
 	}
 }

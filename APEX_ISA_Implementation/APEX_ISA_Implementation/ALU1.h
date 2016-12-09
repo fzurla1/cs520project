@@ -1,3 +1,10 @@
+/*
+ *	ALU1 Class
+ *	This class is responsible for gathering instructions from Decode/RF
+ *	for the ALU functonal unit and passing it to the ALU2 functional unit
+ *  for execution.
+ */
+
 #ifndef ALU1_H
 #define ALU1_H
 
