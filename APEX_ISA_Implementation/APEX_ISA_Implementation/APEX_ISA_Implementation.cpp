@@ -859,8 +859,6 @@ int _tmain(int argc, char* argv[])
 							case Global::OPCODE::EX_OR:
 							case Global::OPCODE::EX_ORL:
 							case Global::OPCODE::MOVC:
-							case Global::OPCODE::MUL:
-							case Global::OPCODE::MULL:
 							case Global::OPCODE::OR:
 							case Global::OPCODE::ORL:
 							case Global::OPCODE::SUB:
@@ -918,6 +916,9 @@ int _tmain(int argc, char* argv[])
 									alu1->setPipelineStruct(garbage_struct);
 								}
 								break;
+							case Global::OPCODE::MUL:
+							case Global::OPCODE::MULL:
+
 							default:
 								break;
 						}
