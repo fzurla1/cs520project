@@ -63,6 +63,9 @@
     <ClInclude Include="Dispatch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="IssueQueue.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -102,6 +105,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Dispatch.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="IssueQueue.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
