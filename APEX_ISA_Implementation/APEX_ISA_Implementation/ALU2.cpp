@@ -19,7 +19,6 @@ ALU2::~ALU2()
 Global::apexStruct ALU2::run(
 	Global::Forwarding_Info(&Forward_Bus)[Global::FINAL_FORWARD_TYPE_TOTAL],
 	bool(&Stalled_Stages)[Global::FINAL_STALLED_STAGE_TOTAL],
-	Global::Register_Info *Register_File,
 	Global::Reorder_Buffer(&ROB))
 {
 	Global::apexStruct output_struct = myStruct;
@@ -114,10 +113,6 @@ Global::apexStruct ALU2::run(
 		Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].reg_info.tag = output_struct.instruction.dest.tag;
 		Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].reg_info.value = output_struct.instruction.dest.value;
 
-		//Update register file
-		Register_File[output_struct.instruction.dest.tag].status = Global::REGISTER_ALLOCATION::ALLOC_NO_COMMIT;
-		Register_File[output_struct.instruction.dest.tag].value = output_struct.instruction.dest.value;
-
 		//Update ROB
 		ROB.entries[output_struct.instruction.dest.rob_loc].alloc = Global::ROB_ALLOCATION::COMPLETE;
 		ROB.entries[output_struct.instruction.dest.rob_loc].result = output_struct.instruction.dest.value;
@@ -159,10 +154,10 @@ void ALU2::display()
 	//make sure we have valid data
 	if (myStruct.pc_value != INT_MAX)
 	{
-		Global::Debug("ALU2       - " + snapshot_before.untouched_instruction);
+		Global::Output("ALU2       - " + snapshot_before.untouched_instruction);
 	}
 	else
 	{
-		Global::Debug("ALU 2 STAGE --> No Instruction in Stage");
+		Global::Output("ALU 2 STAGE --> No Instruction in Stage");
 	}
 }

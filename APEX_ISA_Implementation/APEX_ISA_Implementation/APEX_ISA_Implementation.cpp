@@ -67,10 +67,10 @@ int Memory_Array[Global::MEMORY_SIZE];
 Global::Reorder_Buffer ROB;
 
 //Front End Rename Table (RAT)
-Global::Rename_Table Front_End_RAT;
+Global::Front_End_Rename_Entry Front_End_RAT[Global::ARCH_REGISTERS::FINAL_ARCH_REGISTERS_ITEM];
 
 //Back End Rename Table (RAT)
-Global::Rename_Table Back_End_RAT;
+Global::Back_End_Rename_Entry Back_End_RAT[Global::ARCH_REGISTERS::FINAL_ARCH_REGISTERS_ITEM];
 
 //Program Statistics
 Global::Statistics stats;
@@ -86,7 +86,6 @@ ALU2 * alu2;
 Multiply * multiply;
 Branch * branch;
 Delay * delay;
-Memory * memory;
 WriteBack * writeBack;
 
 Global::apexStruct pipeline_struct_fetch;
@@ -95,9 +94,9 @@ Global::apexStruct pipeline_struct_dispatch;
 Global::apexStruct pipeline_struct_alu1;
 Global::apexStruct pipeline_struct_alu2;
 Global::apexStruct pipeline_struct_multiply;
+Global::apexStruct pipeline_struct_lsq;
 Global::apexStruct pipeline_struct_branch;
 Global::apexStruct pipeline_struct_delay;
-Global::apexStruct pipeline_struct_memory;
 Global::apexStruct garbage_struct;
 
 bool HALT = false;
@@ -107,14 +106,6 @@ int iteration = 1;
 #pragma endregion VARIABLES
 
 #pragma region "INITIALIZE FUNCTIONS" 
-void initialize_flags()
-{
-	for (int x = 0; x < Global::FLAGS::FINAL_FLAGS_TOTAL; x++)
-	{
-		ALU_Flags[x] = false;
-	}
-}
-
 void initialize_forwarding_bus()
 {
 	for (int x = 0; x < Global::FORWARD_TYPE::FINAL_FORWARD_TYPE_TOTAL; x++)
@@ -126,7 +117,6 @@ void initialize_forwarding_bus()
 		Forward_Bus[x].target = INT_MAX;
 		Forward_Bus[x].tag = Global::REGISTERS::UNA;
 		Forward_Bus[x].reg_info.status = Global::REGISTER_ALLOCATION::REG_UNALLOCATED;
-		//Forward_Bus[x].reg_info.tag = Global::ARCH_REGISTERS::NA;
 		Forward_Bus[x].reg_info.value = INT_MAX;
 	}
 }
@@ -166,8 +156,11 @@ void initialize_rob()
 }
 
 void initialize_rename_table(){
-	Front_End_RAT.clear();
-	Back_End_RAT.clear();
+	for (int x = 0; x < Global::ARCH_REGISTERS::FINAL_ARCH_REGISTERS_ITEM; x++)
+	{
+		Front_End_RAT[x].clear();
+		Back_End_RAT[x].clear();
+	}
 }
 
 void initialize_stats()
@@ -178,10 +171,6 @@ void initialize_stats()
 void initialize_pipeline()
 {
 	cout << "-- Initializing Pipeline --" << endl;
-	cout << "Initializing Flags" << endl
-		<< "..." << endl;
-	initialize_flags();
-	cout << "Initializing Flags Complete" << endl;
 	cout << "Initializing Forwarding Bus" << endl
 		<< "..." << endl;
 	initialize_forwarding_bus();
@@ -202,7 +191,8 @@ void initialize_pipeline()
 		<< "..." << endl;
 	initialize_rename_table();
 	cout << "Initializing Rename Table Complete" << endl;
-	cout << "Initializing Statistics" << endl;
+	cout << "Initializing Statistics" << endl
+		<< "..." << endl;
 	initialize_stats();
 	cout << "Initializing Statistics Complete" << endl;
 	cout << "Resetting Stalled Stages" << endl
@@ -221,14 +211,12 @@ void initialize_pipeline()
 	pipeline_struct_alu2 = garbage_struct;
 	pipeline_struct_branch = garbage_struct;
 	pipeline_struct_delay = garbage_struct;
-	pipeline_struct_memory = garbage_struct;
 	decode->setPipelineStruct(garbage_struct);
 	dispatch->setPipelineStruct(garbage_struct);
 	alu1->setPipelineStruct(garbage_struct);
 	alu2->setPipelineStruct(garbage_struct);
 	branch->setPipelineStruct(garbage_struct);
 	delay->setPipelineStruct(garbage_struct);
-	memory->setPipelineStruct(garbage_struct);
 	writeBack->setPipelineStruct(garbage_struct);
 	cout << "Resetting Pipeline Stages Complete" << endl;
 	cout << "Resetting PC" << endl
@@ -242,102 +230,115 @@ void initialize_pipeline()
 #pragma region DISPLAY FUNCTIONS
 void displayRegisterFile()
 {
-	Global::Debug("");
-	Global::Debug("-- Unified Register File --");
+	Global::Output("");
+	Global::Output("-- Unified Register File --");
 	for (int x = 0; x < urf_size; x++)
 	{
-		Global::Debug("Register[U" + to_string(x) + "]:");
-		Global::Debug("  status: " + Global::toString(Register_File[x].status));
-		Global::Debug("  value : " + to_string(Register_File[x].value));
+		Global::Output("Register[U" + to_string(x) + "]:");
+		Global::Output("  status: " + Global::toString(Register_File[x].status));
+		Global::Output("  value : " + to_string(Register_File[x].value));
 	}
 }
 
 void displayFRAT()
 {
-	Global::Debug("");
-	Global::Debug("-- Front-End Rename Table --");
+	Global::OutputFRAT("");
+	Global::OutputFRAT("-- Front-End Rename Table --");
 	for (int x = 0; x < Global::ARCH_REGISTERS::FINAL_ARCH_REGISTERS_ITEM; x++)
 	{
-		Global::Debug("Arch Reg: " + Global::toString(Global::ARCH_REGISTERS(x)));
-		Global::Debug("  URF link : " + to_string(Front_End_RAT.reg[x]));
-		Global::Debug("  ROB Loc  : " + to_string(Front_End_RAT.rob_loc[x]));
-		Global::Debug("  src bit  : " + Global::toString(Front_End_RAT.src_bit[x]));
+		if (Front_End_RAT[x].reg != -1)
+		{
+			Global::OutputFRAT("Arch Reg: " + Global::toString(Global::ARCH_REGISTERS(x)));
+			Global::OutputFRAT("  URF link : " + to_string(Front_End_RAT[x].reg));
+			Global::OutputFRAT("  ROB Loc  : " + to_string(Front_End_RAT[x].rob_loc));
+			Global::OutputFRAT("  src bit  : " + Global::toString(Front_End_RAT[x].src_bit));
+		}
 	}
+
+	string cmd = "notepad.exe " + Global::getOutFileFRAT();
+	system(cmd.c_str());
 }
 
 void displayRRAT()
 {
-	Global::Debug("");
-	Global::Debug("-- Back-End Rename Table --");
+	Global::OutputBRAT("");
+	Global::OutputBRAT("-- Back-End Rename Table --");
 	for (int x = 0; x < Global::ARCH_REGISTERS::FINAL_ARCH_REGISTERS_ITEM; x++)
 	{
-		Global::Debug("Arch Reg: " + Global::toString(Global::ARCH_REGISTERS(x)));
-		Global::Debug("  URF link : " + to_string(Back_End_RAT.reg[x]));
-		Global::Debug("  ROB Loc  : " + to_string(Front_End_RAT.rob_loc[x]));
-		Global::Debug("  src bit  : " + Global::toString(Front_End_RAT.src_bit[x]));
+		if (Back_End_RAT[x].reg != -1)
+		{
+			Global::OutputBRAT("Arch Reg: " + Global::toString(Global::ARCH_REGISTERS(x)));
+			Global::OutputBRAT("  URF link : " + to_string(Back_End_RAT[x].reg));
+		}
 	}
+
+	string cmd = "notepad.exe " + Global::getOutFileBRAT();
+	system(cmd.c_str());
 }
 
 void displayMemory()
 {
-	Global::Debug("");
-	Global::Debug("-- Memory Locations --");
+	Global::Output("");
+	Global::Output("-- Memory Locations --");
 
 	for (int x = 0; x < 100; x++)
 	{
-		Global::Debug("Memory[" + to_string(x) + "] = " + to_string(Memory_Array[x]));
+		Global::Output("Memory[" + to_string(x) + "] = " + to_string(Memory_Array[x]));
 	}
 }
 
 void displayStalledStages()
 {
-	Global::Debug("");
-	Global::Debug("-- Stalled stages --");
-	Global::Debug("Fetch		: " + to_string(Stalled_Stages[Global::STALLED_STAGE::FETCH]));
-	Global::Debug("DECODE/RENAME1	: " + to_string(Stalled_Stages[Global::STALLED_STAGE::DECODE_RF]));
-	Global::Debug("RENAME2/DISPATCH : " + to_string(Stalled_Stages[Global::STALLED_STAGE::DISPATCH]));
-	Global::Debug("ALU1		    : " + to_string(Stalled_Stages[Global::STALLED_STAGE::ALU1]));
-	Global::Debug("ALU2		    : " + to_string(Stalled_Stages[Global::STALLED_STAGE::ALU2]));
-	Global::Debug("BRANCH		: " + to_string(Stalled_Stages[Global::STALLED_STAGE::BRANCH]));
-	Global::Debug("DELAY		: " + to_string(Stalled_Stages[Global::STALLED_STAGE::DELAY]));
-	Global::Debug("MEMORY		: " + to_string(Stalled_Stages[Global::STALLED_STAGE::MEMORY]));
-	Global::Debug("WRITEBACK	: " + to_string(Stalled_Stages[Global::STALLED_STAGE::WRITEBACK]));
-	Global::Debug("");
+	Global::Output("");
+	Global::Output("-- Stalled stages --");
+	Global::Output("Fetch		: " + to_string(Stalled_Stages[Global::STALLED_STAGE::FETCH]));
+	Global::Output("DECODE/RENAME1	: " + to_string(Stalled_Stages[Global::STALLED_STAGE::DECODE_RF]));
+	Global::Output("RENAME2/DISPATCH : " + to_string(Stalled_Stages[Global::STALLED_STAGE::DISPATCH]));
+	Global::Output("ALU1		    : " + to_string(Stalled_Stages[Global::STALLED_STAGE::ALU1]));
+	Global::Output("ALU2		    : " + to_string(Stalled_Stages[Global::STALLED_STAGE::ALU2]));
+	Global::Output("BRANCH		: " + to_string(Stalled_Stages[Global::STALLED_STAGE::BRANCH]));
+	Global::Output("DELAY		: " + to_string(Stalled_Stages[Global::STALLED_STAGE::DELAY]));
+	Global::Output("MEMORY		: " + to_string(Stalled_Stages[Global::STALLED_STAGE::MEMORY]));
+	Global::Output("WRITEBACK	: " + to_string(Stalled_Stages[Global::STALLED_STAGE::WRITEBACK]));
+	Global::Output("");
 }
 
 void displayROB()
 {
-	Global::Debug("");
-	Global::Debug("-- ROB Information --");
-	Global::Debug("	HEAD: " + to_string(ROB.head));
-	Global::Debug(" TAIL: " + to_string(ROB.tail));
-	for (int x = ROB.head; x != ROB.tail; x++)
+	Global::OutputROB("");
+	Global::OutputROB("-- ROB Information --");
+	Global::OutputROB(" HEAD: " + to_string(ROB.head));
+	Global::OutputROB(" TAIL: " + to_string(ROB.tail));
+	for (int x = ROB.head; x != ROB.tail+1; x++)
 	{
-		Global::Debug("   Entry[" + to_string(x) + "] = ");
-		Global::Debug("      PC Value  : " + to_string(ROB.entries[x].pc_value));
-		Global::Debug("      Allocation: " + Global::toString(ROB.entries[x].alloc));
-		Global::Debug("      Instr Type: " + Global::toString(ROB.entries[x].type));
-		Global::Debug("      Arch Reg  : " + Global::toString(ROB.entries[x].destArchReg));
-		Global::Debug("      URF Reg   : " + to_string(ROB.entries[x].destReg));
-		Global::Debug("      Flags     : " + Global::toString(ROB.entries[x].flags));
-		Global::Debug("      Result    : " + to_string(ROB.entries[x].result));
+		Global::OutputROB("   Entry[" + to_string(x) + "] = ");
+		Global::OutputROB("      PC Value  : " + to_string(ROB.entries[x].pc_value));
+		Global::OutputROB("      Allocation: " + Global::toString(ROB.entries[x].alloc));
+		Global::OutputROB("      Instr Type: " + Global::toString(ROB.entries[x].type));
+		Global::OutputROB("      Arch Reg  : " + Global::toString(ROB.entries[x].destArchReg));
+		Global::OutputROB("      URF Reg   : " + to_string(ROB.entries[x].destReg));
+		Global::OutputROB("      Flags     : " + Global::toString(ROB.entries[x].flags));
+		Global::OutputROB("      Result    : " + to_string(ROB.entries[x].result));
 
 		if (x == (Global::ROB_SIZE - 1))
 		{
 			x = 0;
 		}
 	}
+
+	string cmd = "notepad.exe " + Global::getOutFileROB();
+	system(cmd.c_str());
 }
 
 void displayStats()
 {
-	Global::Debug("");
-	Global::Debug("-- Execution Statistics--");
-	Global::Debug("  IPC realized                            : ");
-	Global::Debug("  # of cycles which dispatched as stalled : " + to_string(stats.dispatch_stall_count));
-	Global::Debug("  # of cycles w/o issue                   : " + to_string(stats.no_issue_count));
-	Global::Debug("  # LOADs committed                       : " + to_string(stats.loads_count));
-	Global::Debug("  # STOREs committed                      : " + to_string(stats.stores_count));
+	Global::Output("");
+	Global::Output("-- Execution Statistics--");
+	Global::Output("  IPC realized                            : ");
+	Global::Output("  # of cycles which dispatched as stalled : " + to_string(stats.dispatch_stall_count));
+	Global::Output("  # of cycles w/o issue                   : " + to_string(stats.no_issue_count));
+	Global::Output("  # LOADs committed                       : " + to_string(stats.loads_count));
+	Global::Output("  # STOREs committed                      : " + to_string(stats.stores_count));
 }
 #pragma endregion DISPLAY FUNCTIONS
 
@@ -404,15 +405,15 @@ void user_interface() //char * input_file, char * output_file)
 
 		// print various components of tm structure.
 		outfile_name.append(to_string(1 + ltm.tm_mon) + to_string(ltm.tm_mday) + to_string(1900 + ltm.tm_year));
-		outfile_name.append("_" + to_string(ltm.tm_hour) + "-" + to_string(ltm.tm_min) + "-" + to_string(ltm.tm_sec) + "].txt");
-		cout << "File name = " + outfile_name << endl;
+		outfile_name.append("_" + to_string(ltm.tm_hour) + "-" + to_string(ltm.tm_min) + "-" + to_string(ltm.tm_sec) + "]");
+		cout << "File name = " + outfile_name + ".txt" << endl;
 	}
 	else
 	{
 		outfile_name = trim(outfile_name);
 	}
 
-	Global::setOutFile(outfile_name);
+	Global::setOutFiles(outfile_name + ".txt", outfile_name + +"_ROB.txt", outfile_name + "_FRAT.txt", outfile_name + "_BRAT.txt");
 }
 
 //MAIN PROGRAM
@@ -428,7 +429,6 @@ int _tmain(int argc, char* argv[])
 	multiply = new Multiply();
 	branch = new Branch();
 	delay = new Delay();
-	memory = new Memory();
 	writeBack = new WriteBack();
 	char * input_file_name = NULL;
 	char * output_file_name = NULL;
@@ -497,55 +497,34 @@ int _tmain(int argc, char* argv[])
 
 			if (command == "display" )
 			{
-				cout << "Writing pipeline stages..." << endl;
-				/*
-				Global::Debug("Writing pipeline stages...");
-				if (!Stalled_Stages[Global::STALLED_STAGE::FETCH])
-					fetch->display();
-				else
-					Global::Debug("-- Fetch Stalled -- ");
-
-				if (!Stalled_Stages[Global::STALLED_STAGE::DECODE_RF])
-					decode->display();
-				else
-					Global::Debug("-- Decode Stalled -- " + decode->getInstruction());
-
-				if (!Stalled_Stages[Global::STALLED_STAGE::ALU1])
-					alu1->display();
-				else
-					Global::Debug("-- ALU1 Stalled -- " + alu1->getInstruction());
-
-				if (!Stalled_Stages[Global::STALLED_STAGE::ALU2])
-					alu2->display();
-				else
-					Global::Debug("-- ALU2 Stalled -- " + alu2->getInstruction());
-
-				if (!Stalled_Stages[Global::STALLED_STAGE::BRANCH])
-					branch->display();
-				else
-					Global::Debug("-- Branch Stalled -- " + branch->getInstruction());
-
-				if (!Stalled_Stages[Global::STALLED_STAGE::DELAY])
-					delay->display();
-				else
-					Global::Debug("-- Delay Stalled -- " + delay->getInstruction());
-
-				if (!Stalled_Stages[Global::STALLED_STAGE::MEMORY])
-					memory->display();
-				else
-					Global::Debug("-- Memory Stalled -- " + memory->getInstruction());
-				writeBack->display();
-				*/
-				cout << "Writing pipeline stages Complete" << endl
+				cout << "Writing pipeline stages..." << endl
+					<< "..." << endl
+					<< "Writing pipeline stages Complete" << endl
 					<< endl;
-				//Global::Debug("Writing pipeline stages Complete");
-				cout << "Writing Register File Contents..." << endl;
+				cout << "Writing Register File Contents" << endl
+					<< "..." << endl;
 				displayRegisterFile();
 				cout << "Writing Register File Contents Complete" << endl
 					<< endl
-					<< "Writing Memory Contents..." << endl;
+					<< "Writing Memory Contents..." << endl
+					<< "..." << endl;
 				displayMemory();
-				cout << "Writing Memory Contents Complete" << endl;
+				cout << "Writing Memory Contents Complete" << endl
+					<< endl
+					<< "Writing ROB Contents..." << endl
+					<< "..." << endl;
+				displayROB();
+				cout << "Writing ROB Contents Complete" << endl
+					<< endl
+					<< "Writing Front-End RAT Contents..." << endl
+					<< "..." << endl;
+				displayFRAT();
+				cout << "Writing Front-End RAT Contents Complete" << endl
+					<< endl
+					<< "Writing Back-End RAT Contents..." << endl
+					<< "..." << endl;
+				displayRRAT();
+				cout << "Writing Back-End RAT Contents Complete" << endl;
 				string cmd = "notepad.exe " + Global::getOutFile();
 				system(cmd.c_str());
 			}
@@ -563,8 +542,6 @@ int _tmain(int argc, char* argv[])
 			if (command == "print_rob")
 			{
 				displayROB();
-				string cmd = "notepad.exe " + Global::getOutFile();
-				system(cmd.c_str());
 			}
 
 			if (command == "print_urf")
@@ -592,7 +569,7 @@ int _tmain(int argc, char* argv[])
 			}
 			else
 			{
-				cout << "** ERROR - cannot set URF size once simulation has started! **" << endl;
+				cout << "** WANRNING - cannot set URF size once simulation has started! **" << endl;
 			}
 
 #pragma endregion //BASIC COMMANDS
@@ -610,7 +587,7 @@ int _tmain(int argc, char* argv[])
 				//and while the pipeline still has data in it
 				while (!HALT && n > 0 && pipelineHasData)
 				{
-					Global::Debug("\nIteration " + to_string(iteration));
+					Global::Output("\nIteration " + to_string(iteration));
 
 #pragma region EXECUTE_PIPELINE
 
@@ -623,23 +600,26 @@ int _tmain(int argc, char* argv[])
 					{
 						if (ROB.entries[ROB.head].alloc == Global::ROB_ALLOCATION::COMPLETE)
 						{
+							int old_reg = 0;
 							switch (ROB.entries[ROB.head].type)
 							{
 								case Global::INSTRUCTION_TYPE::BRANCH_TYPE:
 									break;
 								case Global::INSTRUCTION_TYPE::LOAD_TYPE:
-									break;
 								case Global::INSTRUCTION_TYPE::REG_TO_REG_TYPE:
+									//free up reg
+									old_reg = Back_End_RAT[ROB.entries[ROB.head].destArchReg].reg;
+									Register_File[old_reg].status = Global::REGISTER_ALLOCATION::REG_UNALLOCATED;
+
 									//update back end RAT
-									Back_End_RAT.reg[ROB.entries[ROB.head].destArchReg] = ROB.entries[ROB.head].destReg;
-									Back_End_RAT.rob_loc[ROB.entries[ROB.head].destArchReg] = -1;
-									Back_End_RAT.src_bit[ROB.entries[ROB.head].destArchReg] = Global::SOURCES::REGISTER_FILE;
+									Back_End_RAT[ROB.entries[ROB.head].destArchReg].reg = ROB.entries[ROB.head].destReg;
 
 									//Mark register file as committed
 									Register_File[ROB.entries[ROB.head].destReg].status = Global::REGISTER_ALLOCATION::ALLOC_COMMIT;
 									Register_File[ROB.entries[ROB.head].destReg].value = ROB.entries[ROB.head].result;
 									break;
 								case Global::INSTRUCTION_TYPE::STORE_TYPE:
+									Memory_Array[ROB.entries[ROB.head].memory_loc / 4] = ROB.entries[ROB.head].result;
 									break;
 								default:
 									break;
@@ -652,7 +632,7 @@ int _tmain(int argc, char* argv[])
 
 					//run writeback
 					//HALT = writeBack->run(Register_File, Forward_Bus, Back_End_RAT);
-					HALT = writeBack->run(Forward_Bus, ROB, Register_File, Back_End_RAT);
+					HALT = writeBack->run(Forward_Bus, ROB, Register_File);
 
 					if (!HALT)
 					{
@@ -688,23 +668,23 @@ int _tmain(int argc, char* argv[])
 						if (Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].updatePC)
 						{
 							decode->setPipelineStruct(garbage_struct);
-							Global::Debug("....");
-							Global::Debug("Flushing Fetch!");
-							Global::Debug("Flushing Decode/RF");
+							Global::Output("....");
+							Global::Output("Flushing Fetch!");
+							Global::Output("Flushing Decode/RF");
 							if (!Stalled_Stages[Global::STALLED_STAGE::ALU1])
 							{
 								alu1->setPipelineStruct(garbage_struct);
-								Global::Debug("Flushing ALU1");
+								Global::Output("Flushing ALU1");
 							}
-							Global::Debug("...."); 
+							Global::Output("...."); 
 						}
 						*/
 
 						//Run Multiply
-						pipeline_struct_multiply = multiply->run(Forward_Bus, Register_File, ROB);
+						pipeline_struct_multiply = multiply->run(Forward_Bus, ROB, Stalled_Stages);
 
 						//Run AL2
-						pipeline_struct_alu2 = alu2->run(Forward_Bus, Stalled_Stages, Register_File, ROB);
+						pipeline_struct_alu2 = alu2->run(Forward_Bus, Stalled_Stages, ROB);
 
 						//Run ALU1
 						pipeline_struct_alu1 = alu1->run(Forward_Bus, Stalled_Stages);
@@ -728,7 +708,7 @@ int _tmain(int argc, char* argv[])
 						else if (fetch->endOfFile())
 						{
 							pipeline_struct_fetch = garbage_struct;
-							Global::Debug("Input File Complete");
+							Global::Output("Input File Complete");
 						}
 						//or we stall
 						else
@@ -743,41 +723,37 @@ int _tmain(int argc, char* argv[])
 							if (!Stalled_Stages[Global::STALLED_STAGE::FETCH])
 								fetch->display();
 							else
-								Global::Debug("-- Fetch Stalled -- ");
+								Global::Output("-- Fetch Stalled -- ");
 
 							if (!Stalled_Stages[Global::STALLED_STAGE::DECODE_RF])
 								decode->display();
 							else
-								Global::Debug("-- Decode/Rename1 Stalled -- " + decode->getInstruction());
+								Global::Output("-- Decode/Rename1 Stalled -- " + decode->getInstruction());
 
 							if (!Stalled_Stages[Global::STALLED_STAGE::DISPATCH])
 								dispatch->display();
 							else
-								Global::Debug("-- Rename2/Dispatch Stalled -- " + dispatch->getInstruction());
+								Global::Output("-- Rename2/Dispatch Stalled -- " + dispatch->getInstruction());
 							if (!Stalled_Stages[Global::STALLED_STAGE::ALU1])
 								alu1->display();
 							else
-								Global::Debug("-- ALU1 Stalled -- " + alu1->getInstruction());
+								Global::Output("-- ALU1 Stalled -- " + alu1->getInstruction());
 
 							if (!Stalled_Stages[Global::STALLED_STAGE::ALU2])
 								alu2->display();
 							else
-								Global::Debug("-- ALU2 Stalled -- " + alu2->getInstruction());
+								Global::Output("-- ALU2 Stalled -- " + alu2->getInstruction());
 
 							if (!Stalled_Stages[Global::STALLED_STAGE::BRANCH])
 								branch->display();
 							else
-								Global::Debug("-- Branch Stalled -- " + branch->getInstruction());
+								Global::Output("-- Branch Stalled -- " + branch->getInstruction());
 
 							if (!Stalled_Stages[Global::STALLED_STAGE::DELAY])
 								delay->display();
 							else
-								Global::Debug("-- Delay Stalled -- " + delay->getInstruction());
+								Global::Output("-- Delay Stalled -- " + delay->getInstruction());
 
-							if (!Stalled_Stages[Global::STALLED_STAGE::MEMORY])
-								memory->display();
-							else
-								Global::Debug("-- Memory Stalled -- " + memory->getInstruction());
 							writeBack->display();
 						}
 #pragma endregion //DEBUG_OUTPUT
@@ -786,45 +762,13 @@ int _tmain(int argc, char* argv[])
 						//set up for the next cycle
 						//*************************
 
-						//as long as memory is not stalled and valid data to pass, move it on
-						//if (memory->hasValidData() && !Stalled_Stages[Global::STALLED_STAGE::MEMORY])
-						if (!Stalled_Stages[Global::STALLED_STAGE::MEMORY])
-						{
-							writeBack->setPipelineStruct(pipeline_struct_memory);
-							pipeline_struct_memory = garbage_struct;
-						}
-						else
-						{
-							writeBack->setPipelineStruct(garbage_struct);
-						}
-
-						//send memory data based on pc value and make sure we ar enot stalled
-						if (!Stalled_Stages[Global::STALLED_STAGE::MEMORY])
-						{
-							if ((pipeline_struct_alu2.pc_value < pipeline_struct_delay.pc_value)
-								//&& alu2->hasValidData()
-								&& !Stalled_Stages[Global::STALLED_STAGE::ALU2])
-							{
-								memory->setPipelineStruct(pipeline_struct_alu2);
-								pipeline_struct_alu2 = garbage_struct;
-							}
-							else if ((pipeline_struct_delay.pc_value < pipeline_struct_alu2.pc_value)
-								//&& delay->hasValidData()
-								&& !Stalled_Stages[Global::STALLED_STAGE::DELAY])
-							{
-								memory->setPipelineStruct(pipeline_struct_delay);
-								pipeline_struct_delay = garbage_struct;
-							}
-							else
-							{
-								memory->setPipelineStruct(garbage_struct);
-							}
-						}
+						writeBack->setPipelineStruct(pipeline_struct_alu2);
+						writeBack->setPipelineStruct(pipeline_struct_multiply);
+						writeBack->setPipelineStruct(pipeline_struct_lsq);
 
 						//if not stalled, pass branch output to delay
 						if (!Stalled_Stages[Global::STALLED_STAGE::BRANCH]
 							&& !Stalled_Stages[Global::STALLED_STAGE::DELAY])
-							//&& branch->hasValidData())
 						{
 							delay->setPipelineStruct(pipeline_struct_branch);
 							pipeline_struct_branch = garbage_struct;
@@ -838,7 +782,6 @@ int _tmain(int argc, char* argv[])
 						//as long as we are not stalled, pass data
 						if (!Stalled_Stages[Global::STALLED_STAGE::ALU1]
 							&& !Stalled_Stages[Global::STALLED_STAGE::ALU2])
-							//&& alu1->hasValidData())
 						{
 							alu2->setPipelineStruct(pipeline_struct_alu1);
 							pipeline_struct_alu1 = garbage_struct;
@@ -871,7 +814,6 @@ int _tmain(int argc, char* argv[])
 								if (!Stalled_Stages[Global::STALLED_STAGE::DECODE_RF]
 									&& !Stalled_Stages[Global::STALLED_STAGE::ALU1]
 									&& !Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].updatePC)
-									//&& decode->hasValidData())
 								{
 									alu1->setPipelineStruct(pipeline_struct_dispatch);
 									pipeline_struct_dispatch = garbage_struct;
@@ -880,7 +822,6 @@ int _tmain(int argc, char* argv[])
 								//or if code does not have valid data (bubble)
 								else if (!Stalled_Stages[Global::STALLED_STAGE::ALU1]
 									|| Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].updatePC)
-									//|| !decode->hasValidData())
 								{
 									alu1->setPipelineStruct(garbage_struct);
 								}
@@ -900,7 +841,6 @@ int _tmain(int argc, char* argv[])
 								if (!Stalled_Stages[Global::STALLED_STAGE::DECODE_RF]
 									&& !Stalled_Stages[Global::STALLED_STAGE::BRANCH]
 									&& !Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].updatePC)
-									//&& decode->hasValidData())
 								{
 									branch->setPipelineStruct(pipeline_struct_dispatch);
 									pipeline_struct_dispatch = garbage_struct;
@@ -944,7 +884,6 @@ int _tmain(int argc, char* argv[])
 						{
 							decode->setPipelineStruct(pipeline_struct_fetch);
 							pipeline_struct_fetch = garbage_struct;
-							PC++;
 						}
 						//or if we are not stalled, then feed in garbage (bubble)
 						else if (!Stalled_Stages[Global::STALLED_STAGE::DECODE_RF] || HALT)
@@ -970,7 +909,6 @@ int _tmain(int argc, char* argv[])
 							|| multiply->hasValidData()
 							|| branch->hasValidData()
 							|| delay->hasValidData()
-							|| memory->hasValidData()
 							|| writeBack->hasValidData())
 						{
 							pipelineHasData = true;
@@ -1009,7 +947,7 @@ int _tmain(int argc, char* argv[])
 	}
 
 	fetch->closeFile();
-	Global::closeFile();
+	Global::closeFiles();
 
 	//delete & free up memory
 	delete fetch;
@@ -1019,7 +957,6 @@ int _tmain(int argc, char* argv[])
 	delete multiply;
 	delete branch;
 	delete delay;
-	delete memory;
 	delete writeBack;
 
 	return 0;

@@ -13,8 +13,8 @@ Multiply::~Multiply()
 
 
 Global::apexStruct Multiply::run(Global::Forwarding_Info(&Forward_Bus)[Global::FINAL_FORWARD_TYPE_TOTAL],
-	Global::Register_Info *Register_File,
-	Global::Reorder_Buffer(&ROB))
+	Global::Reorder_Buffer(&ROB),
+	bool(&Stalled_Stages)[Global::FINAL_STALLED_STAGE_TOTAL])
 {
 	Global::apexStruct output_struct = myStruct;
 	snapshot_before = myStruct;
@@ -25,6 +25,9 @@ Global::apexStruct Multiply::run(Global::Forwarding_Info(&Forward_Bus)[Global::F
 		//takes 4 cycles to complete
 		if (count == 4)
 		{
+			//mark FU as free
+			Stalled_Stages[Global::STALLED_STAGE::MULTIPLY] = false;
+
 			switch (myStruct.instruction.op_code)
 			{
 #pragma region "MUL"
@@ -55,10 +58,6 @@ Global::apexStruct Multiply::run(Global::Forwarding_Info(&Forward_Bus)[Global::F
 			Forward_Bus[Global::FORWARD_TYPE::FROM_MULTIPLY].pc_value = output_struct.pc_value;
 			Forward_Bus[Global::FORWARD_TYPE::FROM_MULTIPLY].reg_info.tag = output_struct.instruction.dest.tag;
 			Forward_Bus[Global::FORWARD_TYPE::FROM_MULTIPLY].reg_info.value = output_struct.instruction.dest.value;
-
-			//Update register file
-			Register_File[output_struct.instruction.dest.tag].status = Global::REGISTER_ALLOCATION::ALLOC_NO_COMMIT;
-			Register_File[output_struct.instruction.dest.tag].value = output_struct.instruction.dest.value;
 
 			//Update ROB
 			ROB.entries[output_struct.instruction.dest.rob_loc].alloc = Global::ROB_ALLOCATION::COMPLETE;
@@ -101,10 +100,10 @@ void Multiply::display()
 	//make sure we have valid data
 	if (myStruct.pc_value != INT_MAX)
 	{
-		Global::Debug("MULTIPLY  - " + snapshot_before.untouched_instruction);
+		Global::Output("MULTIPLY  - " + snapshot_before.untouched_instruction);
 	}
 	else
 	{
-		Global::Debug("MULTIPLY 2 STAGE --> No Instruction in Stage");
+		Global::Output("MULTIPLY 2 STAGE --> No Instruction in Stage");
 	}
 }

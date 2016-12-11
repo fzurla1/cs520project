@@ -33,7 +33,7 @@ Global::apexStruct Branch::run(
 				Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].updatePC = true;
 				Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].target = myStruct.instruction.dest.value + myStruct.instruction.literal_value;
 				X.value = PC + 1;
-				Global::Debug("-- Branch Taken! BAL-- ");
+				Global::Output("-- Branch Taken! BAL-- ");
 				break;
 			case Global::OPCODE::BNZ:
 				if (Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].pc_value == myStruct.branch_waiting_to_complete)
@@ -43,11 +43,11 @@ Global::apexStruct Branch::run(
 						Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].opcode = Global::OPCODE::BNZ;
 						Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].updatePC = true;
 						Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].target = myStruct.instruction.literal_value;
-						Global::Debug("-- Branch Taken! BNZ-- ");
+						Global::Output("-- Branch Taken! BNZ-- ");
 					}
 					else
 					{
-						Global::Debug("-- Branch NOT Taken.-- ");
+						Global::Output("-- Branch NOT Taken.-- ");
 					}
 				}
 				else
@@ -63,11 +63,11 @@ Global::apexStruct Branch::run(
 						Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].opcode = Global::OPCODE::BZ;
 						Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].updatePC = true;
 						Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].target = myStruct.instruction.literal_value;
-						Global::Debug("-- Branch Taken! BZ-- ");
+						Global::Output("-- Branch Taken! BZ-- ");
 					}
 					else
 					{
-						Global::Debug("-- Branch NOT Taken.-- ");
+						Global::Output("-- Branch NOT Taken.-- ");
 					}
 				}
 				else
@@ -79,7 +79,7 @@ Global::apexStruct Branch::run(
 				Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].opcode = Global::OPCODE::JUMP;
 				Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].updatePC = true;
 				Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].target = X.value + myStruct.instruction.literal_value/4;
-				Global::Debug("-- Branch Taken! JUMP-- ");
+				Global::Output("-- Branch Taken! JUMP-- ");
 				break;
 		}
 		x_value = X.value;
@@ -116,23 +116,23 @@ void Branch::display()
 	//make sure we have valid data
 	if (myStruct.pc_value != INT_MAX)
 	{
-		Global::Debug("BRANCH     - " + myStruct.untouched_instruction);
+		Global::Output("BRANCH     - " + myStruct.untouched_instruction);
 		/*
-		Global::Debug("\n--- Branch stage display ---\n - ENTERING STAGE -");
-		Global::Debug("pc                  : " + to_string(4000 + ((myStruct.pc_value - 4000) * 4)));
-		Global::Debug("raw instruction     : " + myStruct.untouched_instruction);
-		Global::Debug("op code             : " + Global::toString(myStruct.instruction.op_code));
+		Global::Output("\n--- Branch stage display ---\n - ENTERING STAGE -");
+		Global::Output("pc                  : " + to_string(4000 + ((myStruct.pc_value - 4000) * 4)));
+		Global::Output("raw instruction     : " + myStruct.untouched_instruction);
+		Global::Output("op code             : " + Global::toString(myStruct.instruction.op_code));
 		if (updatePC)
 		{
-			Global::Debug("Branch Taken!");
-			Global::Debug("X                   : " + to_string(4000 + ((x_value - 4000) * 4)));
-			Global::Debug("target              : " + to_string(target));
+			Global::Output("Branch Taken!");
+			Global::Output("X                   : " + to_string(4000 + ((x_value - 4000) * 4)));
+			Global::Output("target              : " + to_string(target));
 		}
-		Global::Debug("--- END Branch stage display ---");
+		Global::Output("--- END Branch stage display ---");
 		*/
 	}
 	else
 	{
-		Global::Debug("Branch STAGE --> No Instruction in Stage");
+		Global::Output("Branch STAGE --> No Instruction in Stage");
 	}
 }

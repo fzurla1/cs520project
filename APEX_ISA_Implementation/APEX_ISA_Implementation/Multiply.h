@@ -22,8 +22,8 @@ public:
 	///	2) update the Global::apexStruct for the ALU2 phase
 	/// </summary>
 	Global::apexStruct run(Global::Forwarding_Info(&Forward_Bus)[Global::FINAL_FORWARD_TYPE_TOTAL],
-		Global::Register_Info *Register_File,
-		Global::Reorder_Buffer(&ROB));
+		Global::Reorder_Buffer(&ROB),
+		bool(&Stalled_Stages)[Global::FINAL_STALLED_STAGE_TOTAL]);
 
 	/// <summary>
 	///	This function will:

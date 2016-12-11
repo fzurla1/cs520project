@@ -20,9 +20,8 @@ public:
 		int URF_SIZE,
 		Global::Forwarding_Info(&Forward_Bus)[Global::FORWARD_TYPE::FINAL_FORWARD_TYPE_TOTAL],
 		bool(&Stalled_Stages)[Global::STALLED_STAGE::FINAL_STALLED_STAGE_TOTAL],
-		//int(&Most_Recent_Reg)[Global::REGISTERS::FINAL_REGISTERS_TOTAL],
 		Global::Reorder_Buffer(&ROB),
-		Global::Rename_Table(&Front_End_RAT));
+		Global::Front_End_Rename_Entry(&Front_End_RAT)[Global::ARCH_REGISTERS::FINAL_ARCH_REGISTERS_ITEM]);
 
 	/// <summary>
 	///	This function will:

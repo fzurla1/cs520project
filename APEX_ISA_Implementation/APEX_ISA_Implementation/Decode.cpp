@@ -22,9 +22,8 @@ Global::apexStruct Decode::run(
 	int URF_SIZE,
 	Global::Forwarding_Info(&Forward_Bus)[Global::FORWARD_TYPE::FINAL_FORWARD_TYPE_TOTAL],
 	bool(&Stalled_Stages)[Global::STALLED_STAGE::FINAL_STALLED_STAGE_TOTAL],
-	//int(&Most_Recent_Reg)[Global::REGISTERS::FINAL_REGISTERS_TOTAL],
 	Global::Reorder_Buffer(&ROB),
-	Global::Rename_Table(&Front_End_RAT))
+	Global::Front_End_Rename_Entry(&Front_End_RAT)[Global::ARCH_REGISTERS::FINAL_ARCH_REGISTERS_ITEM])
 {
 	Global::apexStruct output_struct = myStruct;
 	snapshot_before = myStruct;
@@ -229,20 +228,20 @@ Global::apexStruct Decode::run(
 
 				//set up source 1
 				output_struct.instruction.src1.status = Global::STATUS::VALID;
-				output_struct.instruction.src1.tag = Front_End_RAT.reg[arch_src1];
+				output_struct.instruction.src1.tag = Front_End_RAT[arch_src1].reg;
 				output_struct.instruction.src1.archreg = Global::ARCH_REGISTERS(arch_src1);
 				output_struct.instruction.src1.rob_loc = -1;
 
 				//set up source 2
 				output_struct.instruction.src2.status = Global::STATUS::VALID;
-				output_struct.instruction.src2.tag = Front_End_RAT.reg[arch_src2];
+				output_struct.instruction.src2.tag = Front_End_RAT[arch_src2].reg;
 				output_struct.instruction.src2.archreg = Global::ARCH_REGISTERS(arch_src2);
 				output_struct.instruction.src2.rob_loc = -1;
 
 				//FOR SRC1
 				//look to FE RAT for where data is stored
-				if ((Front_End_RAT.src_bit[arch_src1] == Global::SOURCES::REGISTER_FILE)
-					&& (Register_File[Front_End_RAT.reg[arch_src1]].status == Global::REGISTER_ALLOCATION::ALLOC_COMMIT))
+				if ((Front_End_RAT[arch_src1].src_bit == Global::SOURCES::REGISTER_FILE)
+					&& (Register_File[Front_End_RAT[arch_src1].reg].status == Global::REGISTER_ALLOCATION::ALLOC_COMMIT))
 				{
 					output_struct.instruction.src1.value = Register_File[output_struct.instruction.src1.tag].value;
 				}
@@ -253,14 +252,14 @@ Global::apexStruct Decode::run(
 				else
 				{
 					//get ROB entry location
-					output_struct.instruction.src1.rob_loc = Front_End_RAT.reg[arch_src1];
+					output_struct.instruction.src1.rob_loc = Front_End_RAT[arch_src1].reg;
 
 					//check ROB
 					//if ROB entry is complete, get out data
 					//get ROB entry # from FE RAT ROB location entry based on arch register from src1 input
-					if (ROB.entries[Front_End_RAT.rob_loc[arch_src1]].alloc == Global::ROB_ALLOCATION::COMPLETE)
+					if (ROB.entries[Front_End_RAT[arch_src1].rob_loc].alloc == Global::ROB_ALLOCATION::COMPLETE)
 					{
-						output_struct.instruction.src1.value = ROB.entries[Front_End_RAT.rob_loc[arch_src1]].result;
+						output_struct.instruction.src1.value = ROB.entries[Front_End_RAT[arch_src1].rob_loc].result;
 					}
 					//if the entry is not complete, but it is executing or waiting, check forwarding bus
 					else
@@ -291,8 +290,8 @@ Global::apexStruct Decode::run(
 				//look to reg file for valid data
 				//FOR SRC1
 				//look to FE RAT for where data is stored
-				if ((Front_End_RAT.src_bit[arch_src2] == Global::SOURCES::REGISTER_FILE)
-					&& (Register_File[Front_End_RAT.reg[arch_src2]].status == Global::REGISTER_ALLOCATION::ALLOC_COMMIT))
+				if ((Front_End_RAT[arch_src2].src_bit == Global::SOURCES::REGISTER_FILE)
+					&& (Register_File[Front_End_RAT[arch_src2].reg].status == Global::REGISTER_ALLOCATION::ALLOC_COMMIT))
 				{
 					output_struct.instruction.src2.value = Register_File[output_struct.instruction.src2.tag].value;
 				}
@@ -303,14 +302,14 @@ Global::apexStruct Decode::run(
 				else
 				{
 					//get ROB entry location
-					output_struct.instruction.src2.rob_loc = Front_End_RAT.reg[arch_src2];
+					output_struct.instruction.src2.rob_loc = Front_End_RAT[arch_src2].reg;
 
 					//check ROB
 					//if ROB entry is complete, get out data
 					//get ROB entry # from FE RAT ROB location entry based on arch register from src1 input
-					if (ROB.entries[Front_End_RAT.rob_loc[arch_src2]].alloc == Global::ROB_ALLOCATION::COMPLETE)
+					if (ROB.entries[Front_End_RAT[arch_src2].rob_loc].alloc == Global::ROB_ALLOCATION::COMPLETE)
 					{
-						output_struct.instruction.src2.value = ROB.entries[Front_End_RAT.rob_loc[arch_src2]].result;
+						output_struct.instruction.src2.value = ROB.entries[Front_End_RAT[arch_src2].rob_loc].result;
 						output_struct.instruction.src2.status = Global::STATUS::VALID;
 					}
 					//if the entry is not complete, but it is executing or waiting, check forwarding bus
@@ -364,7 +363,7 @@ Global::apexStruct Decode::run(
 
 				//set up source 1
 				output_struct.instruction.src1.status = Global::STATUS::VALID;
-				output_struct.instruction.src1.tag = Front_End_RAT.reg[arch_src1];
+				output_struct.instruction.src1.tag = Front_End_RAT[arch_src1].reg;
 				output_struct.instruction.src1.rob_loc = -1;
 
 				//set source 2 to valid since there isnt one
@@ -375,8 +374,8 @@ Global::apexStruct Decode::run(
 
 				//FOR SRC1
 				//look to FE RAT for where data is stored
-				if ((Front_End_RAT.src_bit[arch_src1] == Global::SOURCES::REGISTER_FILE)
-					&& (Register_File[Front_End_RAT.reg[arch_src1]].status == Global::REGISTER_ALLOCATION::ALLOC_COMMIT))
+				if ((Front_End_RAT[arch_src1].src_bit == Global::SOURCES::REGISTER_FILE)
+					&& (Register_File[Front_End_RAT[arch_src1].reg].status == Global::REGISTER_ALLOCATION::ALLOC_COMMIT))
 				{
 					output_struct.instruction.src1.value = Register_File[output_struct.instruction.src1.tag].value;
 				}
@@ -387,14 +386,14 @@ Global::apexStruct Decode::run(
 				else
 				{
 					//get ROB entry location
-					output_struct.instruction.src1.rob_loc = Front_End_RAT.reg[arch_src1];
+					output_struct.instruction.src1.rob_loc = Front_End_RAT[arch_src1].reg;
 
 					//check ROB
 					//if ROB entry is complete, get out data
 					//get ROB entry # from FE RAT ROB location entry based on arch register from src1 input
-					if (ROB.entries[Front_End_RAT.rob_loc[arch_src1]].alloc == Global::ROB_ALLOCATION::COMPLETE)
+					if (ROB.entries[Front_End_RAT[arch_src1].rob_loc].alloc == Global::ROB_ALLOCATION::COMPLETE)
 					{
-						output_struct.instruction.src1.value = ROB.entries[Front_End_RAT.rob_loc[arch_src1]].result;
+						output_struct.instruction.src1.value = ROB.entries[Front_End_RAT[arch_src1].rob_loc].result;
 					}
 					//if the entry is not complete, but it is executing or waiting, check forwarding bus
 					else
@@ -445,20 +444,20 @@ Global::apexStruct Decode::run(
 
 				//set up source 1
 				output_struct.instruction.src1.status = Global::STATUS::VALID;
-				output_struct.instruction.src1.tag = Front_End_RAT.reg[arch_src1];
+				output_struct.instruction.src1.tag = Front_End_RAT[arch_src1].reg;
 				output_struct.instruction.src1.rob_loc = -1;
 
 				//set up source 2
 				output_struct.instruction.src2.status = Global::STATUS::VALID;
-				output_struct.instruction.src2.tag = Front_End_RAT.reg[arch_src2];
+				output_struct.instruction.src2.tag = Front_End_RAT[arch_src2].reg;
 				output_struct.instruction.src2.rob_loc = -1;
 
 				output_struct.instruction.literal_value = atoi(s_literal.c_str());
 
 				//FOR SRC1
 				//look to FE RAT for where data is stored
-				if ((Front_End_RAT.src_bit[arch_src1] == Global::SOURCES::REGISTER_FILE)
-					&& (Register_File[Front_End_RAT.reg[arch_src1]].status == Global::REGISTER_ALLOCATION::ALLOC_COMMIT))
+				if ((Front_End_RAT[arch_src1].src_bit == Global::SOURCES::REGISTER_FILE)
+					&& (Register_File[Front_End_RAT[arch_src1].reg].status == Global::REGISTER_ALLOCATION::ALLOC_COMMIT))
 				{
 					output_struct.instruction.src1.value = Register_File[output_struct.instruction.src1.tag].value;
 				}
@@ -469,14 +468,14 @@ Global::apexStruct Decode::run(
 				else
 				{
 					//get ROB entry location
-					output_struct.instruction.src1.rob_loc = Front_End_RAT.reg[arch_src1];
+					output_struct.instruction.src1.rob_loc = Front_End_RAT[arch_src1].reg;
 
 					//check ROB
 					//if ROB entry is complete, get out data
 					//get ROB entry # from FE RAT ROB location entry based on arch register from src1 input
-					if (ROB.entries[Front_End_RAT.rob_loc[arch_src1]].alloc == Global::ROB_ALLOCATION::COMPLETE)
+					if (ROB.entries[Front_End_RAT[arch_src1].rob_loc].alloc == Global::ROB_ALLOCATION::COMPLETE)
 					{
-						output_struct.instruction.src1.value = ROB.entries[Front_End_RAT.rob_loc[arch_src1]].result;
+						output_struct.instruction.src1.value = ROB.entries[Front_End_RAT[arch_src1].rob_loc].result;
 					}
 					//if the entry is not complete, but it is executing or waiting, check forwarding bus
 					else
@@ -507,8 +506,8 @@ Global::apexStruct Decode::run(
 				//look to reg file for valid data
 				//FOR SRC1
 				//look to FE RAT for where data is stored
-				if ((Front_End_RAT.src_bit[arch_src2] == Global::SOURCES::REGISTER_FILE)
-					&& (Register_File[Front_End_RAT.reg[arch_src2]].status == Global::REGISTER_ALLOCATION::ALLOC_COMMIT))
+				if ((Front_End_RAT[arch_src2].src_bit == Global::SOURCES::REGISTER_FILE)
+					&& (Register_File[Front_End_RAT[arch_src2].reg].status == Global::REGISTER_ALLOCATION::ALLOC_COMMIT))
 				{
 					output_struct.instruction.src2.value = Register_File[output_struct.instruction.src2.tag].value;
 				}
@@ -519,14 +518,14 @@ Global::apexStruct Decode::run(
 				else
 				{
 					//get ROB entry location
-					output_struct.instruction.src2.rob_loc = Front_End_RAT.reg[arch_src2];
+					output_struct.instruction.src2.rob_loc = Front_End_RAT[arch_src2].reg;
 
 					//check ROB
 					//if ROB entry is complete, get out data
 					//get ROB entry # from FE RAT ROB location entry based on arch register from src1 input
-					if (ROB.entries[Front_End_RAT.rob_loc[arch_src2]].alloc == Global::ROB_ALLOCATION::COMPLETE)
+					if (ROB.entries[Front_End_RAT[arch_src2].rob_loc].alloc == Global::ROB_ALLOCATION::COMPLETE)
 					{
-						output_struct.instruction.src2.value = ROB.entries[Front_End_RAT.rob_loc[arch_src2]].result;
+						output_struct.instruction.src2.value = ROB.entries[Front_End_RAT[arch_src2].rob_loc].result;
 						output_struct.instruction.src2.status = Global::STATUS::VALID;
 					}
 					//if the entry is not complete, but it is executing or waiting, check forwarding bus
@@ -652,9 +651,9 @@ Global::apexStruct Decode::run(
 					//2
 					Register_File[x].status = Global::REGISTER_ALLOCATION::ALLOC_NO_COMMIT;
 					//3
-					Front_End_RAT.reg[arch_dest] = x;
-					Front_End_RAT.src_bit[arch_dest] = Global::SOURCES::ROB;
-					Front_End_RAT.rob_loc[arch_dest] = ROB.tail;
+					Front_End_RAT[arch_dest].reg = x;
+					Front_End_RAT[arch_dest].src_bit = Global::SOURCES::ROB;
+					Front_End_RAT[arch_dest].rob_loc = ROB.tail;
 				}
 				//4
 				ROB.entries[ROB.tail].alloc = Global::ROB_ALLOCATION::WAITING;
@@ -712,10 +711,10 @@ void Decode::display()
 	//make sure we have valid data
 	if (snapshot_before.pc_value != INT_MAX)
 	{
-		Global::Debug("Decode/Rename1  - " + snapshot_before.untouched_instruction);
+		Global::Output("Decode/Rename1  - " + snapshot_before.untouched_instruction);
 	}
 	else
 	{
-		Global::Debug("Decode/Rename1 STAGE --> No Instruction in Stage");
+		Global::Output("Decode/Rename1 STAGE --> No Instruction in Stage");
 	}
 }

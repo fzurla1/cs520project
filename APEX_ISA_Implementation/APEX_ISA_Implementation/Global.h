@@ -218,6 +218,9 @@ public:
 		FLAGS flags = FLAGS::CLEAR;
 		//ROB allocation
 		ROB_ALLOCATION alloc = ROB_ALLOCATION::ROB_UNALLOCATED;
+		//memory location to write
+		int memory_loc = -1;
+		//
 		int saved_RAT_entry = -1;
 		
 		void clear()
@@ -229,6 +232,7 @@ public:
 			result = -1;
 			flags = FLAGS::CLEAR;
 			alloc = ROB_ALLOCATION::ROB_UNALLOCATED;
+			memory_loc = -1;
 			saved_RAT_entry = -1;
 		}
 	};
@@ -248,22 +252,31 @@ public:
 	//rename table containing the current stand-in for an
 	//input architectural register is a register within the
 	//ARF (src bit = 0) or a slot within the ROB (src_bit=1)
-	struct Rename_Table{
+	struct Front_End_Rename_Entry{
 		//URF associated with arch register
-		int reg[ARCH_REGISTERS::FINAL_ARCH_REGISTERS_ITEM];
+		int reg;
 		//location within ROB for register info, if applicable
-		int rob_loc[ARCH_REGISTERS::FINAL_ARCH_REGISTERS_ITEM];
+		int rob_loc;
 		//where data is located: URF or ROB
-		SOURCES src_bit[ARCH_REGISTERS::FINAL_ARCH_REGISTERS_ITEM];
+		SOURCES src_bit;
 
 		void clear()
 		{
-			for (int x = 0; x < ARCH_REGISTERS::FINAL_ARCH_REGISTERS_ITEM; x++)
-			{
-				reg[x] = -1;
-				rob_loc[x] = -1;
-				src_bit[x] = SOURCES::REGISTER_FILE;
-			}
+			reg = -1;
+			rob_loc = -1;
+			src_bit = SOURCES::REGISTER_FILE;
+		}
+	};
+
+	//rename table containing the pointer for the register
+	//most recently committed for the precise state of
+	//the pipeline
+	struct Back_End_Rename_Entry{
+		int reg = -1;
+
+		void clear()
+		{
+			reg = -1;
 		}
 	};
 
@@ -346,12 +359,27 @@ public:
 	/// <summary>
 	/// Set output file for debug and display information
 	/// </summary>
-	static void setOutFile(string filename);
+	static void setOutFiles(string filename, string filename_ROB, string filename_FRAT, string filename_BRAT);
 
 	/// <summary>
 	/// Get output file
 	/// </summary>
 	static string getOutFile();
+
+	/// <summary>
+	/// Get ROB output file
+	/// </summary>
+	static string getOutFileROB();
+
+	/// <summary>
+	/// Get FRAT output file
+	/// </summary>
+	static string getOutFileFRAT();
+
+	/// <summary>
+	/// Get RRAT output file
+	/// </summary>
+	static string getOutFileBRAT();
 
 	/// <summary>
 	/// If file is good and open
@@ -361,14 +389,28 @@ public:
 	/// <summary>
 	// Close output file
 	/// </summary>
-	static void closeFile();
+	static void closeFiles();
 
 	/// <summary>
-	/// General debug information to output file
+	/// General information to output file
 	/// </summary>
-	static void Debug(string s1);
+	static void Output(string s1);
 
-	//used for debug - set enums to string for easier debugging and output
+	/// <summary>
+	/// ROB information to output file
+	/// </summary>
+	static void OutputROB(string s1);
+
+	/// <summary>
+	/// Front-End RAT information to output file
+	/// </summary>
+	static void OutputFRAT(string s1);
+
+	/// <summary>
+	/// Back-End RAT information to output file
+	/// </summary>
+	static void OutputBRAT(string s1);
+
 	/// <summary>
 	/// Output OPCODE enum to string
 	/// </summary>

@@ -91,41 +91,41 @@ void Memory::display()
 	//make sure we have valid data
 	if (myStruct.pc_value != INT_MAX)
 	{
-		Global::Debug("MEMORY     - " + snapshot_after.untouched_instruction);
+		Global::Output("MEMORY     - " + snapshot_after.untouched_instruction);
 		/*
-		Global::Debug("--- MEM stage display ---");
-		Global::Debug(" - Entering stage - ");
-		Global::Debug("pc                  : " + to_string(4000 + ((snapshot_before.pc_value - 4000) * 4)));
-		Global::Debug("raw instruction     : " + snapshot_before.untouched_instruction);
-		Global::Debug("op code             : " + Global::toString(snapshot_before.instruction.op_code));
-		Global::Debug("destination reg tag : " + Global::toString(snapshot_before.instruction.dest.tag));
-		Global::Debug("destination value   : N/A");
-		Global::Debug("source 1 reg tag    : " + Global::toString(snapshot_before.instruction.src1.tag));
-		Global::Debug("source 1 reg valid  : " + Global::toString(snapshot_before.instruction.src1.status));
-		Global::Debug("source 1 reg value  : " + to_string(snapshot_before.instruction.src1.value));
-		Global::Debug("source 2 reg tag    : " + Global::toString(snapshot_before.instruction.src2.tag));
-		Global::Debug("source 2 reg valid  : " + Global::toString(snapshot_before.instruction.src2.status));
-		Global::Debug("source 2 reg value  : " + to_string(snapshot_before.instruction.src2.value));
-		Global::Debug("literal             : " + to_string(snapshot_before.instruction.literal_value));
-		Global::Debug("....................");
-		Global::Debug(" - Exiting stage - ");
-		Global::Debug("pc                  : " + to_string(4000 + ((snapshot_after.pc_value - 4000) * 4)));
-		Global::Debug("op code             : " + Global::toString(snapshot_after.instruction.op_code));
-		Global::Debug("destination reg tag : " + Global::toString(snapshot_after.instruction.dest.tag));
-		Global::Debug("destination value   : " + to_string(snapshot_after.instruction.dest.value));
-		Global::Debug("source 1 reg tag    : " + Global::toString(snapshot_after.instruction.src1.tag));
-		Global::Debug("source 1 reg valid  : " + Global::toString(snapshot_after.instruction.src1.status));
-		Global::Debug("source 1 reg value  : " + to_string(snapshot_after.instruction.src1.value));
-		Global::Debug("source 2 reg tag    : " + Global::toString(snapshot_after.instruction.src2.tag));
-		Global::Debug("source 2 reg valid  : " + Global::toString(snapshot_after.instruction.src2.status));
-		Global::Debug("source 2 reg value  : " + to_string(snapshot_after.instruction.src2.value));
-		Global::Debug("literal             : " + to_string(snapshot_after.instruction.literal_value));
-		Global::Debug("memory location     : " + to_string(snapshot_after.instruction.memory_location));
-		Global::Debug("--- END MEM stage display ---");
+		Global::Output("--- MEM stage display ---");
+		Global::Output(" - Entering stage - ");
+		Global::Output("pc                  : " + to_string(4000 + ((snapshot_before.pc_value - 4000) * 4)));
+		Global::Output("raw instruction     : " + snapshot_before.untouched_instruction);
+		Global::Output("op code             : " + Global::toString(snapshot_before.instruction.op_code));
+		Global::Output("destination reg tag : " + Global::toString(snapshot_before.instruction.dest.tag));
+		Global::Output("destination value   : N/A");
+		Global::Output("source 1 reg tag    : " + Global::toString(snapshot_before.instruction.src1.tag));
+		Global::Output("source 1 reg valid  : " + Global::toString(snapshot_before.instruction.src1.status));
+		Global::Output("source 1 reg value  : " + to_string(snapshot_before.instruction.src1.value));
+		Global::Output("source 2 reg tag    : " + Global::toString(snapshot_before.instruction.src2.tag));
+		Global::Output("source 2 reg valid  : " + Global::toString(snapshot_before.instruction.src2.status));
+		Global::Output("source 2 reg value  : " + to_string(snapshot_before.instruction.src2.value));
+		Global::Output("literal             : " + to_string(snapshot_before.instruction.literal_value));
+		Global::Output("....................");
+		Global::Output(" - Exiting stage - ");
+		Global::Output("pc                  : " + to_string(4000 + ((snapshot_after.pc_value - 4000) * 4)));
+		Global::Output("op code             : " + Global::toString(snapshot_after.instruction.op_code));
+		Global::Output("destination reg tag : " + Global::toString(snapshot_after.instruction.dest.tag));
+		Global::Output("destination value   : " + to_string(snapshot_after.instruction.dest.value));
+		Global::Output("source 1 reg tag    : " + Global::toString(snapshot_after.instruction.src1.tag));
+		Global::Output("source 1 reg valid  : " + Global::toString(snapshot_after.instruction.src1.status));
+		Global::Output("source 1 reg value  : " + to_string(snapshot_after.instruction.src1.value));
+		Global::Output("source 2 reg tag    : " + Global::toString(snapshot_after.instruction.src2.tag));
+		Global::Output("source 2 reg valid  : " + Global::toString(snapshot_after.instruction.src2.status));
+		Global::Output("source 2 reg value  : " + to_string(snapshot_after.instruction.src2.value));
+		Global::Output("literal             : " + to_string(snapshot_after.instruction.literal_value));
+		Global::Output("memory location     : " + to_string(snapshot_after.instruction.memory_location));
+		Global::Output("--- END MEM stage display ---");
 		*/
 	}
 	else
 	{
-		Global::Debug("MEM STAGE --> No Instruction in Stage");
+		Global::Output("MEM STAGE --> No Instruction in Stage");
 	}
 }

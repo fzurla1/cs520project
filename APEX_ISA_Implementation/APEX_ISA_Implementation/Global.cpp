@@ -5,14 +5,34 @@
 
 using namespace std;
 
+//main output
 ofstream fout;
-
 string output_file_name;
 
-void Global::setOutFile(string filename)
+//ROB output
+ofstream fout_ROB;
+string output_file_name_ROB;
+
+//FRAT output
+ofstream fout_FRAT;
+string output_file_name_FRAT;
+
+//BRAT output
+ofstream fout_BRAT;
+string output_file_name_BRAT;
+
+void Global::setOutFiles(string filename, string filename_ROB, string filename_FRAT, string filename_BRAT)
 {
 	output_file_name = filename;
-	fout.open(filename);// .c_str(), std::ios::out);
+	output_file_name_ROB = filename_ROB;
+	output_file_name_FRAT = filename_FRAT;
+	output_file_name_BRAT = filename_BRAT;
+	
+	fout.open(filename);
+	fout_ROB.open(filename_ROB, ios_base::out | ios_base::trunc);
+	fout_FRAT.open(filename_FRAT, ios_base::out | ios_base::trunc);
+	fout_BRAT.open(filename_BRAT, ios_base::out | ios_base::trunc);
+
 	if (!fout)
 	{
 		cout << "Failed to open file: " + filename << endl;
@@ -21,6 +41,33 @@ void Global::setOutFile(string filename)
 	{
 		cout << "File " + filename + " opened successfully." << endl;
 	}
+
+	if (!fout_ROB)
+	{
+		cout << "Failed to open file: " + filename_ROB << endl;
+	}
+	else
+	{
+		cout << "File " + filename_ROB + " opened successfully." << endl;
+	}
+
+	if (!fout_FRAT)
+	{
+		cout << "Failed to open file: " + filename_FRAT << endl;
+	}
+	else
+	{
+		cout << "File " + filename_FRAT + " opened successfully." << endl;
+	}
+
+	if (!fout_BRAT)
+	{
+		cout << "Failed to open file: " + filename_BRAT << endl;
+	}
+	else
+	{
+		cout << "File " + filename_BRAT + " opened successfully." << endl;
+	}
 }
 
 string Global::getOutFile()
@@ -28,22 +75,67 @@ string Global::getOutFile()
 	return output_file_name;
 }
 
+string Global::getOutFileROB()
+{
+	return output_file_name_ROB;
+}
+
+string Global::getOutFileFRAT()
+{
+	return output_file_name_FRAT;
+}
+
+string Global::getOutFileBRAT()
+{
+	return output_file_name_BRAT;
+}
+
 bool Global::fileIsGood()
 {
-	return fout.is_open() & fout.good();
+	return fout.is_open() & fout.good() 
+		& fout_ROB.is_open() & fout_ROB.good() 
+		& fout_FRAT.is_open() & fout_FRAT.good() 
+		& fout_BRAT.is_open() & fout_BRAT.good();
 }
 
-void Global::closeFile()
+void Global::closeFiles()
 {
 	fout.close();
+	fout_ROB.close();
+	fout_FRAT.close();
+	fout_BRAT.close();
 }
 
-void Global::Debug(string s1)
+void Global::Output(string s1)
 {
 	if (DEBUG)
 		cout << s1 << endl;
 
 	fout << s1 << endl;
+}
+
+void Global::OutputROB(string s1)
+{
+	if (DEBUG)
+		cout << s1 << endl;
+
+	fout_ROB << s1 << endl;
+}
+
+void Global::OutputFRAT(string s1)
+{
+	if (DEBUG)
+		cout << s1 << endl;
+
+	fout_FRAT << s1 << endl;
+}
+
+void Global::OutputBRAT(string s1)
+{
+	if (DEBUG)
+		cout << s1 << endl;
+
+	fout_BRAT << s1 << endl;
 }
 
 //OpCodes

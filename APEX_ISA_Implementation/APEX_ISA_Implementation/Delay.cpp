@@ -50,36 +50,36 @@ void Delay::display()
 	//make sure we have valid data
 	if (myStruct.pc_value != INT_MAX)
 	{
-		Global::Debug("DELAY      - " + myStruct.untouched_instruction);
+		Global::Output("DELAY      - " + myStruct.untouched_instruction);
 		/*
-		Global::Debug("\n--- Delay stage display ---\n - ENTERING STAGE -");
-		Global::Debug("pc                  : " + to_string(4000 + ((myStruct.pc_value -4000)* 4)));
-		Global::Debug("raw instruction     : " + myStruct.untouched_instruction);
-		Global::Debug("op code             : " + Global::toString(myStruct.instruction.op_code));
-		Global::Debug("destination reg tag : " + Global::toString(myStruct.instruction.dest.tag));
-		Global::Debug("destination value   : not ready");
-		Global::Debug("source 1 reg tag    : " + Global::toString(myStruct.instruction.src1.tag));
-		Global::Debug("source 1 reg valid  : " + Global::toString(myStruct.instruction.src1.status));
+		Global::Output("\n--- Delay stage display ---\n - ENTERING STAGE -");
+		Global::Output("pc                  : " + to_string(4000 + ((myStruct.pc_value -4000)* 4)));
+		Global::Output("raw instruction     : " + myStruct.untouched_instruction);
+		Global::Output("op code             : " + Global::toString(myStruct.instruction.op_code));
+		Global::Output("destination reg tag : " + Global::toString(myStruct.instruction.dest.tag));
+		Global::Output("destination value   : not ready");
+		Global::Output("source 1 reg tag    : " + Global::toString(myStruct.instruction.src1.tag));
+		Global::Output("source 1 reg valid  : " + Global::toString(myStruct.instruction.src1.status));
 
 		if (myStruct.instruction.src1.status == Global::STATUS::INVALID)
-			Global::Debug("source 1 reg value  : invalid!");
+			Global::Output("source 1 reg value  : invalid!");
 		else
-			Global::Debug("source 1 reg value  : " + to_string(myStruct.instruction.src1.value));
+			Global::Output("source 1 reg value  : " + to_string(myStruct.instruction.src1.value));
 
-		Global::Debug("source 2 reg tag    : " + Global::toString(myStruct.instruction.src2.tag));
-		Global::Debug("source 2 reg valid  : " + Global::toString(myStruct.instruction.src2.status));
+		Global::Output("source 2 reg tag    : " + Global::toString(myStruct.instruction.src2.tag));
+		Global::Output("source 2 reg valid  : " + Global::toString(myStruct.instruction.src2.status));
 
 		if (!myStruct.instruction.src2.status)
-			Global::Debug("source 2 reg value  : invalid!");
+			Global::Output("source 2 reg value  : invalid!");
 		else
-			Global::Debug("source 2 reg value  : " + to_string(myStruct.instruction.src2.value));
+			Global::Output("source 2 reg value  : " + to_string(myStruct.instruction.src2.value));
 
-		Global::Debug("literal             : " + to_string(myStruct.instruction.literal_value));
-		Global::Debug("--- END Delay stage display ---");
+		Global::Output("literal             : " + to_string(myStruct.instruction.literal_value));
+		Global::Output("--- END Delay stage display ---");
 		*/
 	}
 	else
 	{
-		Global::Debug("Delay STAGE --> No Instruction in Stage");
+		Global::Output("Delay STAGE --> No Instruction in Stage");
 	}
 }
