@@ -115,7 +115,7 @@ void initialize_forwarding_bus()
 		Forward_Bus[x].pc_value = -1;
 		Forward_Bus[x].updatePC = false;
 		Forward_Bus[x].target = INT_MAX;
-		Forward_Bus[x].tag = Global::REGISTERS::UNA;
+		Forward_Bus[x].reg_info.tag = -1;
 		Forward_Bus[x].reg_info.status = Global::REGISTER_ALLOCATION::REG_UNALLOCATED;
 		Forward_Bus[x].reg_info.value = INT_MAX;
 	}

@@ -34,7 +34,7 @@ bool IssueQueue::differentOpCode(Global::apexStruct current, std::vector<Global:
 }
 
 
-bool IssueQueue::stalledStage(Global::apexStruct current, bool(&Stalled_Stages)[Global::TOTAL_STAGES])
+bool IssueQueue::stalledStage(Global::apexStruct current, bool(&Stalled_Stages)[Global::STALLED_STAGE::FINAL_STALLED_STAGE_TOTAL])
 {
 	Global::OPCODE opc = current.instruction.op_code;
 
@@ -57,7 +57,7 @@ bool IssueQueue::stalledStage(Global::apexStruct current, bool(&Stalled_Stages)[
 	case Global::OPCODE::MUL:
 	case Global::OPCODE::MULL:
 		//NEED TO ADD MUL TO STALLED_STAGES
-		if (Stalled_Stages[Global::STALLED_STAGE::MUL])
+		if (Stalled_Stages[Global::STALLED_STAGE::MULTIPLY])
 		{
 			return true;
 		}
@@ -82,14 +82,13 @@ bool IssueQueue::stalledStage(Global::apexStruct current, bool(&Stalled_Stages)[
 }
 
 std::vector<Global::apexStruct> IssueQueue::run(Global::Forwarding_Info(&Forward_Bus)[Global::FORWARD_TYPE::FINAL_FORWARD_TYPE_TOTAL],
-	bool(&Stalled_Stages)[Global::STALLED_STAGE::FINAL_STALLED_STAGE_TOTAL],
-	int(&Most_Recent_Reg)[Global::ARCH_REGISTER_COUNT])
+	bool(&Stalled_Stages)[Global::STALLED_STAGE::FINAL_STALLED_STAGE_TOTAL])
 {
 	//check if IQ is full and set flag if so
 	if (IQ.size() >= 12)
 	{
 		//NEED TO ADD IQ TO STALLED_STAGE
-		Stalled_Stages[Global::STALLED_STAGE::IQ = true];
+		Stalled_Stages[Global::STALLED_STAGE::IQ] = true;
 	}
 
 	//clear output at the start
@@ -127,21 +126,18 @@ std::vector<Global::apexStruct> IssueQueue::run(Global::Forwarding_Info(&Forward
 		else if (current.instruction.src1.status == Global::STATUS::INVALID)
 		{
 			//check from ALU2
-			if ((Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].reg_info.tag == current.instruction.src1.tag)
-				&& (Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].pc_value == Most_Recent_Reg[Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].reg_info.tag]))
+			if (Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].reg_info.tag == current.instruction.src1.tag)
 			{
 				current.instruction.src1.value = Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].reg_info.value;
 			}
 			//check from memory
-			else if ((Forward_Bus[Global::FORWARD_TYPE::FROM_MEMORY].reg_info.tag == current.instruction.src1.tag)
-				&& (Forward_Bus[Global::FORWARD_TYPE::FROM_MEMORY].pc_value == Most_Recent_Reg[Forward_Bus[Global::FORWARD_TYPE::FROM_MEMORY].reg_info.tag]))
+			else if (Forward_Bus[Global::FORWARD_TYPE::FROM_MEMORY].reg_info.tag == current.instruction.src1.tag)
 			{
 				current.instruction.src1.value = Forward_Bus[Global::FORWARD_TYPE::FROM_MEMORY].reg_info.value;
 			}
 			//check from writeback
 			//THIS SHOULD BE LOAD STORE
-			else if ((Forward_Bus[Global::FORWARD_TYPE::FROM_WRITEBACK].reg_info.tag == current.instruction.src1.tag)
-				&& (Forward_Bus[Global::FORWARD_TYPE::FROM_WRITEBACK].pc_value == Most_Recent_Reg[Forward_Bus[Global::FORWARD_TYPE::FROM_WRITEBACK].reg_info.tag]))
+			else if (Forward_Bus[Global::FORWARD_TYPE::FROM_WRITEBACK].reg_info.tag == current.instruction.src1.tag)
 			{
 				current.instruction.src1.value = Forward_Bus[Global::FORWARD_TYPE::FROM_WRITEBACK].reg_info.value;
 			}
@@ -154,21 +150,18 @@ std::vector<Global::apexStruct> IssueQueue::run(Global::Forwarding_Info(&Forward
 		else if (current.instruction.src2.status == Global::STATUS::INVALID)
 		{
 			//check from ALU2
-			if ((Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].reg_info.tag == current.instruction.src2.tag)
-				&& (Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].pc_value == Most_Recent_Reg[Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].reg_info.tag]))
+			if (Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].reg_info.tag == current.instruction.src2.tag)
 			{
 				current.instruction.src2.value = Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].reg_info.value;
 			}
 			//check from memory
-			else if ((Forward_Bus[Global::FORWARD_TYPE::FROM_MEMORY].reg_info.tag == current.instruction.src2.tag)
-				&& (Forward_Bus[Global::FORWARD_TYPE::FROM_MEMORY].pc_value == Most_Recent_Reg[Forward_Bus[Global::FORWARD_TYPE::FROM_MEMORY].reg_info.tag]))
+			else if (Forward_Bus[Global::FORWARD_TYPE::FROM_MEMORY].reg_info.tag == current.instruction.src2.tag)
 			{
 				current.instruction.src2.value = Forward_Bus[Global::FORWARD_TYPE::FROM_MEMORY].reg_info.value;
 			}
 			//check from writeback
 			//THIS SHOULD BE LOAD/STORE
-			else if ((Forward_Bus[Global::FORWARD_TYPE::FROM_WRITEBACK].reg_info.tag == current.instruction.src2.tag)
-				&& (Forward_Bus[Global::FORWARD_TYPE::FROM_WRITEBACK].pc_value == Most_Recent_Reg[Forward_Bus[Global::FORWARD_TYPE::FROM_WRITEBACK].reg_info.tag]))
+			else if (Forward_Bus[Global::FORWARD_TYPE::FROM_WRITEBACK].reg_info.tag == current.instruction.src2.tag)
 			{
 				current.instruction.src2.value = Forward_Bus[Global::FORWARD_TYPE::FROM_WRITEBACK].reg_info.value;
 			}

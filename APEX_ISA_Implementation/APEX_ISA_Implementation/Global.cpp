@@ -294,18 +294,6 @@ string Global::toString(ARCH_REGISTERS reg)
 	return out;
 }
 
-//Registers
-string Global::toString(REGISTERS reg)
-{
-	string out = "U" + int(reg);
-
-	if (reg == REGISTERS::UNA)
-		out = "UNA";
-	else if (reg == REGISTERS::UX)
-		out = "X";
-	return out;
-}
-
 string Global::toString(Register_Info reg)
 {
 	string out = "";

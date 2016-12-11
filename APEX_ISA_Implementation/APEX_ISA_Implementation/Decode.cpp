@@ -657,7 +657,7 @@ Global::apexStruct Decode::run(
 				}
 				//4
 				ROB.entries[ROB.tail].alloc = Global::ROB_ALLOCATION::WAITING;
-				ROB.entries[ROB.tail].destReg = Global::REGISTERS(x);
+				ROB.entries[ROB.tail].destReg = x;
 				ROB.entries[ROB.tail].destArchReg = Global::ARCH_REGISTERS(arch_dest);
 				ROB.entries[ROB.tail].flags = Global::FLAGS::CLEAR;
 				ROB.entries[ROB.tail].pc_value = myStruct.pc_value;

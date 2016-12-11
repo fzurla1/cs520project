@@ -63,20 +63,6 @@ public:
 		NA
 	};
 
-	//unified registers
-	enum REGISTERS{
-		U0, U1, U2, U3, U4, 
-		U5, U6, U7, U8, U9, 
-		U10, U11, U12, U13, U14, 
-		U15, U16, U17, U18, U19, 
-		U20, U21, U22, U23, U24, 
-		U25, U26, U27, U28, U29,
-		U30, U31, U32,
-		FINAL_REGISTERS_TOTAL,
-		UX,
-		UNA
-	};
-
 	//forwarding types
 	enum FORWARD_TYPE{
 		FROM_ALU2,
@@ -92,11 +78,13 @@ public:
 		FETCH,
 		DECODE_RF,
 		DISPATCH,
+		IQ,
 		ALU1,
 		ALU2,
 		BRANCH,
 		DELAY,
 		MULTIPLY,
+		LS,
 		MEMORY,
 		WRITEBACK,
 		FINAL_STALLED_STAGE_TOTAL
@@ -160,7 +148,6 @@ public:
 	//structure used in forwarding bus
 	struct Forwarding_Info{
 		int pc_value = 0;
-		REGISTERS tag = REGISTERS::UNA;
 		Register_Info reg_info;
 		//flags
 		FLAGS flag = FLAGS::CLEAR;
@@ -425,11 +412,6 @@ public:
 	/// Output ARCH_REGISTERS enum to string
 	/// </summary>
 	static string toString(ARCH_REGISTERS reg);
-
-	/// <summary>
-	/// Output REGISTER enum to string
-	/// </summary>
-	static string toString(REGISTERS reg);
 
 	/// <summary>
 	/// Output Register_Info struct to string

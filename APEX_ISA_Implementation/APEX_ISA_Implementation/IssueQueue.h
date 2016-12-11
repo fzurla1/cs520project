@@ -30,8 +30,7 @@ public:
 	bool stalledStage(Global::apexStruct current, bool(&Stalled_Stages)[Global::STALLED_STAGE::FINAL_STALLED_STAGE_TOTAL]);
 
 	std::vector<Global::apexStruct> run(Global::Forwarding_Info(&Forward_Bus)[Global::FORWARD_TYPE::FINAL_FORWARD_TYPE_TOTAL],
-		bool(&Stalled_Stages)[Global::STALLED_STAGE::FINAL_STALLED_STAGE_TOTAL],
-		int(&Most_Recent_Reg)[Global::ARCH_REGISTER_COUNT]);
+		bool(&Stalled_Stages)[Global::STALLED_STAGE::FINAL_STALLED_STAGE_TOTAL]);
 
 private:
 	Global::apexStruct myStruct;
