@@ -30,6 +30,8 @@ Global::apexStruct ALU2::run(
 	//make sure we have valid data
 	if (myStruct.pc_value != INT_MAX)
 	{
+		Stalled_Stages[Global::STALLED_STAGE::ALU2] = false;
+
 		switch (myStruct.instruction.op_code)
 		{
 #pragma region "ADD"

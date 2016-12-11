@@ -23,6 +23,7 @@
 #include "Fetch.h"
 #include "Decode.h"
 #include "Dispatch.h"
+#include "IssueQueue.h"
 #include "ALU1.h"
 #include "ALU2.h"
 #include "Multiply.h"
@@ -81,6 +82,7 @@ bool pipelineHasData = true;
 Fetch * fetch;
 Decode * decode;
 Dispatch * dispatch;
+IssueQueue * iq;
 ALU1 * alu1;
 ALU2 * alu2;
 Multiply * multiply;
@@ -91,6 +93,7 @@ WriteBack * writeBack;
 Global::apexStruct pipeline_struct_fetch;
 Global::apexStruct pipeline_struct_decode;
 Global::apexStruct pipeline_struct_dispatch;
+vector<Global::apexStruct> pipeline_structs_iq;
 Global::apexStruct pipeline_struct_alu1;
 Global::apexStruct pipeline_struct_alu2;
 Global::apexStruct pipeline_struct_multiply;
@@ -424,6 +427,7 @@ int _tmain(int argc, char* argv[])
 	fetch = new Fetch();
 	decode = new Decode();
 	dispatch = new Dispatch();
+	iq = new IssueQueue();
 	alu1 = new ALU1();
 	alu2 = new ALU2();
 	multiply = new Multiply();
@@ -689,6 +693,9 @@ int _tmain(int argc, char* argv[])
 						//Run ALU1
 						pipeline_struct_alu1 = alu1->run(Forward_Bus, Stalled_Stages);
 
+						//look into IQ
+						pipeline_structs_iq = iq->run(Forward_Bus, Stalled_Stages);
+
 						//Run Rename2/Dispatch
 						pipeline_struct_dispatch = dispatch->run(Register_File, urf_size, Forward_Bus, Stalled_Stages, ROB, Front_End_RAT);
 
@@ -792,9 +799,11 @@ int _tmain(int argc, char* argv[])
 							alu2->setPipelineStruct(garbage_struct);
 						}
 
-						//based on opcode....
-						switch (pipeline_struct_dispatch.instruction.op_code)
+						for (int x = 0; x < pipeline_structs_iq.size(); x++)
 						{
+							//based on opcode....
+							switch (pipeline_structs_iq[x].instruction.op_code)
+							{
 							case Global::OPCODE::ADD:
 							case Global::OPCODE::ADDL:
 							case Global::OPCODE::AND:
@@ -812,16 +821,14 @@ int _tmain(int argc, char* argv[])
 								//if for the ALU, and we are not stalled, or branching, 
 								//set up ALU1 with the output of code
 								if (!Stalled_Stages[Global::STALLED_STAGE::DECODE_RF]
-									&& !Stalled_Stages[Global::STALLED_STAGE::ALU1]
 									&& !Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].updatePC)
 								{
-									alu1->setPipelineStruct(pipeline_struct_dispatch);
+									alu1->setPipelineStruct(pipeline_structs_iq[x]);
 									pipeline_struct_dispatch = garbage_struct;
 								}
 								//feed in bubble if we are not stalled, the branch was taken
 								//or if code does not have valid data (bubble)
-								else if (!Stalled_Stages[Global::STALLED_STAGE::ALU1]
-									|| Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].updatePC)
+								else if ( Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].updatePC)
 								{
 									alu1->setPipelineStruct(garbage_struct);
 								}
@@ -861,16 +868,20 @@ int _tmain(int argc, char* argv[])
 
 							default:
 								break;
+							}
 						}
 
-						if (!Stalled_Stages[Global::STALLED_STAGE::DISPATCH])
+						iq->setPipelineStruct(pipeline_struct_dispatch);
+
+						if (!Stalled_Stages[Global::STALLED_STAGE::IQ]
+							&& !HALT)
 						{
 							dispatch->setPipelineStruct(pipeline_struct_decode);
 							pipeline_struct_decode = garbage_struct;
 							PC++;
 						}
 						//or if we are not stalled, then feed in garbage (bubble)
-						else if (!Stalled_Stages[Global::STALLED_STAGE::DISPATCH])
+						else
 						{
 							dispatch->setPipelineStruct(garbage_struct);
 							stats.dispatch_stall_count++;
@@ -879,14 +890,14 @@ int _tmain(int argc, char* argv[])
 						//as long as decode is not stalled, and we are not updating
 						// the PC from a branch, and we still have data to read
 						//from fetch, move the fetch output to the input of decode
-						if (!Stalled_Stages[Global::STALLED_STAGE::DECODE_RF]
+						if (!Stalled_Stages[Global::STALLED_STAGE::IQ]
 							&& !HALT)
 						{
 							decode->setPipelineStruct(pipeline_struct_fetch);
 							pipeline_struct_fetch = garbage_struct;
 						}
 						//or if we are not stalled, then feed in garbage (bubble)
-						else if (!Stalled_Stages[Global::STALLED_STAGE::DECODE_RF] || HALT)
+						else
 						{
 							decode->setPipelineStruct(garbage_struct);
 						}

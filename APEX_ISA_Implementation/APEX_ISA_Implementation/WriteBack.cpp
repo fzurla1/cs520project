@@ -18,7 +18,7 @@ bool WriteBack::run(
 {
 	bool HALT = false;
 
-	for (int x = (myStructVector.size()-1); x >= 0; x--)
+	for (int x = (myStructVector.size() -1); x >= 0; x--)
 	{
 		//make sure we have valid data
 		if (myStructVector[x].pc_value != INT_MAX)

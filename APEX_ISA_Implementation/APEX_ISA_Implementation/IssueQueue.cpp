@@ -99,7 +99,7 @@ std::vector<Global::apexStruct> IssueQueue::run(Global::Forwarding_Info(&Forward
 	{
 		if (output.size() >= 3)
 		{
-			return output;
+			break;
 		}
 
 		Global::apexStruct current = IQ[i];
@@ -176,6 +176,8 @@ std::vector<Global::apexStruct> IssueQueue::run(Global::Forwarding_Info(&Forward
 			removeIQEntry(IQ, i);
 		}
 	}
+
+	return output;
 }
 
 void IssueQueue::setPipelineStruct(Global::apexStruct inputStruct)
