@@ -22,6 +22,9 @@ Global::apexStruct Multiply::run(Global::Forwarding_Info(&Forward_Bus)[Global::F
 	//make sure we have valid data
 	if (myStruct.pc_value != INT_MAX)
 	{
+		//mark FU as busy
+		Stalled_Stages[Global::STALLED_STAGE::MULTIPLY] = true;
+
 		//takes 4 cycles to complete
 		if (count == 4)
 		{
@@ -58,11 +61,6 @@ Global::apexStruct Multiply::run(Global::Forwarding_Info(&Forward_Bus)[Global::F
 			Forward_Bus[Global::FORWARD_TYPE::FROM_MULTIPLY].pc_value = output_struct.pc_value;
 			Forward_Bus[Global::FORWARD_TYPE::FROM_MULTIPLY].reg_info.tag = output_struct.instruction.dest.tag;
 			Forward_Bus[Global::FORWARD_TYPE::FROM_MULTIPLY].reg_info.value = output_struct.instruction.dest.value;
-
-			//Update ROB
-			ROB.entries[output_struct.instruction.dest.rob_loc].alloc = Global::ROB_ALLOCATION::COMPLETE;
-			ROB.entries[output_struct.instruction.dest.rob_loc].flags = output_struct.instruction.flag;
-			ROB.entries[output_struct.instruction.dest.rob_loc].result = output_struct.instruction.dest.value;
 
 			//reset count
 			count = 1;

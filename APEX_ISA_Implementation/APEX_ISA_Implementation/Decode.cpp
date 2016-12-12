@@ -270,9 +270,9 @@ Global::apexStruct Decode::run(
 							output_struct.instruction.src1.value = Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].reg_info.value;
 						}
 						//check from memory
-						else if (Forward_Bus[Global::FORWARD_TYPE::FROM_MEMORY].reg_info.tag == output_struct.instruction.src1.tag)
+						else if (Forward_Bus[Global::FORWARD_TYPE::FROM_MULTIPLY].reg_info.tag == output_struct.instruction.src1.tag)
 						{
-							output_struct.instruction.src1.value = Forward_Bus[Global::FORWARD_TYPE::FROM_MEMORY].reg_info.value;
+							output_struct.instruction.src1.value = Forward_Bus[Global::FORWARD_TYPE::FROM_MULTIPLY].reg_info.value;
 						}
 						//check from writeback
 						else if (Forward_Bus[Global::FORWARD_TYPE::FROM_WRITEBACK].reg_info.tag == output_struct.instruction.src1.tag)
@@ -321,9 +321,9 @@ Global::apexStruct Decode::run(
 							output_struct.instruction.src2.value = Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].reg_info.value;
 						}
 						//check from memory
-						else if (Forward_Bus[Global::FORWARD_TYPE::FROM_MEMORY].reg_info.tag == output_struct.instruction.src2.tag)
+						else if (Forward_Bus[Global::FORWARD_TYPE::FROM_MULTIPLY].reg_info.tag == output_struct.instruction.src2.tag)
 						{
-							output_struct.instruction.src2.value = Forward_Bus[Global::FORWARD_TYPE::FROM_MEMORY].reg_info.value;
+							output_struct.instruction.src2.value = Forward_Bus[Global::FORWARD_TYPE::FROM_MULTIPLY].reg_info.value;
 						}
 						//check from writeback
 						else if (Forward_Bus[Global::FORWARD_TYPE::FROM_WRITEBACK].reg_info.tag == output_struct.instruction.src2.tag)
@@ -404,9 +404,9 @@ Global::apexStruct Decode::run(
 							output_struct.instruction.src1.value = Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].reg_info.value;
 						}
 						//check from memory
-						else if (Forward_Bus[Global::FORWARD_TYPE::FROM_MEMORY].reg_info.tag == output_struct.instruction.src1.tag)
+						else if (Forward_Bus[Global::FORWARD_TYPE::FROM_MULTIPLY].reg_info.tag == output_struct.instruction.src1.tag)
 						{
-							output_struct.instruction.src1.value = Forward_Bus[Global::FORWARD_TYPE::FROM_MEMORY].reg_info.value;
+							output_struct.instruction.src1.value = Forward_Bus[Global::FORWARD_TYPE::FROM_MULTIPLY].reg_info.value;
 						}
 						//check from writeback
 						else if (Forward_Bus[Global::FORWARD_TYPE::FROM_WRITEBACK].reg_info.tag == output_struct.instruction.src1.tag)
@@ -486,9 +486,9 @@ Global::apexStruct Decode::run(
 							output_struct.instruction.src1.value = Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].reg_info.value;
 						}
 						//check from memory
-						else if (Forward_Bus[Global::FORWARD_TYPE::FROM_MEMORY].reg_info.tag == output_struct.instruction.src1.tag)
+						else if (Forward_Bus[Global::FORWARD_TYPE::FROM_MULTIPLY].reg_info.tag == output_struct.instruction.src1.tag)
 						{
-							output_struct.instruction.src1.value = Forward_Bus[Global::FORWARD_TYPE::FROM_MEMORY].reg_info.value;
+							output_struct.instruction.src1.value = Forward_Bus[Global::FORWARD_TYPE::FROM_MULTIPLY].reg_info.value;
 						}
 						//check from writeback
 						else if (Forward_Bus[Global::FORWARD_TYPE::FROM_WRITEBACK].reg_info.tag == output_struct.instruction.src1.tag)
@@ -537,9 +537,9 @@ Global::apexStruct Decode::run(
 							output_struct.instruction.src2.value = Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].reg_info.value;
 						}
 						//check from memory
-						else if (Forward_Bus[Global::FORWARD_TYPE::FROM_MEMORY].reg_info.tag == output_struct.instruction.src2.tag)
+						else if (Forward_Bus[Global::FORWARD_TYPE::FROM_MULTIPLY].reg_info.tag == output_struct.instruction.src2.tag)
 						{
-							output_struct.instruction.src2.value = Forward_Bus[Global::FORWARD_TYPE::FROM_MEMORY].reg_info.value;
+							output_struct.instruction.src2.value = Forward_Bus[Global::FORWARD_TYPE::FROM_MULTIPLY].reg_info.value;
 						}
 						//check from writeback
 						else if (Forward_Bus[Global::FORWARD_TYPE::FROM_WRITEBACK].reg_info.tag == output_struct.instruction.src2.tag)
@@ -603,16 +603,62 @@ Global::apexStruct Decode::run(
 				iss >> s_literal;
 				s_literal = s_literal.substr(1, s_literal.length());
 
-				/*
 				output_struct.instruction.dest.tag = Global::ARCH_REGISTERS::NA;
 
-				output_struct.instruction.src1.tag = Global::ARCH_REGISTERS::X;
+				arch_src1 = Global::ARCH_REGISTERS::X;
+				output_struct.instruction.src1.archreg = Global::ARCH_REGISTERS::X;
 				output_struct.instruction.src1.status = Global::STATUS::VALID;
-				output_struct.instruction.src1.value = Register_File[Global::ARCH_REGISTERS::X].value;
 
 				output_struct.instruction.src2.tag = Global::ARCH_REGISTERS::NA;
 				output_struct.instruction.src2.status = Global::STATUS::VALID;
-				*/
+
+				//FOR SRC1
+				//look to FE RAT for where data is stored
+				if ((Front_End_RAT[arch_src1].src_bit == Global::SOURCES::REGISTER_FILE)
+					&& (Register_File[Front_End_RAT[arch_src1].reg].status == Global::REGISTER_ALLOCATION::ALLOC_COMMIT))
+				{
+					output_struct.instruction.src1.value = Register_File[output_struct.instruction.src1.tag].value;
+				}
+
+				//check ROB and forwarding buses
+				//if tag matches what we are looking for, and that instruction is the most recent to update 
+				//the register, then grab that value, otherwise, stall.
+				else
+				{
+					//get ROB entry location
+					output_struct.instruction.src1.rob_loc = Front_End_RAT[arch_src1].reg;
+
+					//check ROB
+					//if ROB entry is complete, get out data
+					//get ROB entry # from FE RAT ROB location entry based on arch register from src1 input
+					if (ROB.entries[Front_End_RAT[arch_src1].rob_loc].alloc == Global::ROB_ALLOCATION::COMPLETE)
+					{
+						output_struct.instruction.src1.value = ROB.entries[Front_End_RAT[arch_src1].rob_loc].result;
+					}
+					//if the entry is not complete, but it is executing or waiting, check forwarding bus
+					else
+					{
+						//check from ALU2
+						if (Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].reg_info.tag == output_struct.instruction.src1.tag)
+						{
+							output_struct.instruction.src1.value = Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].reg_info.value;
+						}
+						//check from memory
+						else if (Forward_Bus[Global::FORWARD_TYPE::FROM_MULTIPLY].reg_info.tag == output_struct.instruction.src1.tag)
+						{
+							output_struct.instruction.src1.value = Forward_Bus[Global::FORWARD_TYPE::FROM_MULTIPLY].reg_info.value;
+						}
+						//check from writeback
+						else if (Forward_Bus[Global::FORWARD_TYPE::FROM_WRITEBACK].reg_info.tag == output_struct.instruction.src1.tag)
+						{
+							output_struct.instruction.src1.value = Forward_Bus[Global::FORWARD_TYPE::FROM_WRITEBACK].reg_info.value;
+						}
+						else
+						{
+							output_struct.instruction.src1.status = Global::STATUS::INVALID;
+						}
+					}
+				}
 
 				output_struct.instruction.literal_value = atoi(s_literal.c_str());
 
@@ -639,42 +685,70 @@ Global::apexStruct Decode::run(
 		//4) create new entry in ROB
 		//5) move tail
 		bool entry_made = false;
-		for (int x = 0; x < URF_SIZE; x++)
+		if (output_struct.instruction.op_code != Global::OPCODE::BAL)
 		{
-			//1
-			if (Register_File[x].status == Global::REGISTER_ALLOCATION::REG_UNALLOCATED)
+			for (int x = 0; x < URF_SIZE - 1; x++) //last register is designated for X
 			{
-				//if not a branch or store instruction, set up the register file and FE RAT
-				if ((output_struct.type != Global::INSTRUCTION_TYPE::BRANCH_TYPE)
-					|| (output_struct.type != Global::INSTRUCTION_TYPE::STORE_TYPE))
+				//1
+				if (Register_File[x].status == Global::REGISTER_ALLOCATION::REG_UNALLOCATED)
 				{
-					//2
-					Register_File[x].status = Global::REGISTER_ALLOCATION::ALLOC_NO_COMMIT;
-					//3
-					Front_End_RAT[arch_dest].reg = x;
-					Front_End_RAT[arch_dest].src_bit = Global::SOURCES::ROB;
-					Front_End_RAT[arch_dest].rob_loc = ROB.tail;
+					//if not a branch or store instruction, set up the register file and FE RAT
+					if ((output_struct.type != Global::INSTRUCTION_TYPE::BRANCH_TYPE)
+						|| (output_struct.type != Global::INSTRUCTION_TYPE::STORE_TYPE))
+					{
+						//2
+						Register_File[x].status = Global::REGISTER_ALLOCATION::ALLOC_NO_COMMIT;
+						//3
+						Front_End_RAT[arch_dest].reg = x;
+						Front_End_RAT[arch_dest].src_bit = Global::SOURCES::ROB;
+						Front_End_RAT[arch_dest].rob_loc = ROB.tail;
+					}
+					//4
+					ROB.entries[ROB.tail].alloc = Global::ROB_ALLOCATION::WAITING;
+					ROB.entries[ROB.tail].destReg = x;
+					ROB.entries[ROB.tail].destArchReg = Global::ARCH_REGISTERS(arch_dest);
+					ROB.entries[ROB.tail].flags = Global::FLAGS::CLEAR;
+					ROB.entries[ROB.tail].pc_value = myStruct.pc_value;
+					ROB.entries[ROB.tail].result = 0;
+					if (output_struct.instruction.op_code != Global::OPCODE::LOAD)
+					{
+						ROB.entries[ROB.tail].type = Global::INSTRUCTION_TYPE::REG_TO_REG_TYPE;
+					}
+					else
+					{
+						ROB.entries[ROB.tail].type = Global::INSTRUCTION_TYPE::LOAD_TYPE;
+					}
+					//5
+					ROB.tail = (ROB.tail + 1) % Global::ROB_SIZE;
+
+					entry_made = true;
+					break;
 				}
+			}
+		}
+
+		//set up info for reg X
+		else
+		{
+			if (Register_File[URF_SIZE - 1].status == Global::REGISTER_ALLOCATION::REG_UNALLOCATED)
+			{
+				//2
+				Register_File[URF_SIZE - 1].status = Global::REGISTER_ALLOCATION::ALLOC_NO_COMMIT;
+				//3
+				Front_End_RAT[Global::ARCH_REGISTERS::X].reg = URF_SIZE - 1;
+				Front_End_RAT[arch_dest].src_bit = Global::SOURCES::ROB;
+				Front_End_RAT[arch_dest].rob_loc = ROB.tail;
 				//4
 				ROB.entries[ROB.tail].alloc = Global::ROB_ALLOCATION::WAITING;
-				ROB.entries[ROB.tail].destReg = x;
-				ROB.entries[ROB.tail].destArchReg = Global::ARCH_REGISTERS(arch_dest);
+				ROB.entries[ROB.tail].destReg = URF_SIZE - 1;
+				ROB.entries[ROB.tail].destArchReg = Global::ARCH_REGISTERS::X;
 				ROB.entries[ROB.tail].flags = Global::FLAGS::CLEAR;
 				ROB.entries[ROB.tail].pc_value = myStruct.pc_value;
 				ROB.entries[ROB.tail].result = 0;
-				if (output_struct.instruction.op_code != Global::OPCODE::LOAD)
-				{
-					ROB.entries[ROB.tail].type = Global::INSTRUCTION_TYPE::REG_TO_REG_TYPE;
-				}
-				else
-				{
-					ROB.entries[ROB.tail].type = Global::INSTRUCTION_TYPE::LOAD_TYPE;
-				}
 				//5
 				ROB.tail = (ROB.tail + 1) % Global::ROB_SIZE;
 
 				entry_made = true;
-				break;
 			}
 		}
 

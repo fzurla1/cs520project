@@ -95,91 +95,94 @@ std::vector<Global::apexStruct> IssueQueue::run(Global::Forwarding_Info(&Forward
 	output.clear();
 
 	//loop through IQ to find instructions ready for dispatch, put up to 3 in output (only 1 per FU)
-	for (int i = IQ.size()-1; i <= 0; i--)
+	if (IQ.size() > 0)
 	{
-		if (output.size() >= 3)
+		for (int i = IQ.size() - 1; i >= 0; i--)
 		{
-			break;
-		}
+			if (output.size() >= 3)
+			{
+				break;
+			}
 
-		Global::apexStruct current = IQ[i];
+			Global::apexStruct current = IQ[i];
 
-		//skip to next IQ entry if the opcode exists in output already
-		if (!differentOpCode(current, output))
-		{
-			continue;
-		}
+			//skip to next IQ entry if the opcode exists in output already
+			if (!differentOpCode(current, output))
+			{
+				continue;
+			}
 
-		//check if FU is ready to receive instruction
-		if (stalledStage(current, Stalled_Stages))
-		{
-			continue;
-		}
+			//check if FU is ready to receive instruction
+			if (stalledStage(current, Stalled_Stages))
+			{
+				continue;
+			}
 
-		//issue instruction if both sources valid
-		if (current.instruction.src1.status == Global::STATUS::VALID && current.instruction.src2.status == Global::STATUS::VALID)
-		{
-			output.push_back(current);
-			removeIQEntry(IQ, i);
-		}
-		//look for src1 from forward bus
-		else if (current.instruction.src1.status == Global::STATUS::INVALID)
-		{
-			//check from ALU2
-			if (Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].reg_info.tag == current.instruction.src1.tag)
+			//issue instruction if both sources valid
+			if (current.instruction.src1.status == Global::STATUS::VALID && current.instruction.src2.status == Global::STATUS::VALID)
 			{
-				current.instruction.src1.value = Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].reg_info.value;
+				output.push_back(current);
+				removeIQEntry(IQ, i);
 			}
-			//check from memory
-			else if (Forward_Bus[Global::FORWARD_TYPE::FROM_MEMORY].reg_info.tag == current.instruction.src1.tag)
+			//look for src1 from forward bus
+			else if (current.instruction.src1.status == Global::STATUS::INVALID)
 			{
-				current.instruction.src1.value = Forward_Bus[Global::FORWARD_TYPE::FROM_MEMORY].reg_info.value;
+				//check from ALU2
+				if (Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].reg_info.tag == current.instruction.src1.tag)
+				{
+					current.instruction.src1.value = Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].reg_info.value;
+				}
+				//check from memory
+				else if (Forward_Bus[Global::FORWARD_TYPE::FROM_MEMORY].reg_info.tag == current.instruction.src1.tag)
+				{
+					current.instruction.src1.value = Forward_Bus[Global::FORWARD_TYPE::FROM_MEMORY].reg_info.value;
+				}
+				//check from writeback
+				else if (Forward_Bus[Global::FORWARD_TYPE::FROM_WRITEBACK].reg_info.tag == current.instruction.src1.tag)
+				{
+					current.instruction.src1.value = Forward_Bus[Global::FORWARD_TYPE::FROM_WRITEBACK].reg_info.value;
+				}
+				//check from multiply
+				else if (Forward_Bus[Global::FORWARD_TYPE::FROM_MULTIPLY].reg_info.tag == current.instruction.src1.tag)
+				{
+					current.instruction.src1.value = Forward_Bus[Global::FORWARD_TYPE::FROM_MULTIPLY].reg_info.value;
+				}
+				//check from LS
+				//NEED LS
 			}
-			//check from writeback
-			else if (Forward_Bus[Global::FORWARD_TYPE::FROM_WRITEBACK].reg_info.tag == current.instruction.src1.tag)
+			//look for src2 from forward bus
+			else if (current.instruction.src2.status == Global::STATUS::INVALID)
 			{
-				current.instruction.src1.value = Forward_Bus[Global::FORWARD_TYPE::FROM_WRITEBACK].reg_info.value;
+				//check from ALU2
+				if (Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].reg_info.tag == current.instruction.src2.tag)
+				{
+					current.instruction.src2.value = Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].reg_info.value;
+				}
+				//check from memory
+				else if (Forward_Bus[Global::FORWARD_TYPE::FROM_MEMORY].reg_info.tag == current.instruction.src2.tag)
+				{
+					current.instruction.src2.value = Forward_Bus[Global::FORWARD_TYPE::FROM_MEMORY].reg_info.value;
+				}
+				//check from writeback
+				else if (Forward_Bus[Global::FORWARD_TYPE::FROM_WRITEBACK].reg_info.tag == current.instruction.src2.tag)
+				{
+					current.instruction.src2.value = Forward_Bus[Global::FORWARD_TYPE::FROM_WRITEBACK].reg_info.value;
+				}
+				//check from multiply
+				else if (Forward_Bus[Global::FORWARD_TYPE::FROM_MULTIPLY].reg_info.tag == current.instruction.src2.tag)
+				{
+					current.instruction.src2.value = Forward_Bus[Global::FORWARD_TYPE::FROM_MULTIPLY].reg_info.value;
+				}
+				//check from LS
+				//NEED LS
 			}
-			//check from multiply
-			else if (Forward_Bus[Global::FORWARD_TYPE::FROM_MULTIPLY].reg_info.tag == current.instruction.src1.tag)
-			{
-				current.instruction.src1.value = Forward_Bus[Global::FORWARD_TYPE::FROM_MULTIPLY].reg_info.value;
-			}
-			//check from LS
-			//NEED LS
-		}
-		//look for src2 from forward bus
-		else if (current.instruction.src2.status == Global::STATUS::INVALID)
-		{
-			//check from ALU2
-			if (Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].reg_info.tag == current.instruction.src2.tag)
-			{
-				current.instruction.src2.value = Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].reg_info.value;
-			}
-			//check from memory
-			else if (Forward_Bus[Global::FORWARD_TYPE::FROM_MEMORY].reg_info.tag == current.instruction.src2.tag)
-			{
-				current.instruction.src2.value = Forward_Bus[Global::FORWARD_TYPE::FROM_MEMORY].reg_info.value;
-			}
-			//check from writeback
-			else if (Forward_Bus[Global::FORWARD_TYPE::FROM_WRITEBACK].reg_info.tag == current.instruction.src2.tag)
-			{
-				current.instruction.src2.value = Forward_Bus[Global::FORWARD_TYPE::FROM_WRITEBACK].reg_info.value;
-			}
-			//check from multiply
-			else if (Forward_Bus[Global::FORWARD_TYPE::FROM_MULTIPLY].reg_info.tag == current.instruction.src2.tag)
-			{
-				current.instruction.src2.value = Forward_Bus[Global::FORWARD_TYPE::FROM_MULTIPLY].reg_info.value;
-			}
-			//check from LS
-			//NEED LS
-		}
 
-		//after searching for src1/2, issue instruction if both sources valid
-		if (current.instruction.src1.status == Global::STATUS::VALID && current.instruction.src2.status == Global::STATUS::VALID)
-		{
-			output.push_back(current);
-			removeIQEntry(IQ, i);
+			//after searching for src1/2, issue instruction if both sources valid
+			if (current.instruction.src1.status == Global::STATUS::VALID && current.instruction.src2.status == Global::STATUS::VALID)
+			{
+				output.push_back(current);
+				removeIQEntry(IQ, i);
+			}
 		}
 	}
 
@@ -188,5 +191,19 @@ std::vector<Global::apexStruct> IssueQueue::run(Global::Forwarding_Info(&Forward
 
 void IssueQueue::setPipelineStruct(Global::apexStruct inputStruct)
 {
-	myStruct = inputStruct;
+	//add if there is a valid instruction
+	if (inputStruct.pc_value != INT_MAX)
+	{
+		addIQEntry(IQ, inputStruct);
+	}	
+}
+
+void IssueQueue::display()
+{
+	Global::Output("-- Issue Queue --");
+	for (int x = 0; x < IQ.size(); x++)
+	{
+		Global::Output(" IQ slot[" + to_string(x) + "]");
+		Global::Output("     Instruction: " + IQ[x].untouched_instruction);
+	}
 }

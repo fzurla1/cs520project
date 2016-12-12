@@ -22,10 +22,22 @@ Global::apexStruct ALU2::run(
 	Global::Reorder_Buffer(&ROB))
 {
 	Global::apexStruct output_struct = myStruct;
+	Global::apexStruct garbage_struct;
 	snapshot_before = myStruct;
 
 	//initialize flags
 	Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].flag = Global::FLAGS::CLEAR;
+
+	//if a branch has occured
+	if (Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].updatePC == true)
+	{
+		//if my PC is > than the branch, meaning that this instruction is later in the instruction
+		//set, clear out my instruction
+		if (myStruct.pc_value > Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].pc_value)
+		{
+			myStruct = garbage_struct;
+		}
+	}
 
 	//make sure we have valid data
 	if (myStruct.pc_value != INT_MAX)
@@ -114,10 +126,6 @@ Global::apexStruct ALU2::run(
 		Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].pc_value = output_struct.pc_value;
 		Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].reg_info.tag = output_struct.instruction.dest.tag;
 		Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].reg_info.value = output_struct.instruction.dest.value;
-
-		//Update ROB
-		ROB.entries[output_struct.instruction.dest.rob_loc].alloc = Global::ROB_ALLOCATION::COMPLETE;
-		ROB.entries[output_struct.instruction.dest.rob_loc].result = output_struct.instruction.dest.value;
 
 
 		if (output_struct.instruction.dest.value == 0)

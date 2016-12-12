@@ -87,7 +87,6 @@ ALU1 * alu1;
 ALU2 * alu2;
 Multiply * multiply;
 Branch * branch;
-Delay * delay;
 WriteBack * writeBack;
 
 Global::apexStruct pipeline_struct_fetch;
@@ -97,9 +96,9 @@ vector<Global::apexStruct> pipeline_structs_iq;
 Global::apexStruct pipeline_struct_alu1;
 Global::apexStruct pipeline_struct_alu2;
 Global::apexStruct pipeline_struct_multiply;
-Global::apexStruct pipeline_struct_lsq;
+Global::apexStruct pipeline_struct_ls1;
+Global::apexStruct pipeline_struct_ls2;
 Global::apexStruct pipeline_struct_branch;
-Global::apexStruct pipeline_struct_delay;
 Global::apexStruct garbage_struct;
 
 bool HALT = false;
@@ -109,315 +108,29 @@ int iteration = 1;
 #pragma endregion VARIABLES
 
 #pragma region "INITIALIZE FUNCTIONS" 
-void initialize_forwarding_bus()
-{
-	for (int x = 0; x < Global::FORWARD_TYPE::FINAL_FORWARD_TYPE_TOTAL; x++)
-	{
-		Forward_Bus[x].flag = Global::FLAGS::CLEAR;
-		Forward_Bus[x].opcode = Global::OPCODE::NONE;
-		Forward_Bus[x].pc_value = -1;
-		Forward_Bus[x].updatePC = false;
-		Forward_Bus[x].target = INT_MAX;
-		Forward_Bus[x].reg_info.tag = -1;
-		Forward_Bus[x].reg_info.status = Global::REGISTER_ALLOCATION::REG_UNALLOCATED;
-		Forward_Bus[x].reg_info.value = INT_MAX;
-	}
-}
-
-void initialize_memory()
-{
-	for (int x = 0; x < Global::MEMORY_SIZE; x++)
-	{
-		Memory_Array[x] = 0;
-	}
-}
-
-void initialize_Register_File()
-{
-	for (int x = 0; x < urf_size + 1; x++)
-	{
-		Register_File[x].clear();
-	}
-}
-
-void initialize_stalled_stages()
-{
-	for (int x = 0; x < Global::STALLED_STAGE::FINAL_STALLED_STAGE_TOTAL; x++)
-	{
-		Stalled_Stages[x] = false;
-	}
-}
-
-void initialize_rob()
-{
-	ROB.head = 0;
-	ROB.tail = 0;
-	for (int x = 0; x < Global::ROB_SIZE; x++)
-	{
-		ROB.entries[x].clear();
-	}
-}
-
-void initialize_rename_table(){
-	for (int x = 0; x < Global::ARCH_REGISTERS::FINAL_ARCH_REGISTERS_ITEM; x++)
-	{
-		Front_End_RAT[x].clear();
-		Back_End_RAT[x].clear();
-	}
-}
-
-void initialize_stats()
-{
-	stats.clear();
-}
-
-void initialize_pipeline()
-{
-	cout << "-- Initializing Pipeline --" << endl;
-	cout << "Initializing Forwarding Bus" << endl
-		<< "..." << endl;
-	initialize_forwarding_bus();
-	cout << "Initializing Forwarding Bus Complete" << endl;
-	cout << "Initializing Register File" << endl
-		<< "..." << endl;
-	initialize_Register_File();
-	cout << "Initializing Register File Complete" << endl;
-	cout << "Initializing Memory" << endl
-		<< "..." << endl;
-	initialize_memory();
-	cout << "Initializing Memory Complete" << endl;
-	cout << "Initializing Reorder Buffer" << endl
-		<< "..." << endl;
-	initialize_rob();
-	cout << "Initializing Reorder Buffer" << endl;
-	cout << "Initializing Rename Table" << endl
-		<< "..." << endl;
-	initialize_rename_table();
-	cout << "Initializing Rename Table Complete" << endl;
-	cout << "Initializing Statistics" << endl
-		<< "..." << endl;
-	initialize_stats();
-	cout << "Initializing Statistics Complete" << endl;
-	cout << "Resetting Stalled Stages" << endl
-		<< "..." << endl;
-	initialize_stalled_stages();
-	cout << "Resetting Stalled Stages Complete" << endl;
-	HALT = false;
-	iteration = 1;
-
-	cout << "Resetting Pipeline Stages" << endl
-		<< "..." << endl;
-	pipeline_struct_fetch = garbage_struct;
-	pipeline_struct_decode = garbage_struct;
-	pipeline_struct_dispatch = garbage_struct;
-	pipeline_struct_alu1 = garbage_struct;
-	pipeline_struct_alu2 = garbage_struct;
-	pipeline_struct_branch = garbage_struct;
-	pipeline_struct_delay = garbage_struct;
-	decode->setPipelineStruct(garbage_struct);
-	dispatch->setPipelineStruct(garbage_struct);
-	alu1->setPipelineStruct(garbage_struct);
-	alu2->setPipelineStruct(garbage_struct);
-	branch->setPipelineStruct(garbage_struct);
-	delay->setPipelineStruct(garbage_struct);
-	writeBack->setPipelineStruct(garbage_struct);
-	cout << "Resetting Pipeline Stages Complete" << endl;
-	cout << "Resetting PC" << endl
-		<< "..." << endl;
-	PC = 4000;
-	cout << "Resetting PC Complete" << endl;
-	cout << "-- Initialization Complete --" << endl;
-}
+void initialize_forwarding_bus();
+void initialize_memory();
+void initialize_Register_File();
+void initialize_stalled_stages();
+void initialize_rob();
+void initialize_rename_table();
+void initialize_stats();
+void initialize_pipeline();
 #pragma endregion INITIALIZE FUNCTIONS
 
 #pragma region DISPLAY FUNCTIONS
-void displayRegisterFile()
-{
-	Global::Output("");
-	Global::Output("-- Unified Register File --");
-	for (int x = 0; x < urf_size; x++)
-	{
-		Global::Output("Register[U" + to_string(x) + "]:");
-		Global::Output("  status: " + Global::toString(Register_File[x].status));
-		Global::Output("  value : " + to_string(Register_File[x].value));
-	}
-}
-
-void displayFRAT()
-{
-	Global::OutputFRAT("");
-	Global::OutputFRAT("-- Front-End Rename Table --");
-	for (int x = 0; x < Global::ARCH_REGISTERS::FINAL_ARCH_REGISTERS_ITEM; x++)
-	{
-		if (Front_End_RAT[x].reg != -1)
-		{
-			Global::OutputFRAT("Arch Reg: " + Global::toString(Global::ARCH_REGISTERS(x)));
-			Global::OutputFRAT("  URF link : " + to_string(Front_End_RAT[x].reg));
-			Global::OutputFRAT("  ROB Loc  : " + to_string(Front_End_RAT[x].rob_loc));
-			Global::OutputFRAT("  src bit  : " + Global::toString(Front_End_RAT[x].src_bit));
-		}
-	}
-
-	string cmd = "notepad.exe " + Global::getOutFileFRAT();
-	system(cmd.c_str());
-}
-
-void displayRRAT()
-{
-	Global::OutputBRAT("");
-	Global::OutputBRAT("-- Back-End Rename Table --");
-	for (int x = 0; x < Global::ARCH_REGISTERS::FINAL_ARCH_REGISTERS_ITEM; x++)
-	{
-		if (Back_End_RAT[x].reg != -1)
-		{
-			Global::OutputBRAT("Arch Reg: " + Global::toString(Global::ARCH_REGISTERS(x)));
-			Global::OutputBRAT("  URF link : " + to_string(Back_End_RAT[x].reg));
-		}
-	}
-
-	string cmd = "notepad.exe " + Global::getOutFileBRAT();
-	system(cmd.c_str());
-}
-
-void displayMemory()
-{
-	Global::Output("");
-	Global::Output("-- Memory Locations --");
-
-	for (int x = 0; x < 100; x++)
-	{
-		Global::Output("Memory[" + to_string(x) + "] = " + to_string(Memory_Array[x]));
-	}
-}
-
-void displayStalledStages()
-{
-	Global::Output("");
-	Global::Output("-- Stalled stages --");
-	Global::Output("Fetch		: " + to_string(Stalled_Stages[Global::STALLED_STAGE::FETCH]));
-	Global::Output("DECODE/RENAME1	: " + to_string(Stalled_Stages[Global::STALLED_STAGE::DECODE_RF]));
-	Global::Output("RENAME2/DISPATCH : " + to_string(Stalled_Stages[Global::STALLED_STAGE::DISPATCH]));
-	Global::Output("ALU1		    : " + to_string(Stalled_Stages[Global::STALLED_STAGE::ALU1]));
-	Global::Output("ALU2		    : " + to_string(Stalled_Stages[Global::STALLED_STAGE::ALU2]));
-	Global::Output("BRANCH		: " + to_string(Stalled_Stages[Global::STALLED_STAGE::BRANCH]));
-	Global::Output("DELAY		: " + to_string(Stalled_Stages[Global::STALLED_STAGE::DELAY]));
-	Global::Output("MEMORY		: " + to_string(Stalled_Stages[Global::STALLED_STAGE::MEMORY]));
-	Global::Output("WRITEBACK	: " + to_string(Stalled_Stages[Global::STALLED_STAGE::WRITEBACK]));
-	Global::Output("");
-}
-
-void displayROB()
-{
-	Global::OutputROB("");
-	Global::OutputROB("-- ROB Information --");
-	Global::OutputROB(" HEAD: " + to_string(ROB.head));
-	Global::OutputROB(" TAIL: " + to_string(ROB.tail));
-	for (int x = ROB.head; x != ROB.tail+1; x++)
-	{
-		Global::OutputROB("   Entry[" + to_string(x) + "] = ");
-		Global::OutputROB("      PC Value  : " + to_string(ROB.entries[x].pc_value));
-		Global::OutputROB("      Allocation: " + Global::toString(ROB.entries[x].alloc));
-		Global::OutputROB("      Instr Type: " + Global::toString(ROB.entries[x].type));
-		Global::OutputROB("      Arch Reg  : " + Global::toString(ROB.entries[x].destArchReg));
-		Global::OutputROB("      URF Reg   : " + to_string(ROB.entries[x].destReg));
-		Global::OutputROB("      Flags     : " + Global::toString(ROB.entries[x].flags));
-		Global::OutputROB("      Result    : " + to_string(ROB.entries[x].result));
-
-		if (x == (Global::ROB_SIZE - 1))
-		{
-			x = 0;
-		}
-	}
-
-	string cmd = "notepad.exe " + Global::getOutFileROB();
-	system(cmd.c_str());
-}
-
-void displayStats()
-{
-	Global::Output("");
-	Global::Output("-- Execution Statistics--");
-	Global::Output("  IPC realized                            : ");
-	Global::Output("  # of cycles which dispatched as stalled : " + to_string(stats.dispatch_stall_count));
-	Global::Output("  # of cycles w/o issue                   : " + to_string(stats.no_issue_count));
-	Global::Output("  # LOADs committed                       : " + to_string(stats.loads_count));
-	Global::Output("  # STOREs committed                      : " + to_string(stats.stores_count));
-}
+void displayRegisterFile();
+void displayFRAT();
+void displayRRAT();
+void displayMemory();
+void displayStalledStages();
+void displayROB();
+void displayStats();
 #pragma endregion DISPLAY FUNCTIONS
 
-string trim(string &str)
-{
-	size_t first = str.find_first_not_of(' ');
-	size_t last = str.find_last_not_of(' ');
-	return str.substr(first, (last - first + 1));
-}
+string trim(string &str);
 
-void user_interface() //char * input_file, char * output_file)
-{
-	string	infile_name = "",
-		outfile_name = "";
-
-	bool is_open = false;
-
-	cout << "Welcome to the APEX ISA Implementation for CS520" << endl
-		<< "Project 1" << endl
-		<< "Prof Ghose" << endl
-		<< "Fall 2016" << endl
-		<< "Frank Zurla and Eric Garbade" << endl
-		<< endl
-		<< "Usage: project_1 " << endl
-		<< "  options: <input file>  = APEX instruction set to run" << endl
-		<< "         : <output_file> = output file to write to" << endl
-		<< "                         = default is apex_output[date_time].txt" << endl
-		<< endl;
-
-
-	if (!DEBUG_INPUT)
-	{
-		while (infile_name == "")
-		{
-			cout << "please enter input instruction file: ";
-			getline(cin, infile_name);
-		}
-	}
-	else
-	{
-		infile_name = "test.txt";
-	}
-
-	fetch->setFile(infile_name);
-
-	cout << endl;
-
-	if (!DEBUG_INPUT)
-	{
-
-		cout << "please enter output file (or blank): ";
-		getline(cin, outfile_name);
-	}
-
-	if (outfile_name == "")
-	{
-		cout << endl << "using default output file: apex_output[date_time].txt" << endl;
-		outfile_name = "apex_output[";
-			
-		// current date/time based on current system
-		time_t now = time(0);
-		tm ltm;
-		localtime_s(&ltm, &now);
-
-		// print various components of tm structure.
-		outfile_name.append(to_string(1 + ltm.tm_mon) + to_string(ltm.tm_mday) + to_string(1900 + ltm.tm_year));
-		outfile_name.append("_" + to_string(ltm.tm_hour) + "-" + to_string(ltm.tm_min) + "-" + to_string(ltm.tm_sec) + "]");
-		cout << "File name = " + outfile_name + ".txt" << endl;
-	}
-	else
-	{
-		outfile_name = trim(outfile_name);
-	}
-
-	Global::setOutFiles(outfile_name + ".txt", outfile_name + +"_ROB.txt", outfile_name + "_FRAT.txt", outfile_name + "_BRAT.txt");
-}
+void user_interface();
 
 //MAIN PROGRAM
 int _tmain(int argc, char* argv[])
@@ -432,7 +145,6 @@ int _tmain(int argc, char* argv[])
 	alu2 = new ALU2();
 	multiply = new Multiply();
 	branch = new Branch();
-	delay = new Delay();
 	writeBack = new WriteBack();
 	char * input_file_name = NULL;
 	char * output_file_name = NULL;
@@ -704,7 +416,7 @@ int _tmain(int argc, char* argv[])
 						
 						//as long as decode is not stalled and we still have data to read from the
 						//input file, fetch the next command
-						if ((!Stalled_Stages[Global::STALLED_STAGE::DECODE_RF]
+						if ((!Stalled_Stages[Global::STALLED_STAGE::IQ]
 							&& !fetch->endOfFile()
 							&& (pipeline_struct_decode.instruction.op_code != Global::OPCODE::HALT))
 							|| (Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].updatePC))
@@ -741,6 +453,13 @@ int _tmain(int argc, char* argv[])
 								dispatch->display();
 							else
 								Global::Output("-- Rename2/Dispatch Stalled -- " + dispatch->getInstruction());
+
+
+							if (!Stalled_Stages[Global::STALLED_STAGE::IQ])
+								iq->display();
+							else
+								Global::Output("-- Issue Queue Stalled -- ");
+
 							if (!Stalled_Stages[Global::STALLED_STAGE::ALU1])
 								alu1->display();
 							else
@@ -756,14 +475,9 @@ int _tmain(int argc, char* argv[])
 							else
 								Global::Output("-- Branch Stalled -- " + branch->getInstruction());
 
-							if (!Stalled_Stages[Global::STALLED_STAGE::DELAY])
-								delay->display();
-							else
-								Global::Output("-- Delay Stalled -- " + delay->getInstruction());
-
 							writeBack->display();
 						}
-#pragma endregion //DEBUG_OUTPUT
+#pragma endregion DEBUG_OUTPUT
 
 						//*************************
 						//set up for the next cycle
@@ -771,20 +485,7 @@ int _tmain(int argc, char* argv[])
 
 						writeBack->setPipelineStruct(pipeline_struct_alu2);
 						writeBack->setPipelineStruct(pipeline_struct_multiply);
-						writeBack->setPipelineStruct(pipeline_struct_lsq);
-
-						//if not stalled, pass branch output to delay
-						if (!Stalled_Stages[Global::STALLED_STAGE::BRANCH]
-							&& !Stalled_Stages[Global::STALLED_STAGE::DELAY])
-						{
-							delay->setPipelineStruct(pipeline_struct_branch);
-							pipeline_struct_branch = garbage_struct;
-						}
-						//or as long as delay is not stalled, bubble
-						else if (!Stalled_Stages[Global::STALLED_STAGE::DELAY])
-						{
-							delay->setPipelineStruct(garbage_struct);
-						}
+						writeBack->setPipelineStruct(pipeline_struct_ls2);
 
 						//as long as we are not stalled, pass data
 						if (!Stalled_Stages[Global::STALLED_STAGE::ALU1]
@@ -799,80 +500,62 @@ int _tmain(int argc, char* argv[])
 							alu2->setPipelineStruct(garbage_struct);
 						}
 
+						//set up for issuing from IQ
+						alu1->setPipelineStruct(garbage_struct);
+						branch->setPipelineStruct(garbage_struct);
+						if (Stalled_Stages[Global::STALLED_STAGE::MULTIPLY] == false)
+						{
+							multiply->setPipelineStruct(garbage_struct);
+						}
+						/*
+						if (Stalled_Stages[Global::STALLED_STAGE::LS] == false)
+						{
+							ls->setPipelineStruct(garbage_struct);
+						}
+						*/
+
 						for (int x = 0; x < pipeline_structs_iq.size(); x++)
 						{
 							//based on opcode....
 							switch (pipeline_structs_iq[x].instruction.op_code)
 							{
-							case Global::OPCODE::ADD:
-							case Global::OPCODE::ADDL:
-							case Global::OPCODE::AND:
-							case Global::OPCODE::ANDL:
-							case Global::OPCODE::EX_OR:
-							case Global::OPCODE::EX_ORL:
-							case Global::OPCODE::MOVC:
-							case Global::OPCODE::OR:
-							case Global::OPCODE::ORL:
-							case Global::OPCODE::SUB:
-							case Global::OPCODE::SUBL:
-							case Global::OPCODE::HALT:
-							case Global::OPCODE::LOAD:
-							case Global::OPCODE::STORE:
-								//if for the ALU, and we are not stalled, or branching, 
-								//set up ALU1 with the output of code
-								if (!Stalled_Stages[Global::STALLED_STAGE::DECODE_RF]
-									&& !Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].updatePC)
-								{
+								case Global::OPCODE::ADD:
+								case Global::OPCODE::ADDL:
+								case Global::OPCODE::AND:
+								case Global::OPCODE::ANDL:
+								case Global::OPCODE::EX_OR:
+								case Global::OPCODE::EX_ORL:
+								case Global::OPCODE::MOVC:
+								case Global::OPCODE::OR:
+								case Global::OPCODE::ORL:
+								case Global::OPCODE::SUB:
+								case Global::OPCODE::SUBL:
+								case Global::OPCODE::HALT:
 									alu1->setPipelineStruct(pipeline_structs_iq[x]);
-									pipeline_struct_dispatch = garbage_struct;
-								}
-								//feed in bubble if we are not stalled, the branch was taken
-								//or if code does not have valid data (bubble)
-								else if ( Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].updatePC)
-								{
-									alu1->setPipelineStruct(garbage_struct);
-								}
-
-								//set branch to bubble
-								if (!Stalled_Stages[Global::STALLED_STAGE::BRANCH])
-								{
-									branch->setPipelineStruct(garbage_struct);
-								}
-								break;
-							case Global::OPCODE::BAL:
-							case Global::OPCODE::BNZ:
-							case Global::OPCODE::BZ:
-							case Global::OPCODE::JUMP:
-								//if for the branch, and we are not stalled, or branching, 
-								//set up branch with the output of code
-								if (!Stalled_Stages[Global::STALLED_STAGE::DECODE_RF]
-									&& !Stalled_Stages[Global::STALLED_STAGE::BRANCH]
-									&& !Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].updatePC)
-								{
-									branch->setPipelineStruct(pipeline_struct_dispatch);
-									pipeline_struct_dispatch = garbage_struct;
-								}
-								//feed in bubble if we are not stalled
-								else if (!Stalled_Stages[Global::STALLED_STAGE::BRANCH])
-								{
-									branch->setPipelineStruct(garbage_struct);
-								}
-								//set branch to bubble
-								if (!Stalled_Stages[Global::STALLED_STAGE::ALU1])
-								{
-									alu1->setPipelineStruct(garbage_struct);
-								}
-								break;
-							case Global::OPCODE::MUL:
-							case Global::OPCODE::MULL:
-
-							default:
-								break;
+									break;
+								case Global::OPCODE::BAL:
+								case Global::OPCODE::BNZ:
+								case Global::OPCODE::BZ:
+								case Global::OPCODE::JUMP:
+									branch->setPipelineStruct(pipeline_structs_iq[x]);
+									break;
+								case Global::OPCODE::MUL:
+								case Global::OPCODE::MULL:
+									multiply->setPipelineStruct(pipeline_structs_iq[x]);
+									break;
+								case Global::OPCODE::LOAD:
+								case Global::OPCODE::STORE:
+									//ls->setPipelineStruct(pipeline_structs_iq[x]);
+									break;
+								default:
+									break;
 							}
 						}
 
 						iq->setPipelineStruct(pipeline_struct_dispatch);
 
+						//if the IQ is not full, and we have not hit a HALT,
+						//move the instruction from decode to dispatch
 						if (!Stalled_Stages[Global::STALLED_STAGE::IQ]
 							&& !HALT)
 						{
@@ -880,10 +563,9 @@ int _tmain(int argc, char* argv[])
 							pipeline_struct_decode = garbage_struct;
 							PC++;
 						}
-						//or if we are not stalled, then feed in garbage (bubble)
-						else
+						//or if we are stalled, then do nothing
+						else if (!Stalled_Stages[Global::STALLED_STAGE::IQ] || HALT)
 						{
-							dispatch->setPipelineStruct(garbage_struct);
 							stats.dispatch_stall_count++;
 						}
 
@@ -897,7 +579,7 @@ int _tmain(int argc, char* argv[])
 							pipeline_struct_fetch = garbage_struct;
 						}
 						//or if we are not stalled, then feed in garbage (bubble)
-						else
+						else if (!Stalled_Stages[Global::STALLED_STAGE::IQ] || HALT)
 						{
 							decode->setPipelineStruct(garbage_struct);
 						}
@@ -919,7 +601,6 @@ int _tmain(int argc, char* argv[])
 							|| alu2->hasValidData()
 							|| multiply->hasValidData()
 							|| branch->hasValidData()
-							|| delay->hasValidData()
 							|| writeBack->hasValidData())
 						{
 							pipelineHasData = true;
@@ -963,12 +644,324 @@ int _tmain(int argc, char* argv[])
 	//delete & free up memory
 	delete fetch;
 	delete decode;
+	delete iq;
 	delete alu1;
 	delete alu2;
 	delete multiply;
 	delete branch;
-	delete delay;
 	delete writeBack;
 
 	return 0;
+}
+
+#pragma region "INITIALIZE FUNCTIONS" 
+void initialize_forwarding_bus()
+{
+	for (int x = 0; x < Global::FORWARD_TYPE::FINAL_FORWARD_TYPE_TOTAL; x++)
+	{
+		Forward_Bus[x].flag = Global::FLAGS::CLEAR;
+		Forward_Bus[x].opcode = Global::OPCODE::NONE;
+		Forward_Bus[x].pc_value = -1;
+		Forward_Bus[x].updatePC = false;
+		Forward_Bus[x].target = INT_MAX;
+		Forward_Bus[x].reg_info.tag = -1;
+		Forward_Bus[x].reg_info.status = Global::REGISTER_ALLOCATION::REG_UNALLOCATED;
+		Forward_Bus[x].reg_info.value = INT_MAX;
+	}
+}
+
+void initialize_memory()
+{
+	for (int x = 0; x < Global::MEMORY_SIZE; x++)
+	{
+		Memory_Array[x] = 0;
+	}
+}
+
+void initialize_Register_File()
+{
+	for (int x = 0; x < urf_size + 1; x++)
+	{
+		Register_File[x].clear();
+	}
+}
+
+void initialize_stalled_stages()
+{
+	for (int x = 0; x < Global::STALLED_STAGE::FINAL_STALLED_STAGE_TOTAL; x++)
+	{
+		Stalled_Stages[x] = false;
+	}
+}
+
+void initialize_rob()
+{
+	ROB.head = 0;
+	ROB.tail = 0;
+	for (int x = 0; x < Global::ROB_SIZE; x++)
+	{
+		ROB.entries[x].clear();
+	}
+}
+
+void initialize_rename_table(){
+	for (int x = 0; x < Global::ARCH_REGISTERS::FINAL_ARCH_REGISTERS_ITEM; x++)
+	{
+		Front_End_RAT[x].clear();
+		Back_End_RAT[x].clear();
+	}
+}
+
+void initialize_stats()
+{
+	stats.clear();
+}
+
+void initialize_pipeline()
+{
+	cout << "-- Initializing Pipeline --" << endl;
+	cout << "Initializing Forwarding Bus" << endl
+		<< "..." << endl;
+	initialize_forwarding_bus();
+	cout << "Initializing Forwarding Bus Complete" << endl;
+	cout << "Initializing Register File" << endl
+		<< "..." << endl;
+	initialize_Register_File();
+	cout << "Initializing Register File Complete" << endl;
+	cout << "Initializing Memory" << endl
+		<< "..." << endl;
+	initialize_memory();
+	cout << "Initializing Memory Complete" << endl;
+	cout << "Initializing Reorder Buffer" << endl
+		<< "..." << endl;
+	initialize_rob();
+	cout << "Initializing Reorder Buffer" << endl;
+	cout << "Initializing Rename Table" << endl
+		<< "..." << endl;
+	initialize_rename_table();
+	cout << "Initializing Rename Table Complete" << endl;
+	cout << "Initializing Statistics" << endl
+		<< "..." << endl;
+	initialize_stats();
+	cout << "Initializing Statistics Complete" << endl;
+	cout << "Resetting Stalled Stages" << endl
+		<< "..." << endl;
+	initialize_stalled_stages();
+	cout << "Resetting Stalled Stages Complete" << endl;
+	HALT = false;
+	iteration = 1;
+
+	cout << "Resetting Pipeline Stages" << endl
+		<< "..." << endl;
+	pipeline_struct_fetch = garbage_struct;
+	pipeline_struct_decode = garbage_struct;
+	pipeline_struct_dispatch = garbage_struct;
+	pipeline_struct_alu1 = garbage_struct;
+	pipeline_struct_alu2 = garbage_struct;
+	pipeline_struct_branch = garbage_struct;
+	pipeline_struct_ls1 = garbage_struct;
+	pipeline_struct_ls2 = garbage_struct;
+	decode->setPipelineStruct(garbage_struct);
+	dispatch->setPipelineStruct(garbage_struct);
+	iq->setPipelineStruct(garbage_struct);
+	alu1->setPipelineStruct(garbage_struct);
+	alu2->setPipelineStruct(garbage_struct);
+	branch->setPipelineStruct(garbage_struct);
+	writeBack->setPipelineStruct(garbage_struct);
+	cout << "Resetting Pipeline Stages Complete" << endl;
+	cout << "Resetting PC" << endl
+		<< "..." << endl;
+	PC = 4000;
+	cout << "Resetting PC Complete" << endl;
+	cout << "-- Initialization Complete --" << endl;
+}
+#pragma endregion INITIALIZE FUNCTIONS
+
+#pragma region DISPLAY FUNCTIONS
+void displayRegisterFile()
+{
+	Global::Output("");
+	Global::Output("-- Unified Register File --");
+	for (int x = 0; x < urf_size; x++)
+	{
+		Global::Output("Register[U" + to_string(x) + "]:");
+		Global::Output("  status: " + Global::toString(Register_File[x].status));
+		Global::Output("  value : " + to_string(Register_File[x].value));
+	}
+}
+
+void displayFRAT()
+{
+	Global::OutputFRAT("");
+	Global::OutputFRAT("-- Front-End Rename Table --");
+	for (int x = 0; x < Global::ARCH_REGISTERS::FINAL_ARCH_REGISTERS_ITEM; x++)
+	{
+		if (Front_End_RAT[x].reg != -1)
+		{
+			Global::OutputFRAT("Arch Reg: " + Global::toString(Global::ARCH_REGISTERS(x)));
+			Global::OutputFRAT("  URF link : " + to_string(Front_End_RAT[x].reg));
+			Global::OutputFRAT("  ROB Loc  : " + to_string(Front_End_RAT[x].rob_loc));
+			Global::OutputFRAT("  src bit  : " + Global::toString(Front_End_RAT[x].src_bit));
+		}
+	}
+
+	string cmd = "notepad.exe " + Global::getOutFileFRAT();
+	system(cmd.c_str());
+}
+
+void displayRRAT()
+{
+	Global::OutputBRAT("");
+	Global::OutputBRAT("-- Back-End Rename Table --");
+	for (int x = 0; x < Global::ARCH_REGISTERS::FINAL_ARCH_REGISTERS_ITEM; x++)
+	{
+		if (Back_End_RAT[x].reg != -1)
+		{
+			Global::OutputBRAT("Arch Reg: " + Global::toString(Global::ARCH_REGISTERS(x)));
+			Global::OutputBRAT("  URF link : " + to_string(Back_End_RAT[x].reg));
+		}
+	}
+
+	string cmd = "notepad.exe " + Global::getOutFileBRAT();
+	system(cmd.c_str());
+}
+
+void displayMemory()
+{
+	Global::Output("");
+	Global::Output("-- Memory Locations --");
+
+	for (int x = 0; x < 100; x++)
+	{
+		Global::Output("Memory[" + to_string(x) + "] = " + to_string(Memory_Array[x]));
+	}
+}
+
+void displayStalledStages()
+{
+	Global::Output("");
+	Global::Output("-- Stalled stages --");
+	Global::Output("Fetch		: " + to_string(Stalled_Stages[Global::STALLED_STAGE::FETCH]));
+	Global::Output("DECODE/RENAME1	: " + to_string(Stalled_Stages[Global::STALLED_STAGE::DECODE_RF]));
+	Global::Output("RENAME2/DISPATCH : " + to_string(Stalled_Stages[Global::STALLED_STAGE::DISPATCH]));
+	Global::Output("ALU1		    : " + to_string(Stalled_Stages[Global::STALLED_STAGE::ALU1]));
+	Global::Output("ALU2		    : " + to_string(Stalled_Stages[Global::STALLED_STAGE::ALU2]));
+	Global::Output("BRANCH		: " + to_string(Stalled_Stages[Global::STALLED_STAGE::BRANCH]));
+	Global::Output("DELAY		: " + to_string(Stalled_Stages[Global::STALLED_STAGE::DELAY]));
+	Global::Output("MEMORY		: " + to_string(Stalled_Stages[Global::STALLED_STAGE::MEMORY]));
+	Global::Output("WRITEBACK	: " + to_string(Stalled_Stages[Global::STALLED_STAGE::WRITEBACK]));
+	Global::Output("");
+}
+
+void displayROB()
+{
+	Global::OutputROB("");
+	Global::OutputROB("-- ROB Information --");
+	Global::OutputROB(" HEAD: " + to_string(ROB.head));
+	Global::OutputROB(" TAIL: " + to_string(ROB.tail));
+	for (int x = ROB.head; x != ROB.tail + 1; x++)
+	{
+		Global::OutputROB("   Entry[" + to_string(x) + "] = ");
+		Global::OutputROB("      PC Value  : " + to_string(ROB.entries[x].pc_value));
+		Global::OutputROB("      Allocation: " + Global::toString(ROB.entries[x].alloc));
+		Global::OutputROB("      Instr Type: " + Global::toString(ROB.entries[x].type));
+		Global::OutputROB("      Arch Reg  : " + Global::toString(ROB.entries[x].destArchReg));
+		Global::OutputROB("      URF Reg   : " + to_string(ROB.entries[x].destReg));
+		Global::OutputROB("      Flags     : " + Global::toString(ROB.entries[x].flags));
+		Global::OutputROB("      Result    : " + to_string(ROB.entries[x].result));
+
+		if (x == (Global::ROB_SIZE - 1))
+		{
+			x = 0;
+		}
+	}
+
+	string cmd = "notepad.exe " + Global::getOutFileROB();
+	system(cmd.c_str());
+}
+
+void displayStats()
+{
+	Global::Output("");
+	Global::Output("-- Execution Statistics--");
+	Global::Output("  IPC realized                            : ");
+	Global::Output("  # of cycles which dispatched as stalled : " + to_string(stats.dispatch_stall_count));
+	Global::Output("  # of cycles w/o issue                   : " + to_string(stats.no_issue_count));
+	Global::Output("  # LOADs committed                       : " + to_string(stats.loads_count));
+	Global::Output("  # STOREs committed                      : " + to_string(stats.stores_count));
+}
+#pragma endregion DISPLAY FUNCTIONS
+
+string trim(string &str)
+{
+	size_t first = str.find_first_not_of(' ');
+	size_t last = str.find_last_not_of(' ');
+	return str.substr(first, (last - first + 1));
+}
+
+void user_interface() //char * input_file, char * output_file)
+{
+	string	infile_name = "",
+		outfile_name = "";
+
+	bool is_open = false;
+
+	cout << "Welcome to the APEX ISA Implementation for CS520" << endl
+		<< "Project 1" << endl
+		<< "Prof Ghose" << endl
+		<< "Fall 2016" << endl
+		<< "Frank Zurla and Eric Garbade" << endl
+		<< endl
+		<< "Usage: project_1 " << endl
+		<< "  options: <input file>  = APEX instruction set to run" << endl
+		<< "         : <output_file> = output file to write to" << endl
+		<< "                         = default is apex_output[date_time].txt" << endl
+		<< endl;
+
+
+	if (!DEBUG_INPUT)
+	{
+		while (infile_name == "")
+		{
+			cout << "please enter input instruction file: ";
+			getline(cin, infile_name);
+		}
+	}
+	else
+	{
+		infile_name = "test.txt";
+	}
+
+	fetch->setFile(infile_name);
+
+	cout << endl;
+
+	if (!DEBUG_INPUT)
+	{
+
+		cout << "please enter output file (or blank): ";
+		getline(cin, outfile_name);
+	}
+
+	if (outfile_name == "")
+	{
+		cout << endl << "using default output file: apex_output[date_time].txt" << endl;
+		outfile_name = "apex_output[";
+
+		// current date/time based on current system
+		time_t now = time(0);
+		tm ltm;
+		localtime_s(&ltm, &now);
+
+		// print various components of tm structure.
+		outfile_name.append(to_string(1 + ltm.tm_mon) + to_string(ltm.tm_mday) + to_string(1900 + ltm.tm_year));
+		outfile_name.append("_" + to_string(ltm.tm_hour) + "-" + to_string(ltm.tm_min) + "-" + to_string(ltm.tm_sec) + "]");
+		cout << "File name = " + outfile_name + ".txt" << endl;
+	}
+	else
+	{
+		outfile_name = trim(outfile_name);
+	}
+
+	Global::setOutFiles(outfile_name + ".txt", outfile_name + +"_ROB.txt", outfile_name + "_FRAT.txt", outfile_name + "_BRAT.txt");
 }

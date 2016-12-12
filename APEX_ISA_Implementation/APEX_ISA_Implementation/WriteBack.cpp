@@ -17,6 +17,21 @@ bool WriteBack::run(
 	Global::Register_Info * Register_File)
 {
 	bool HALT = false;
+	Global::apexStruct garbage_struct;
+
+	for (int x = (myStructVector.size() - 1); x >= 0; x--)
+	{
+		//if a branch has occured
+		if (Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].updatePC == true)
+		{
+			//if my PC is > than the branch, meaning that this instruction is later in the instruction
+			//set, clear out my instruction
+			if (myStructVector[x].pc_value > Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].pc_value)
+			{
+				myStructVector[x] = garbage_struct;
+			}
+		}
+	}
 
 	for (int x = (myStructVector.size() -1); x >= 0; x--)
 	{
@@ -29,6 +44,11 @@ bool WriteBack::run(
 
 			Register_File[myStructVector[x].instruction.dest.tag].status = Global::REGISTER_ALLOCATION::ALLOC_COMMIT;
 			Register_File[myStructVector[x].instruction.dest.tag].value = myStructVector[x].instruction.dest.value;
+
+			//Update ROB
+			ROB.entries[myStructVector[x].instruction.dest.rob_loc].alloc = Global::ROB_ALLOCATION::COMPLETE;
+			ROB.entries[myStructVector[x].instruction.dest.rob_loc].flags = myStructVector[x].instruction.flag;
+			ROB.entries[myStructVector[x].instruction.dest.rob_loc].result = myStructVector[x].instruction.dest.value;
 
 			if (myStructVector[x].instruction.op_code == Global::OPCODE::HALT)
 			{
