@@ -28,7 +28,13 @@ Global::apexStruct LS1::run(Global::Forwarding_Info(&Forward_Bus)[Global::FINAL_
 {
 	Global::apexStruct output_struct = myStruct;
 	snapshot_before = myStruct;
-	Stalled_Stages[Global::STALLED_STAGE::LS1] = false;
+	if (Stalled_Stages[Global::STALLED_STAGE::LS2] == true){
+		Stalled_Stages[Global::STALLED_STAGE::LS1] == true;
+	}
+	else
+	{
+		Stalled_Stages[Global::STALLED_STAGE::LS1] = false;
+	}
 
 	if (myStruct.pc_value != INT_MAX)
 	{

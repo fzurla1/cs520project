@@ -545,7 +545,7 @@ int _tmain(int argc, char* argv[])
 									break;
 								case Global::OPCODE::LOAD:
 								case Global::OPCODE::STORE:
-									//ls->setPipelineStruct(pipeline_structs_iq[x]);
+									//ls1->setPipelineStruct(pipeline_structs_iq[x]);
 									break;
 								default:
 									break;
