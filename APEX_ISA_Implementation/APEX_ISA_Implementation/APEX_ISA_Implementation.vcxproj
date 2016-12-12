@@ -89,6 +89,8 @@
     <ClInclude Include="Fetch.h" />
     <ClInclude Include="Global.h" />
     <ClInclude Include="IssueQueue.h" />
+    <ClInclude Include="LS1.h" />
+    <ClInclude Include="LS2.h" />
     <ClInclude Include="Memory.h" />
     <ClInclude Include="Multiply.h" />
     <ClInclude Include="resource.h" />
@@ -107,6 +109,8 @@
     <ClCompile Include="Fetch.cpp" />
     <ClCompile Include="Global.cpp" />
     <ClCompile Include="IssueQueue.cpp" />
+    <ClCompile Include="LS1.cpp" />
+    <ClCompile Include="LS2.cpp" />
     <ClCompile Include="Memory.cpp" />
     <ClCompile Include="Multiply.cpp" />
     <ClCompile Include="stdafx.cpp">
