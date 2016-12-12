@@ -51,7 +51,7 @@ string ALU1::getInstruction()
 void ALU1::display()
 {
 	//make sure we have valid data
-	if (myStruct.pc_value != INT_MAX)
+	if (snapshot_before.pc_value != INT_MAX)
 	{
 		Global::Output("ALU1       - " + snapshot_before.untouched_instruction);
 	}

@@ -446,11 +446,13 @@ Global::apexStruct Decode::run(
 				output_struct.instruction.src1.status = Global::STATUS::VALID;
 				output_struct.instruction.src1.tag = Front_End_RAT[arch_src1].reg;
 				output_struct.instruction.src1.rob_loc = -1;
+				output_struct.instruction.src1.archreg = Global::ARCH_REGISTERS(arch_src1);
 
 				//set up source 2
 				output_struct.instruction.src2.status = Global::STATUS::VALID;
 				output_struct.instruction.src2.tag = Front_End_RAT[arch_src2].reg;
 				output_struct.instruction.src2.rob_loc = -1;
+				output_struct.instruction.src2.archreg = Global::ARCH_REGISTERS(arch_src2);
 
 				output_struct.instruction.literal_value = atoi(s_literal.c_str());
 
@@ -692,6 +694,8 @@ Global::apexStruct Decode::run(
 				//1
 				if (Register_File[x].status == Global::REGISTER_ALLOCATION::REG_UNALLOCATED)
 				{
+					output_struct.instruction.dest.tag = x;
+
 					//if not a branch or store instruction, set up the register file and FE RAT
 					if ((output_struct.type != Global::INSTRUCTION_TYPE::BRANCH_TYPE)
 						|| (output_struct.type != Global::INSTRUCTION_TYPE::STORE_TYPE))
@@ -732,6 +736,8 @@ Global::apexStruct Decode::run(
 		{
 			if (Register_File[URF_SIZE - 1].status == Global::REGISTER_ALLOCATION::REG_UNALLOCATED)
 			{
+				output_struct.instruction.dest.tag = URF_SIZE - 1;
+
 				//2
 				Register_File[URF_SIZE - 1].status = Global::REGISTER_ALLOCATION::ALLOC_NO_COMMIT;
 				//3

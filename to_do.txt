@@ -1,0 +1,7 @@
+X register on BAL / JUMP --> assign as phys register
+
+come up with all forwarding scenarios (16)
+
+come up with scenarios for "stalling" 
+
+debug IQ

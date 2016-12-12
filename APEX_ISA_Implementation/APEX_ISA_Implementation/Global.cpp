@@ -29,9 +29,9 @@ void Global::setOutFiles(string filename, string filename_ROB, string filename_F
 	output_file_name_BRAT = filename_BRAT;
 	
 	fout.open(filename);
-	fout_ROB.open(filename_ROB, ios_base::out | ios_base::trunc);
-	fout_FRAT.open(filename_FRAT, ios_base::out | ios_base::trunc);
-	fout_BRAT.open(filename_BRAT, ios_base::out | ios_base::trunc);
+	fout_ROB.open(filename_ROB, ios_base::out | ios::trunc);
+	fout_FRAT.open(filename_FRAT, ios_base::out | ios::trunc);
+	fout_BRAT.open(filename_BRAT, ios_base::out | ios::trunc);
 
 	if (!fout)
 	{
@@ -317,6 +317,9 @@ string Global::toString(FORWARD_TYPE frwd)
 	case FORWARD_TYPE::FROM_BRANCH:
 		out = "From Branch";
 		break;
+	case FORWARD_TYPE::FROM_MULTIPLY:
+		out = "From Multiply";
+		break;
 	case FORWARD_TYPE::FROM_MEMORY:
 		out = "From Memory";
 		break;
@@ -353,6 +356,24 @@ string Global::toString(STATUS stat)
 string Global::toString(ROB_ALLOCATION stat)
 {
 	string out = "";
+	
+	switch (stat)
+	{
+		case ROB_ALLOCATION::COMPLETE:
+			out = "COMPLETE";
+			break;
+		case ROB_ALLOCATION::EXECUTING:
+			out = "EXECUTING";
+			break;
+		case ROB_ALLOCATION::ROB_UNALLOCATED:
+			out = "UNALLOCATED";
+			break;
+		case ROB_ALLOCATION::WAITING:
+			out = "WAITING";
+			break;
+		default:
+			break;
+	}
 	return out;
 }
 

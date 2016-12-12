@@ -100,6 +100,7 @@ std::vector<Global::apexStruct> IssueQueue::run(Global::Forwarding_Info(&Forward
 	//loop through IQ to find instructions ready for dispatch, put up to 3 in output (only 1 per FU)
 	if (IQ.size() > 0)
 	{
+		snapshotBefore = IQ;
 		for (int i = IQ.size() - 1; i >= 0; i--)
 		{
 			if (output.size() >= 3)
@@ -121,14 +122,17 @@ std::vector<Global::apexStruct> IssueQueue::run(Global::Forwarding_Info(&Forward
 				continue;
 			}
 
+			/*  FAZ -- removed this - its done twice
 			//issue instruction if both sources valid
 			if (current.instruction.src1.status == Global::STATUS::VALID && current.instruction.src2.status == Global::STATUS::VALID)
 			{
 				output.push_back(current);
 				removeIQEntry(IQ, i);
 			}
+			*/
+
 			//look for src1 from forward bus
-			else if (current.instruction.src1.status == Global::STATUS::INVALID)
+			if (current.instruction.src1.status == Global::STATUS::INVALID)
 			{
 				//check from ALU2
 				if (Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].reg_info.tag == current.instruction.src1.tag)
@@ -154,7 +158,7 @@ std::vector<Global::apexStruct> IssueQueue::run(Global::Forwarding_Info(&Forward
 				//NEED LS
 			}
 			//look for src2 from forward bus
-			else if (current.instruction.src2.status == Global::STATUS::INVALID)
+			if (current.instruction.src2.status == Global::STATUS::INVALID)
 			{
 				//check from ALU2
 				if (Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].reg_info.tag == current.instruction.src2.tag)
@@ -203,10 +207,17 @@ void IssueQueue::setPipelineStruct(Global::apexStruct inputStruct)
 
 void IssueQueue::display()
 {
-	Global::Output("-- Issue Queue --");
-	for (int x = 0; x < IQ.size(); x++)
+	if (snapshotBefore.size() > 0)
 	{
-		Global::Output(" IQ slot[" + to_string(x) + "]");
-		Global::Output("     Instruction: " + IQ[x].untouched_instruction);
+		Global::Output("-- Issue Queue --");
+		for (int x = 0; x < snapshotBefore.size(); x++)
+		{
+			Global::Output(" IQ slot[" + to_string(x) + "]");
+			Global::Output("     Instruction: " + snapshotBefore[x].untouched_instruction);
+		}
+	}
+	else
+	{
+		Global::Output("Issue Queue --> No Instruction in Issue Queue");
 	}
 }

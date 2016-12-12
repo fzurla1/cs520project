@@ -36,6 +36,6 @@ public:
 
 private:
 	Global::apexStruct myStruct;
-	Global::apexStruct snapshotBefore;
+	vector<Global::apexStruct> snapshotBefore;
 	Global::apexStruct snapshotAfter;
 };

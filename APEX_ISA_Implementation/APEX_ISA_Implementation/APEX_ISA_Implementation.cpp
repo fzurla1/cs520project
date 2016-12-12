@@ -151,6 +151,7 @@ int _tmain(int argc, char* argv[])
 	string command = "",
 		tempS = "",
 		substr = "";
+	vector<Global::apexStruct> issued_instructions;
 
 	int n = 0;
 
@@ -183,10 +184,11 @@ int _tmain(int argc, char* argv[])
 				<< "   Print_ROB              : prints current ROB contents" << endl
 				<< "   Print_URF              : prints contents of URF and status" << endl
 				<< "   Print_Memory <a1> <a2> : prints out memory ranging from a1 to a2" << endl
-				<< "   Print_Stats            : prints the IPC realized up to this point, " << endl
-				<< "                            number of cycles which dispatched was stalled, " << endl
-				<< "                            number of cycles for which no issues have taken place," << endl
-				<< "                            number of LOAD and STORE instructions committed" << endl
+				<< "   Print_Stats            : 1) prints the IPC realized up to this point, " << endl
+				<< "                            2) number of cycles which dispatched was stalled, " << endl
+				<< "                            3) number of cycles for which no issues have " << endl
+				<<"                                taken place," << endl
+				<< "                            4) number of LOAD and STORE instructions committed" << endl
 				<< "   display                : display contents of the pipeline" << endl
 				<< "   commands               : display command list" << endl
 				<< "   end                    : stop execution" << endl
@@ -239,7 +241,7 @@ int _tmain(int argc, char* argv[])
 					<< endl
 					<< "Writing Back-End RAT Contents..." << endl
 					<< "..." << endl;
-				displayRRAT();
+				displayRRAT(); 
 				cout << "Writing Back-End RAT Contents Complete" << endl;
 				string cmd = "notepad.exe " + Global::getOutFile();
 				system(cmd.c_str());
@@ -247,7 +249,15 @@ int _tmain(int argc, char* argv[])
 
 			if (command == "print_map_tables")
 			{
-
+				cout << "Writing Front-End RAT Contents..." << endl
+					<< "..." << endl;
+				displayFRAT();
+				cout << "Writing Front-End RAT Contents Complete" << endl
+					<< endl
+					<< "Writing Back-End RAT Contents..." << endl
+					<< "..." << endl;
+				displayRRAT();
+				cout << "Writing Back-End RAT Contents Complete" << endl;
 			}
 
 			if (command == "print_iq")
@@ -320,6 +330,19 @@ int _tmain(int argc, char* argv[])
 							switch (ROB.entries[ROB.head].type)
 							{
 								case Global::INSTRUCTION_TYPE::BRANCH_TYPE:
+									if (ROB.entries[ROB.head].destArchReg == Global::ARCH_REGISTERS::X)
+									{
+										//free up reg
+										old_reg = Back_End_RAT[Global::ARCH_REGISTERS::X].reg;
+										Register_File[old_reg].status = Global::REGISTER_ALLOCATION::REG_UNALLOCATED;
+
+										//update back end RAT
+										Back_End_RAT[Global::ARCH_REGISTERS::X].reg = ROB.entries[ROB.head].destReg;
+
+										//Mark register file as committed
+										Register_File[ROB.entries[ROB.head].destReg].status = Global::REGISTER_ALLOCATION::ALLOC_COMMIT;
+										Register_File[ROB.entries[ROB.head].destReg].value = ROB.entries[ROB.head].result;
+									}
 									break;
 								case Global::INSTRUCTION_TYPE::LOAD_TYPE:
 								case Global::INSTRUCTION_TYPE::REG_TO_REG_TYPE:
@@ -436,49 +459,6 @@ int _tmain(int argc, char* argv[])
 						}
 #pragma endregion //EXECUTE_PIPELINE
 
-#pragma region DEBUG_OUTPUT
-						if (DEBUG_OUTPUT)
-						{
-							if (!Stalled_Stages[Global::STALLED_STAGE::FETCH])
-								fetch->display();
-							else
-								Global::Output("-- Fetch Stalled -- ");
-
-							if (!Stalled_Stages[Global::STALLED_STAGE::DECODE_RF])
-								decode->display();
-							else
-								Global::Output("-- Decode/Rename1 Stalled -- " + decode->getInstruction());
-
-							if (!Stalled_Stages[Global::STALLED_STAGE::DISPATCH])
-								dispatch->display();
-							else
-								Global::Output("-- Rename2/Dispatch Stalled -- " + dispatch->getInstruction());
-
-
-							if (!Stalled_Stages[Global::STALLED_STAGE::IQ])
-								iq->display();
-							else
-								Global::Output("-- Issue Queue Stalled -- ");
-
-							if (!Stalled_Stages[Global::STALLED_STAGE::ALU1])
-								alu1->display();
-							else
-								Global::Output("-- ALU1 Stalled -- " + alu1->getInstruction());
-
-							if (!Stalled_Stages[Global::STALLED_STAGE::ALU2])
-								alu2->display();
-							else
-								Global::Output("-- ALU2 Stalled -- " + alu2->getInstruction());
-
-							if (!Stalled_Stages[Global::STALLED_STAGE::BRANCH])
-								branch->display();
-							else
-								Global::Output("-- Branch Stalled -- " + branch->getInstruction());
-
-							writeBack->display();
-						}
-#pragma endregion DEBUG_OUTPUT
-
 						//*************************
 						//set up for the next cycle
 						//*************************
@@ -532,20 +512,24 @@ int _tmain(int argc, char* argv[])
 								case Global::OPCODE::SUBL:
 								case Global::OPCODE::HALT:
 									alu1->setPipelineStruct(pipeline_structs_iq[x]);
+									issued_instructions.push_back(pipeline_structs_iq[x]);
 									break;
 								case Global::OPCODE::BAL:
 								case Global::OPCODE::BNZ:
 								case Global::OPCODE::BZ:
 								case Global::OPCODE::JUMP:
 									branch->setPipelineStruct(pipeline_structs_iq[x]);
+									issued_instructions.push_back(pipeline_structs_iq[x]);
 									break;
 								case Global::OPCODE::MUL:
 								case Global::OPCODE::MULL:
 									multiply->setPipelineStruct(pipeline_structs_iq[x]);
+									issued_instructions.push_back(pipeline_structs_iq[x]);
 									break;
 								case Global::OPCODE::LOAD:
 								case Global::OPCODE::STORE:
 									//ls->setPipelineStruct(pipeline_structs_iq[x]);
+									//issued_instructions.push_back(pipeline_structs_iq[x]);
 									break;
 								default:
 									break;
@@ -609,6 +593,55 @@ int _tmain(int argc, char* argv[])
 						{
 							pipelineHasData = false;
 						}
+
+#pragma region DEBUG_OUTPUT
+						if (DEBUG_OUTPUT)
+						{
+							if (!Stalled_Stages[Global::STALLED_STAGE::FETCH])
+								fetch->display();
+							else
+								Global::Output("-- Fetch Stalled -- ");
+
+							if (!Stalled_Stages[Global::STALLED_STAGE::DECODE_RF])
+								decode->display();
+							else
+								Global::Output("-- Decode/Rename1 Stalled -- " + decode->getInstruction());
+
+							if (!Stalled_Stages[Global::STALLED_STAGE::DISPATCH])
+								dispatch->display();
+							else
+								Global::Output("-- Rename2/Dispatch Stalled -- " + dispatch->getInstruction());
+
+							if (!Stalled_Stages[Global::STALLED_STAGE::IQ])
+								iq->display();
+							else
+								Global::Output("-- Issue Queue Stalled -- ");
+
+							if (issued_instructions.size() > 0)
+							{
+								Global::Output("Issued Instructions - ");
+								for (int x = 0; x < issued_instructions.size(); x++)
+									Global::Output("  " + issued_instructions[x].untouched_instruction);
+							}
+
+							if (!Stalled_Stages[Global::STALLED_STAGE::ALU1])
+								alu1->display();
+							else
+								Global::Output("-- ALU1 Stalled -- " + alu1->getInstruction());
+
+							if (!Stalled_Stages[Global::STALLED_STAGE::ALU2])
+								alu2->display();
+							else
+								Global::Output("-- ALU2 Stalled -- " + alu2->getInstruction());
+
+							if (!Stalled_Stages[Global::STALLED_STAGE::BRANCH])
+								branch->display();
+							else
+								Global::Output("-- Branch Stalled -- " + branch->getInstruction());
+
+							writeBack->display();
+						}
+#pragma endregion DEBUG_OUTPUT
 					}
 					else
 					{
@@ -618,6 +651,8 @@ int _tmain(int argc, char* argv[])
 							<< "Please re-initialize the program" << endl
 							<< endl;
 					}
+
+					issued_instructions.clear();
 
 					n--;
 					iteration++;
@@ -719,6 +754,8 @@ void initialize_stats()
 
 void initialize_pipeline()
 {
+	system("cls");
+
 	cout << "-- Initializing Pipeline --" << endl;
 	cout << "Initializing Forwarding Bus" << endl
 		<< "..." << endl;
@@ -796,13 +833,14 @@ void displayFRAT()
 	Global::OutputFRAT("-- Front-End Rename Table --");
 	for (int x = 0; x < Global::ARCH_REGISTERS::FINAL_ARCH_REGISTERS_ITEM; x++)
 	{
-		if (Front_End_RAT[x].reg != -1)
+		Global::OutputFRAT("Arch Reg: " + Global::toString(Global::ARCH_REGISTERS(x)));
+		if (Front_End_RAT[x].src_bit == Global::SOURCES::ROB)
 		{
-			Global::OutputFRAT("Arch Reg: " + Global::toString(Global::ARCH_REGISTERS(x)));
 			Global::OutputFRAT("  URF link : " + to_string(Front_End_RAT[x].reg));
 			Global::OutputFRAT("  ROB Loc  : " + to_string(Front_End_RAT[x].rob_loc));
-			Global::OutputFRAT("  src bit  : " + Global::toString(Front_End_RAT[x].src_bit));
+			
 		}
+		Global::OutputFRAT("  src bit  : " + Global::toString(Front_End_RAT[x].src_bit));
 	}
 
 	string cmd = "notepad.exe " + Global::getOutFileFRAT();
@@ -815,10 +853,14 @@ void displayRRAT()
 	Global::OutputBRAT("-- Back-End Rename Table --");
 	for (int x = 0; x < Global::ARCH_REGISTERS::FINAL_ARCH_REGISTERS_ITEM; x++)
 	{
+		Global::OutputBRAT("Arch Reg: " + Global::toString(Global::ARCH_REGISTERS(x)));
 		if (Back_End_RAT[x].reg != -1)
 		{
-			Global::OutputBRAT("Arch Reg: " + Global::toString(Global::ARCH_REGISTERS(x)));
 			Global::OutputBRAT("  URF link : " + to_string(Back_End_RAT[x].reg));
+		}
+		else
+		{
+			Global::OutputBRAT("  Not Applicable");
 		}
 	}
 
@@ -905,6 +947,8 @@ void user_interface() //char * input_file, char * output_file)
 		outfile_name = "";
 
 	bool is_open = false;
+
+	system("cls");
 
 	cout << "Welcome to the APEX ISA Implementation for CS520" << endl
 		<< "Project 1" << endl
