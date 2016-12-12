@@ -1,0 +1,179 @@
+
+-- ROB Information --
+ HEAD: 6
+ TAIL: 14
+   Entry[6] = 
+      PC Value  : 4006
+      Instruct  : STORE R0, R1, #0
+      Allocation: WAITING
+      Instr Type: NONE
+      Arch Reg  : N/A
+      URF Reg   : 31
+      Flags     : CLEAR
+      Result    : 0
+   Entry[7] = 
+      PC Value  : 4007
+      Instruct  : ADD R1, R1, R3
+      Allocation: COMPLETE
+      Instr Type: REG_TO_REG
+      Arch Reg  : R1
+      URF Reg   : 6
+      Flags     : CLEAR
+      Result    : 68
+   Entry[8] = 
+      PC Value  : 4008
+      Instruct  : SUB R2, R2, R4
+      Allocation: COMPLETE
+      Instr Type: REG_TO_REG
+      Arch Reg  : R2
+      URF Reg   : 7
+      Flags     : CLEAR
+      Result    : 9
+   Entry[9] = 
+      PC Value  : 4009
+      Instruct  : BNZ #-16
+      Allocation: WAITING
+      Instr Type: REG_TO_REG
+      Arch Reg  : N/A
+      URF Reg   : 8
+      Flags     : CLEAR
+      Result    : 0
+   Entry[10] = 
+      PC Value  : 4010
+      Instruct  : MOVC R2, #10
+      Allocation: COMPLETE
+      Instr Type: REG_TO_REG
+      Arch Reg  : R2
+      URF Reg   : 9
+      Flags     : CLEAR
+      Result    : 10
+   Entry[11] = 
+      PC Value  : 4011
+      Instruct  : MOVC R5, #0
+      Allocation: WAITING
+      Instr Type: REG_TO_REG
+      Arch Reg  : R5
+      URF Reg   : 0
+      Flags     : CLEAR
+      Result    : 0
+   Entry[12] = 
+      PC Value  : 4012
+      Instruct  : SUB R1, R1, R3
+      Allocation: WAITING
+      Instr Type: REG_TO_REG
+      Arch Reg  : R1
+      URF Reg   : 10
+      Flags     : CLEAR
+      Result    : 0
+   Entry[13] = 
+      PC Value  : 4013
+      Instruct  : LOAD R6, R1, #0
+      Allocation: WAITING
+      Instr Type: LOAD
+      Arch Reg  : R6
+      URF Reg   : 11
+      Flags     : CLEAR
+      Result    : 0
+   Entry[14] = 
+      PC Value  : -1
+      Instruct  : 
+      Allocation: UNALLOCATED
+      Instr Type: NONE
+      Arch Reg  : N/A
+      URF Reg   : -1
+      Flags     : CLEAR
+      Result    : -1
+
+-- ROB Information --
+ HEAD: 6
+ TAIL: 15
+   Entry[6] = 
+      PC Value  : 4006
+      Instruct  : STORE R0, R1, #0
+      Allocation: WAITING
+      Instr Type: NONE
+      Arch Reg  : N/A
+      URF Reg   : 31
+      Flags     : CLEAR
+      Result    : 0
+   Entry[7] = 
+      PC Value  : 4007
+      Instruct  : ADD R1, R1, R3
+      Allocation: COMPLETE
+      Instr Type: REG_TO_REG
+      Arch Reg  : R1
+      URF Reg   : 6
+      Flags     : CLEAR
+      Result    : 68
+   Entry[8] = 
+      PC Value  : 4008
+      Instruct  : SUB R2, R2, R4
+      Allocation: COMPLETE
+      Instr Type: REG_TO_REG
+      Arch Reg  : R2
+      URF Reg   : 7
+      Flags     : CLEAR
+      Result    : 9
+   Entry[9] = 
+      PC Value  : 4009
+      Instruct  : BNZ #-16
+      Allocation: WAITING
+      Instr Type: REG_TO_REG
+      Arch Reg  : N/A
+      URF Reg   : 8
+      Flags     : CLEAR
+      Result    : 0
+   Entry[10] = 
+      PC Value  : 4010
+      Instruct  : MOVC R2, #10
+      Allocation: COMPLETE
+      Instr Type: REG_TO_REG
+      Arch Reg  : R2
+      URF Reg   : 9
+      Flags     : CLEAR
+      Result    : 10
+   Entry[11] = 
+      PC Value  : 4011
+      Instruct  : MOVC R5, #0
+      Allocation: COMPLETE
+      Instr Type: REG_TO_REG
+      Arch Reg  : R5
+      URF Reg   : 0
+      Flags     : CLEAR
+      Result    : 0
+   Entry[12] = 
+      PC Value  : 4012
+      Instruct  : SUB R1, R1, R3
+      Allocation: WAITING
+      Instr Type: REG_TO_REG
+      Arch Reg  : R1
+      URF Reg   : 10
+      Flags     : CLEAR
+      Result    : 0
+   Entry[13] = 
+      PC Value  : 4013
+      Instruct  : LOAD R6, R1, #0
+      Allocation: WAITING
+      Instr Type: LOAD
+      Arch Reg  : R6
+      URF Reg   : 11
+      Flags     : CLEAR
+      Result    : 0
+   Entry[14] = 
+      PC Value  : 4015
+      Instruct  : ADD R5, R5, R3
+      Allocation: WAITING
+      Instr Type: REG_TO_REG
+      Arch Reg  : R5
+      URF Reg   : 12
+      Flags     : CLEAR
+      Result    : 0
+   Entry[15] = 
+      PC Value  : -1
+      Instruct  : 
+      Allocation: UNALLOCATED
+      Instr Type: NONE
+      Arch Reg  : N/A
+      URF Reg   : -1
+      Flags     : CLEAR
+      Result    : -1

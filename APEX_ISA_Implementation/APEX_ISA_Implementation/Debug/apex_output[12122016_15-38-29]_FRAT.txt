@@ -1,0 +1,86 @@
+
+-- Front-End Rename Table --
+Arch Reg: R0
+  src bit  : Unified Register File
+Arch Reg: R1
+  URF link : 10
+  ROB Loc  : 12
+  src bit  : Reorder Buffer
+Arch Reg: R2
+  URF link : 9
+  ROB Loc  : 10
+  src bit  : Reorder Buffer
+Arch Reg: R3
+  src bit  : Unified Register File
+Arch Reg: R4
+  src bit  : Unified Register File
+Arch Reg: R5
+  URF link : 0
+  ROB Loc  : 11
+  src bit  : Reorder Buffer
+Arch Reg: R6
+  src bit  : Unified Register File
+Arch Reg: R7
+  src bit  : Unified Register File
+Arch Reg: R8
+  src bit  : Unified Register File
+Arch Reg: R9
+  src bit  : Unified Register File
+Arch Reg: R10
+  src bit  : Unified Register File
+Arch Reg: R11
+  src bit  : Unified Register File
+Arch Reg: R12
+  src bit  : Unified Register File
+Arch Reg: R13
+  src bit  : Unified Register File
+Arch Reg: R14
+  src bit  : Unified Register File
+Arch Reg: R15
+  src bit  : Unified Register File
+Arch Reg: N/A
+  src bit  : Unified Register File
+
+-- Front-End Rename Table --
+Arch Reg: R0
+  src bit  : Unified Register File
+Arch Reg: R1
+  URF link : 10
+  ROB Loc  : 12
+  src bit  : Reorder Buffer
+Arch Reg: R2
+  URF link : 9
+  ROB Loc  : 10
+  src bit  : Reorder Buffer
+Arch Reg: R3
+  src bit  : Unified Register File
+Arch Reg: R4
+  src bit  : Unified Register File
+Arch Reg: R5
+  URF link : 0
+  ROB Loc  : 11
+  src bit  : Reorder Buffer
+Arch Reg: R6
+  URF link : 1
+  ROB Loc  : 13
+  src bit  : Reorder Buffer
+Arch Reg: R7
+  src bit  : Unified Register File
+Arch Reg: R8
+  src bit  : Unified Register File
+Arch Reg: R9
+  src bit  : Unified Register File
+Arch Reg: R10
+  src bit  : Unified Register File
+Arch Reg: R11
+  src bit  : Unified Register File
+Arch Reg: R12
+  src bit  : Unified Register File
+Arch Reg: R13
+  src bit  : Unified Register File
+Arch Reg: R14
+  src bit  : Unified Register File
+Arch Reg: R15
+  src bit  : Unified Register File
+Arch Reg: N/A
+  src bit  : Unified Register File

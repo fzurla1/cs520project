@@ -211,6 +211,8 @@ public:
 		int memory_loc = -1;
 		//
 		int saved_RAT_entry = -1;
+		//instruction
+		string instruction = "";
 		
 		void clear()
 		{
@@ -223,6 +225,7 @@ public:
 			alloc = ROB_ALLOCATION::ROB_UNALLOCATED;
 			memory_loc = -1;
 			saved_RAT_entry = -1;
+			instruction = "";
 		}
 	};
 
@@ -272,7 +275,7 @@ public:
 	//Statistics Structure
 	struct Statistics {
 		//the IPC realized up to the point where this command is invoked
-		int ipc = 0;
+		double ipc = 0;
 		//the number of cycles for which dispatched has stalled
 		int dispatch_stall_count = 0;
 		// the number of cycles for which no issues have taken place to any function unit

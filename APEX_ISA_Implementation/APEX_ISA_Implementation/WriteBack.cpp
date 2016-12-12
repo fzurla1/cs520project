@@ -3,7 +3,7 @@
 
 WriteBack::WriteBack()
 {
-//	myStructVector.resize(MAX_PORTS);
+	instructionsCompleted = 0;
 }
 
 
@@ -52,6 +52,7 @@ bool WriteBack::run(
 				HALT = true;
 			}
 
+			instructionsCompleted++;
 			myStructVector.pop_back();
 		}
 	}
@@ -111,4 +112,9 @@ void WriteBack::display()
 	{
 		Global::Output("Writeback STAGE --> No Instruction in Stage");
 	}
+}
+
+int WriteBack::instructionsComplete()
+{
+	return instructionsCompleted;
 }

@@ -1,0 +1,44 @@
+
+-- Front-End Rename Table --
+Arch Reg: R0
+  URF link : 5
+  ROB Loc  : 5
+  src bit  : Reorder Buffer
+Arch Reg: R1
+  URF link : 6
+  ROB Loc  : 7
+  src bit  : Reorder Buffer
+Arch Reg: R2
+  URF link : 7
+  ROB Loc  : 8
+  src bit  : Reorder Buffer
+Arch Reg: R3
+  src bit  : Unified Register File
+Arch Reg: R4
+  URF link : 4
+  ROB Loc  : 4
+  src bit  : Reorder Buffer
+Arch Reg: R5
+  src bit  : Unified Register File
+Arch Reg: R6
+  src bit  : Unified Register File
+Arch Reg: R7
+  src bit  : Unified Register File
+Arch Reg: R8
+  src bit  : Unified Register File
+Arch Reg: R9
+  src bit  : Unified Register File
+Arch Reg: R10
+  src bit  : Unified Register File
+Arch Reg: R11
+  src bit  : Unified Register File
+Arch Reg: R12
+  src bit  : Unified Register File
+Arch Reg: R13
+  src bit  : Unified Register File
+Arch Reg: R14
+  src bit  : Unified Register File
+Arch Reg: R15
+  src bit  : Unified Register File
+Arch Reg: N/A
+  src bit  : Unified Register File

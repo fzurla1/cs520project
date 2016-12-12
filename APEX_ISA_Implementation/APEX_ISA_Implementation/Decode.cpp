@@ -232,7 +232,7 @@ Global::apexStruct Decode::run(
 				s_reg1 = s_reg1.substr(1, s_reg1.length() - 1);
 				s_reg2 = s_reg2.substr(1, s_reg2.length());
 
-				last_alu_pc = output_struct.pc_value;
+				last_alu_mul_pc = output_struct.pc_value;
 
 				arch_dest = atoi(s_dest.c_str());
 				arch_src1 = atoi(s_reg1.c_str());
@@ -270,7 +270,7 @@ Global::apexStruct Decode::run(
 				s_reg1 = s_reg1.substr(1, s_reg1.length() - 1);
 				s_literal = s_literal.substr(1, s_literal.length());
 
-				last_alu_pc = output_struct.pc_value;
+				last_alu_mul_pc = output_struct.pc_value;
 
 				arch_dest = atoi(s_dest.c_str());
 				arch_src1 = atoi(s_reg1.c_str());
@@ -279,6 +279,7 @@ Global::apexStruct Decode::run(
 				output_struct.instruction.src1.status = Global::STATUS::VALID;
 				output_struct.instruction.src1.tag = Front_End_RAT[arch_src1].reg;
 				output_struct.instruction.src1.rob_loc = -1;
+				output_struct.instruction.src1.archreg = Global::ARCH_REGISTERS(arch_src1);
 
 				//set source 2 to valid since there isnt one
 				output_struct.instruction.src2.status = Global::STATUS::VALID;
@@ -336,7 +337,7 @@ Global::apexStruct Decode::run(
 				output_struct.instruction.dest.status = Global::STATUS::VALID;
 				output_struct.instruction.src1.status = Global::STATUS::VALID;
 				output_struct.instruction.src2.status = Global::STATUS::VALID;
-				output_struct.branch_waiting_to_complete = last_alu_pc;
+				output_struct.branch_waiting_to_complete = last_alu_mul_pc;
 				output_struct.type = Global::INSTRUCTION_TYPE::BRANCH_TYPE;
 				break;
 				//opcode <src1>, #literal
@@ -639,6 +640,7 @@ Global::apexStruct Decode::run(
 					ROB.entries[ROB.tail].flags = Global::FLAGS::CLEAR;
 					ROB.entries[ROB.tail].pc_value = myStruct.pc_value;
 					ROB.entries[ROB.tail].result = 0;
+					ROB.entries[ROB.tail].instruction = myStruct.untouched_instruction;
 					if (output_struct.instruction.op_code != Global::OPCODE::LOAD)
 					{
 						ROB.entries[ROB.tail].type = Global::INSTRUCTION_TYPE::REG_TO_REG_TYPE;
@@ -676,6 +678,16 @@ Global::apexStruct Decode::run(
 				ROB.entries[ROB.tail].flags = Global::FLAGS::CLEAR;
 				ROB.entries[ROB.tail].pc_value = myStruct.pc_value;
 				ROB.entries[ROB.tail].result = 0;
+				ROB.entries[ROB.tail].instruction = myStruct.untouched_instruction;
+
+				if (output_struct.instruction.op_code != Global::OPCODE::STORE)
+				{
+					ROB.entries[ROB.tail].type = Global::INSTRUCTION_TYPE::BRANCH_TYPE;
+				}
+				else
+				{
+					ROB.entries[ROB.tail].type = Global::INSTRUCTION_TYPE::STORE_TYPE;
+				}
 				//5
 				ROB.tail = (ROB.tail + 1) % Global::ROB_SIZE;
 

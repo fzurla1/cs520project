@@ -74,3 +74,8 @@ void LS2::display()
 		Global::Output("LS2 STAGE --> No Instruction in Stage");
 	}
 }
+
+string LS2::getInstruction()
+{
+	return myStruct.untouched_instruction;
+}

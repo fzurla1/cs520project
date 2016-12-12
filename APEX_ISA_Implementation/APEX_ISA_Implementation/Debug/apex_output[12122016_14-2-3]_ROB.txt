@@ -1,0 +1,52 @@
+
+-- ROB Information --
+ HEAD: 0
+ TAIL: 5
+   Entry[0] = 
+      PC Value  : 4000
+      Allocation: COMPLETE
+      Instr Type: REG_TO_REG
+      Arch Reg  : R0
+      URF Reg   : 0
+      Flags     : CLEAR
+      Result    : 0
+   Entry[1] = 
+      PC Value  : 4001
+      Allocation: WAITING
+      Instr Type: REG_TO_REG
+      Arch Reg  : R1
+      URF Reg   : 1
+      Flags     : CLEAR
+      Result    : 0
+   Entry[2] = 
+      PC Value  : 4002
+      Allocation: WAITING
+      Instr Type: REG_TO_REG
+      Arch Reg  : R2
+      URF Reg   : 2
+      Flags     : CLEAR
+      Result    : 0
+   Entry[3] = 
+      PC Value  : 4003
+      Allocation: WAITING
+      Instr Type: REG_TO_REG
+      Arch Reg  : R3
+      URF Reg   : 3
+      Flags     : CLEAR
+      Result    : 0
+   Entry[4] = 
+      PC Value  : 4004
+      Allocation: WAITING
+      Instr Type: REG_TO_REG
+      Arch Reg  : R4
+      URF Reg   : 4
+      Flags     : CLEAR
+      Result    : 0
+   Entry[5] = 
+      PC Value  : -1
+      Allocation: UNALLOCATED
+      Instr Type: NONE
+      Arch Reg  : N/A
+      URF Reg   : -1
+      Flags     : CLEAR
+      Result    : -1

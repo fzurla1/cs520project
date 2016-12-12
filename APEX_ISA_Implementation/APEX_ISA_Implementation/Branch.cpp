@@ -15,7 +15,8 @@ Global::apexStruct Branch::run(
 	int PC,
 	Global::Forwarding_Info(&Forward_Bus)[Global::FINAL_FORWARD_TYPE_TOTAL],
 	bool(&Stalled_Stages)[Global::FINAL_STALLED_STAGE_TOTAL],
-	Global::Register_Info(&X))
+	Global::Register_Info(&X),
+	Global::Reorder_Buffer(&ROB))
 {
 	Global::apexStruct output_struct = myStruct;
 	//assue no stall, and no branch
@@ -28,51 +29,42 @@ Global::apexStruct Branch::run(
 	{
 		switch (myStruct.instruction.op_code)
 		{
+			//Update ROB
+			ROB.entries[output_struct.instruction.dest.rob_loc].alloc = Global::ROB_ALLOCATION::COMPLETE;
+
 			case Global::OPCODE::BAL:
 				Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].opcode = Global::OPCODE::BAL;
 				Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].updatePC = true;
 				Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].target = myStruct.instruction.dest.value + myStruct.instruction.literal_value;
 				X.value = PC + 1;
+				ROB.entries[output_struct.instruction.dest.rob_loc].result = PC + 1;
+				output_struct.instruction.dest.value = PC + 1;
 				Global::Output("-- Branch Taken! BAL-- ");
 				break;
 			case Global::OPCODE::BNZ:
-				if (Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].pc_value == myStruct.branch_waiting_to_complete)
+				if (myStruct.instruction.flag == Global::FLAGS::ZERO)
 				{
-					if (!Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].flag == Global::FLAGS::ZERO)
-					{
-						Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].opcode = Global::OPCODE::BNZ;
-						Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].updatePC = true;
-						Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].target = myStruct.instruction.literal_value;
-						Global::Output("-- Branch Taken! BNZ-- ");
-					}
-					else
-					{
-						Global::Output("-- Branch NOT Taken.-- ");
-					}
+					Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].opcode = Global::OPCODE::BNZ;
+					Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].updatePC = true;
+					Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].target = myStruct.instruction.literal_value;
+					Global::Output("-- Branch Taken! BNZ-- ");
 				}
 				else
 				{
-					Stalled_Stages[Global::STALLED_STAGE::BRANCH] = true;
+					Global::Output("-- Branch NOT Taken.-- ");
 				}
 				break;
 			case Global::OPCODE::BZ:
-				if (Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].pc_value == myStruct.branch_waiting_to_complete)
+				if (myStruct.instruction.flag == Global::FLAGS::ZERO)
 				{
-					if (Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].flag == Global::FLAGS::ZERO)
-					{
-						Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].opcode = Global::OPCODE::BZ;
-						Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].updatePC = true;
-						Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].target = myStruct.instruction.literal_value;
-						Global::Output("-- Branch Taken! BZ-- ");
-					}
-					else
-					{
-						Global::Output("-- Branch NOT Taken.-- ");
-					}
+					Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].opcode = Global::OPCODE::BZ;
+					Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].updatePC = true;
+					Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].target = myStruct.instruction.literal_value;
+					Global::Output("-- Branch Taken! BZ-- ");
 				}
 				else
 				{
-					Stalled_Stages[Global::STALLED_STAGE::BRANCH] = true;
+					Global::Output("-- Branch NOT Taken.-- ");
 				}
 				break;
 			case Global::OPCODE::JUMP:

@@ -1,0 +1,56 @@
+
+Iteration 1
+FETCH      - MOVC R0, #0
+Decode/Rename1 STAGE --> No Instruction in Stage
+Rename2/Dispatch STAGE --> No Instruction in Stage
+Issue Queue --> No Instruction in Issue Queue
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+Iteration 2
+FETCH      - MOVC R1, #64
+Decode/Rename1  - MOVC R0, #0
+Rename2/Dispatch STAGE --> No Instruction in Stage
+Issue Queue --> No Instruction in Issue Queue
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+Iteration 3
+FETCH      - MOVC R2, #10
+Decode/Rename1  - MOVC R1, #64
+Rename2/Dispatch  - MOVC R0, #0
+Issue Queue --> No Instruction in Issue Queue
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+
+Iteration 4
+FETCH      - MOVC R3, #4
+Decode/Rename1  - MOVC R2, #10
+Rename2/Dispatch  - MOVC R1, #64
+-- Issue Queue --
+ IQ slot[0]
+     Instruction: MOVC R0, #0
+ALU 1 STAGE --> No Instruction in Stage
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+Issued Instructions - MOVC R0, #0
+
+Iteration 5
+FETCH      - MOVC R4, #1
+Decode/Rename1  - MOVC R3, #4
+Rename2/Dispatch  - MOVC R2, #10
+-- Issue Queue --
+ IQ slot[0]
+     Instruction: MOVC R1, #64
+ALU1       - MOVC R0, #0
+ALU 2 STAGE --> No Instruction in Stage
+Branch STAGE --> No Instruction in Stage
+Writeback STAGE --> No Instruction in Stage
+Issued Instructions - MOVC R1, #64

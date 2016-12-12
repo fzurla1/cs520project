@@ -18,6 +18,7 @@
 #include <iostream>
 #include <ctime>
 #include <algorithm>
+#include <sstream>
 
 #include "Global.h"
 #include "Fetch.h"
@@ -43,6 +44,7 @@ using namespace std;
 
 //program counter
 int PC = 4000;
+int instructions_through_wb = 0;
 
 //stalled stages
 bool Stalled_Stages[Global::STALLED_STAGE::FINAL_STALLED_STAGE_TOTAL];
@@ -124,7 +126,7 @@ void initialize_pipeline();
 void displayRegisterFile();
 void displayFRAT();
 void displayRRAT();
-void displayMemory();
+void displayMemory(int a1, int a2);
 void displayStalledStages();
 void displayROB();
 void displayStats();
@@ -228,11 +230,6 @@ int _tmain(int argc, char* argv[])
 				displayRegisterFile();
 				cout << "Writing Register File Contents Complete" << endl
 					<< endl
-					<< "Writing Memory Contents..." << endl
-					<< "..." << endl;
-				displayMemory();
-				cout << "Writing Memory Contents Complete" << endl
-					<< endl
 					<< "Writing ROB Contents..." << endl
 					<< "..." << endl;
 				displayROB();
@@ -302,6 +299,20 @@ int _tmain(int argc, char* argv[])
 				cout << "** WANRNING - cannot set URF size once simulation has started! **" << endl;
 			}
 
+			if ((substr.compare(0, 11, "print_memory") == 0))
+			{
+				std::istringstream iss(command);
+				string instruction;
+				string a1S;
+				string a2S;
+				iss >> instruction;
+				iss >> a1S;
+				iss >> a2S;
+				int a1 = stoi(a1S);
+				int a2 = stoi(a2S);
+				displayMemory(a1, a2);
+			}
+
 #pragma endregion //BASIC COMMANDS
 
 /*SIMULATION*/
@@ -317,7 +328,8 @@ int _tmain(int argc, char* argv[])
 				//and while the pipeline still has data in it
 				while (!HALT && n > 0 && pipelineHasData)
 				{
-					Global::Output("\nIteration " + to_string(iteration));
+					Global::Output("\n------------------------------------");
+					Global::Output("Iteration " + to_string(iteration));
 
 #pragma region EXECUTE_PIPELINE
 
@@ -328,6 +340,12 @@ int _tmain(int argc, char* argv[])
 					//update ROB
 					if (ROB.head != ROB.tail)
 					{
+						if ((ROB.entries[ROB.head].type == Global::INSTRUCTION_TYPE::LOAD_TYPE)
+							|| (ROB.entries[ROB.head].type == Global::INSTRUCTION_TYPE::STORE_TYPE))
+						{
+							ROB.entries[ROB.head].alloc = Global::ROB_ALLOCATION::COMPLETE;
+						}
+
 						if (ROB.entries[ROB.head].alloc == Global::ROB_ALLOCATION::COMPLETE)
 						{
 							int old_reg = 0;
@@ -339,6 +357,7 @@ int _tmain(int argc, char* argv[])
 									//free up reg
 									old_reg = Back_End_RAT[Global::ARCH_REGISTERS::X].reg;
 									Register_File[old_reg].status = Global::REGISTER_ALLOCATION::REG_UNALLOCATED;
+									Register_File[ROB.entries[ROB.head].destReg].value = ROB.entries[ROB.head].result;
 
 									//update back end RAT
 									Back_End_RAT[Global::ARCH_REGISTERS::X].reg = ROB.entries[ROB.head].destReg;
@@ -368,6 +387,12 @@ int _tmain(int argc, char* argv[])
 
 									//update back end RAT
 									Back_End_RAT[ROB.entries[ROB.head].destArchReg].reg = ROB.entries[ROB.head].destReg;
+
+									stats.loads_count++;
+								}
+								else
+								{
+									stats.stores_count++;
 								}
 								break;
 							default:
@@ -458,7 +483,10 @@ int _tmain(int argc, char* argv[])
 							if (!Stalled_Stages[Global::STALLED_STAGE::DISPATCH])
 								dispatch->display();
 							else
+							{
 								Global::Output("-- Rename2/Dispatch Stalled -- " + dispatch->getInstruction());
+								stats.dispatch_stall_count++;
+							}
 
 							if (!Stalled_Stages[Global::STALLED_STAGE::IQ])
 								iq->display();
@@ -487,6 +515,16 @@ int _tmain(int argc, char* argv[])
 							else
 								Global::Output("-- Branch Stalled -- " + branch->getInstruction());
 
+							if (!Stalled_Stages[Global::STALLED_STAGE::LS1])
+								ls1->display();
+							else
+								Global::Output("-- Load/Store 1 Stalled -- " + ls1->getInstruction());
+
+							if (!Stalled_Stages[Global::STALLED_STAGE::LS2])
+								ls2->display();
+							else
+								Global::Output("-- Load/Store 2 Stalled -- " + ls2->getInstruction());
+
 							writeBack->display();
 						}
 #pragma endregion DEBUG_OUTPUT
@@ -513,9 +551,6 @@ int _tmain(int argc, char* argv[])
 							alu2->setPipelineStruct(garbage_struct);
 						}
 
-						//set up for issuing from IQ
-						alu1->setPipelineStruct(garbage_struct);
-						branch->setPipelineStruct(garbage_struct);
 						if (Stalled_Stages[Global::STALLED_STAGE::MULTIPLY] == false)
 						{
 							multiply->setPipelineStruct(garbage_struct);
@@ -524,10 +559,31 @@ int _tmain(int argc, char* argv[])
 						if (Stalled_Stages[Global::STALLED_STAGE::LS2] == false)
 						{
 							ls2->setPipelineStruct(pipeline_struct_ls1);
+							if ( pipeline_struct_ls1.pc_value != INT_MAX)
+								Stalled_Stages[Global::STALLED_STAGE::LS2] = true;
+						}
+
+						//set up for issuing from IQ
+						alu1->setPipelineStruct(garbage_struct);
+						branch->setPipelineStruct(garbage_struct);
+						if (Stalled_Stages[Global::STALLED_STAGE::LS1] == false)
+						{
+							ls1->setPipelineStruct(garbage_struct);
+						}
+						if (Stalled_Stages[Global::STALLED_STAGE::MULTIPLY] == false)
+						{
+							multiply->setPipelineStruct(garbage_struct);
+						}
+
+						if (pipeline_structs_iq.size() == 0)
+						{
+							stats.no_issue_count++;
 						}
 
 						for (int x = 0; x < pipeline_structs_iq.size(); x++)
 						{
+							Global::Output("");
+							Global::Output("Issued Instructions");
 							//based on opcode....
 							switch (pipeline_structs_iq[x].instruction.op_code)
 							{
@@ -544,6 +600,7 @@ int _tmain(int argc, char* argv[])
 								case Global::OPCODE::SUBL:
 								case Global::OPCODE::HALT:
 									alu1->setPipelineStruct(pipeline_structs_iq[x]);
+									Global::Output("  " + pipeline_structs_iq[x].untouched_instruction);
 									issued_instructions.push_back(pipeline_structs_iq[x]);
 									break;
 								case Global::OPCODE::BAL:
@@ -551,6 +608,7 @@ int _tmain(int argc, char* argv[])
 								case Global::OPCODE::BZ:
 								case Global::OPCODE::JUMP:
 									branch->setPipelineStruct(pipeline_structs_iq[x]);
+									Global::Output("  " + pipeline_structs_iq[x].untouched_instruction);
 									issued_instructions.push_back(pipeline_structs_iq[x]);
 									break;
 								case Global::OPCODE::MUL:
@@ -558,6 +616,7 @@ int _tmain(int argc, char* argv[])
 									if (Stalled_Stages[Global::STALLED_STAGE::MULTIPLY] == false)
 									{
 										multiply->setPipelineStruct(pipeline_structs_iq[x]);
+										Global::Output("  " + pipeline_structs_iq[x].untouched_instruction);
 										issued_instructions.push_back(pipeline_structs_iq[x]);
 									}
 									break;
@@ -566,6 +625,7 @@ int _tmain(int argc, char* argv[])
 									if (Stalled_Stages[Global::STALLED_STAGE::LS1] == false)
 									{
 										ls1->setPipelineStruct(pipeline_structs_iq[x]);
+										Global::Output("  " + pipeline_structs_iq[x].untouched_instruction);
 										issued_instructions.push_back(pipeline_structs_iq[x]);
 									}
 									break;
@@ -849,14 +909,14 @@ void displayRRAT()
 	system(cmd.c_str());
 }
 
-void displayMemory()
+void displayMemory(int a1, int a2)
 {
-	Global::OutputMem("");
-	Global::OutputMem("-- Memory Locations --");
+	Global::Output("");
+	Global::Output("-- Memory Locations --");
 
-	for (int x = 0; x < 100; x++)
+	for (int x = a1; x <= a2; x++)
 	{
-		Global::OutputMem("Memory[" + to_string(x) + "] = " + to_string(Memory_Array[x]));
+		Global::Output("Memory[" + to_string(x) + "] = " + to_string(Memory_Array[x]));
 	}
 }
 
@@ -884,6 +944,7 @@ void displayROB()
 	{
 		Global::OutputROB("   Entry[" + to_string(x) + "] = ");
 		Global::OutputROB("      PC Value  : " + to_string(ROB.entries[x].pc_value));
+		Global::OutputROB("      Instruct  : " + ROB.entries[x].instruction);
 		Global::OutputROB("      Allocation: " + Global::toString(ROB.entries[x].alloc));
 		Global::OutputROB("      Instr Type: " + Global::toString(ROB.entries[x].type));
 		Global::OutputROB("      Arch Reg  : " + Global::toString(ROB.entries[x].destArchReg));
@@ -903,9 +964,10 @@ void displayROB()
 
 void displayStats()
 {
+	stats.ipc = double(writeBack->instructionsComplete()) / double(iteration);
 	Global::Output("");
 	Global::Output("-- Execution Statistics--");
-	Global::Output("  IPC realized                            : ");
+	Global::Output("  IPC realized                            : " + to_string(stats.ipc));
 	Global::Output("  # of cycles which dispatched as stalled : " + to_string(stats.dispatch_stall_count));
 	Global::Output("  # of cycles w/o issue                   : " + to_string(stats.no_issue_count));
 	Global::Output("  # LOADs committed                       : " + to_string(stats.loads_count));

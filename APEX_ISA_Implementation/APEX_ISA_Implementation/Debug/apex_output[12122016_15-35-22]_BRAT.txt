@@ -1,0 +1,36 @@
+
+-- Back-End Rename Table --
+Arch Reg: R0
+  URF link : 5
+Arch Reg: R1
+  URF link : 1
+Arch Reg: R2
+  URF link : 2
+Arch Reg: R3
+  URF link : 3
+Arch Reg: R4
+  URF link : 4
+Arch Reg: R5
+  Not Applicable
+Arch Reg: R6
+  Not Applicable
+Arch Reg: R7
+  Not Applicable
+Arch Reg: R8
+  Not Applicable
+Arch Reg: R9
+  Not Applicable
+Arch Reg: R10
+  Not Applicable
+Arch Reg: R11
+  Not Applicable
+Arch Reg: R12
+  Not Applicable
+Arch Reg: R13
+  Not Applicable
+Arch Reg: R14
+  Not Applicable
+Arch Reg: R15
+  Not Applicable
+Arch Reg: N/A
+  Not Applicable

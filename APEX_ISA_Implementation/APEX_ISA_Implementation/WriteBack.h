@@ -43,9 +43,12 @@ public:
 	/// </summary>
 	void display();
 
+	int instructionsComplete();
+
 private:
 	vector<Global::apexStruct> snapshot_before;
 	vector<Global::apexStruct> myStructVector;
+	int instructionsCompleted;
 };
 
 #endif //WRITE_BACK_H

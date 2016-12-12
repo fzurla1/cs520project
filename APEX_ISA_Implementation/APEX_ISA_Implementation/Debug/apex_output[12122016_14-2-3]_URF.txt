@@ -1,0 +1,98 @@
+
+-- Unified Register File --
+Register[U0]:
+  status: ALLOCATED and NOT COMMITTED
+  value : 4294967295
+Register[U1]:
+  status: ALLOCATED and NOT COMMITTED
+  value : 4294967295
+Register[U2]:
+  status: ALLOCATED and NOT COMMITTED
+  value : 4294967295
+Register[U3]:
+  status: ALLOCATED and NOT COMMITTED
+  value : 4294967295
+Register[U4]:
+  status: ALLOCATED and NOT COMMITTED
+  value : 4294967295
+Register[U5]:
+  status: UNALLOCATED
+  value : 4294967295
+Register[U6]:
+  status: UNALLOCATED
+  value : 4294967295
+Register[U7]:
+  status: UNALLOCATED
+  value : 4294967295
+Register[U8]:
+  status: UNALLOCATED
+  value : 4294967295
+Register[U9]:
+  status: UNALLOCATED
+  value : 4294967295
+Register[U10]:
+  status: UNALLOCATED
+  value : 4294967295
+Register[U11]:
+  status: UNALLOCATED
+  value : 4294967295
+Register[U12]:
+  status: UNALLOCATED
+  value : 4294967295
+Register[U13]:
+  status: UNALLOCATED
+  value : 4294967295
+Register[U14]:
+  status: UNALLOCATED
+  value : 4294967295
+Register[U15]:
+  status: UNALLOCATED
+  value : 4294967295
+Register[U16]:
+  status: UNALLOCATED
+  value : 4294967295
+Register[U17]:
+  status: UNALLOCATED
+  value : 4294967295
+Register[U18]:
+  status: UNALLOCATED
+  value : 4294967295
+Register[U19]:
+  status: UNALLOCATED
+  value : 4294967295
+Register[U20]:
+  status: UNALLOCATED
+  value : 4294967295
+Register[U21]:
+  status: UNALLOCATED
+  value : 4294967295
+Register[U22]:
+  status: UNALLOCATED
+  value : 4294967295
+Register[U23]:
+  status: UNALLOCATED
+  value : 4294967295
+Register[U24]:
+  status: UNALLOCATED
+  value : 4294967295
+Register[U25]:
+  status: UNALLOCATED
+  value : 4294967295
+Register[U26]:
+  status: UNALLOCATED
+  value : 4294967295
+Register[U27]:
+  status: UNALLOCATED
+  value : 4294967295
+Register[U28]:
+  status: UNALLOCATED
+  value : 4294967295
+Register[U29]:
+  status: UNALLOCATED
+  value : 4294967295
+Register[U30]:
+  status: UNALLOCATED
+  value : 4294967295
+Register[U31]:
+  status: UNALLOCATED
+  value : 4294967295

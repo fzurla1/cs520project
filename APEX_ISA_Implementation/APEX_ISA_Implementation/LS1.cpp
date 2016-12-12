@@ -42,7 +42,6 @@ Global::apexStruct LS1::run(Global::Forwarding_Info(&Forward_Bus)[Global::FINAL_
 				output_struct.instruction.memory_location = output_struct.instruction.src2.value + output_struct.instruction.literal_value;
 			}
 		}
-		Stalled_Stages[Global::STALLED_STAGE::LS2] = true;
 	}
 	else
 	{
@@ -65,4 +64,9 @@ void LS1::display()
 	{
 		Global::Output("LS1 STAGE --> No Instruction in Stage");
 	}
+}
+
+string LS1::getInstruction()
+{
+	return myStruct.untouched_instruction;
 }

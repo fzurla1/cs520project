@@ -19,7 +19,8 @@ public:
 		int PC,
 		Global::Forwarding_Info(&Forward_Bus)[Global::FINAL_FORWARD_TYPE_TOTAL],
 		bool(&Stalled_Stages)[Global::FINAL_STALLED_STAGE_TOTAL],
-		Global::Register_Info(&X));
+		Global::Register_Info(&X),
+		Global::Reorder_Buffer(&ROB));
 
 	/// <summary>
 	///	This function will:

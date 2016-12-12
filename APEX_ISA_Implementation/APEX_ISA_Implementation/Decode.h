@@ -50,7 +50,7 @@ private:
 	Global::apexStruct myStruct;
 	Global::apexStruct snapshot_before;
 	Global::apexStruct snapshot_after;
-	int last_alu_pc = INT_MAX;
+	int last_alu_mul_pc = INT_MAX;
 };
 
 #endif //DECODE_H
