@@ -364,6 +364,7 @@ Global::apexStruct Decode::run(
 				}
 				else
 				{
+					output_struct.instruction.dest.archreg = Global::ARCH_REGISTERS(arch_dest);
 					output_struct.type = Global::INSTRUCTION_TYPE::REG_TO_REG_TYPE;
 				}
 				break;
@@ -609,7 +610,8 @@ Global::apexStruct Decode::run(
 		//4) create new entry in ROB
 		//5) move tail
 		bool entry_made = false;
-		if (output_struct.instruction.op_code != Global::OPCODE::BAL)
+		if ((output_struct.instruction.op_code != Global::OPCODE::BAL)
+			&& (output_struct.type != Global::INSTRUCTION_TYPE::STORE_TYPE))
 		{
 			for (int x = 0; x < URF_SIZE - 1; x++) //last register is designated for X
 			{
@@ -617,6 +619,7 @@ Global::apexStruct Decode::run(
 				if (Register_File[x].status == Global::REGISTER_ALLOCATION::REG_UNALLOCATED)
 				{
 					output_struct.instruction.dest.tag = x;
+					output_struct.instruction.dest.rob_loc = ROB.tail;
 
 					//if not a branch or store instruction, set up the register file and FE RAT
 					if ((output_struct.type != Global::INSTRUCTION_TYPE::BRANCH_TYPE)

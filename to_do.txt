@@ -5,3 +5,12 @@ come up with all forwarding scenarios (16)
 come up with scenarios for "stalling" 
 
 debug IQ
+
+instructions w. s1 & s2
+add, and, exor, mul, or, sub, store
+
+only s1
+addl, andl, ex_orl, mull, orl, subl, load
+
+inst w. x
+jump

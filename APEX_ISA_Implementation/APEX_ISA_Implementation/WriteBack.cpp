@@ -19,11 +19,12 @@ bool WriteBack::run(
 	bool HALT = false;
 	Global::apexStruct garbage_struct;
 	int size = myStructVector.size();
+	snapshot_before = myStructVector;
 
-	for (int x = (size - 1); x >= 0; x--)
+	//if a branch has occured
+	if (Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].updatePC == true)
 	{
-		//if a branch has occured
-		if (Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].updatePC == true)
+		for (int x = (size - 1); x >= 0; x--)
 		{
 			//if my PC is > than the branch, meaning that this instruction is later in the instruction
 			//set, clear out my instruction
@@ -93,21 +94,20 @@ string* WriteBack::getInstruction()
 
 void WriteBack::display()
 {
-	bool has_instruction = false;
-	if (myStructVector.size() > 0)
+	if (snapshot_before.size() > 0)
 	{
 		Global::Output("WRITEBACK  - ");
 
-		for (int x = (myStructVector.size() - 1); x >= 0; x--)
+		for (int x = (snapshot_before.size() - 1); x >= 0; x--)
 		{
 			//make sure we have valid data
-			if (myStructVector[x].pc_value != INT_MAX)
+			if (snapshot_before[x].pc_value != INT_MAX)
 			{
-				Global::Output("   INSTRUCTION " + to_string(x) + " - " + myStructVector[x].untouched_instruction);
+				Global::Output("   INSTRUCTION " + to_string(x) + " - " + snapshot_before[x].untouched_instruction);
 			}
 		}
 	}
-	if (!has_instruction)
+	else
 	{
 		Global::Output("Writeback STAGE --> No Instruction in Stage");
 	}

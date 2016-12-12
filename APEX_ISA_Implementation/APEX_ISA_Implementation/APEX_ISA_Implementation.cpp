@@ -319,6 +319,58 @@ int _tmain(int argc, char* argv[])
 					 *  EXECUTE STAGES   *
 					 *********************/
 
+					//update ROB
+					if (ROB.head != ROB.tail)
+					{
+						if (ROB.entries[ROB.head].alloc == Global::ROB_ALLOCATION::COMPLETE)
+						{
+							int old_reg = 0;
+							switch (ROB.entries[ROB.head].type)
+							{
+							case Global::INSTRUCTION_TYPE::BRANCH_TYPE:
+								if (ROB.entries[ROB.head].destArchReg == Global::ARCH_REGISTERS::X)
+								{
+									//free up reg
+									old_reg = Back_End_RAT[Global::ARCH_REGISTERS::X].reg;
+									Register_File[old_reg].status = Global::REGISTER_ALLOCATION::REG_UNALLOCATED;
+
+									//update back end RAT
+									Back_End_RAT[Global::ARCH_REGISTERS::X].reg = ROB.entries[ROB.head].destReg;
+								}
+								break;
+							case Global::INSTRUCTION_TYPE::LOAD_TYPE:
+							case Global::INSTRUCTION_TYPE::REG_TO_REG_TYPE:
+								//free up reg
+								old_reg = Back_End_RAT[ROB.entries[ROB.head].destArchReg].reg;
+								Register_File[old_reg].status = Global::REGISTER_ALLOCATION::REG_UNALLOCATED;
+
+								//update back end RAT
+								Back_End_RAT[ROB.entries[ROB.head].destArchReg].reg = ROB.entries[ROB.head].destReg;
+								break;
+							case Global::INSTRUCTION_TYPE::STORE_TYPE:
+								break;
+							default:
+								break;
+							}
+
+							if (ROB.entries[ROB.head].type != Global::INSTRUCTION_TYPE::STORE_TYPE)
+							{
+								//Mark register file as committed
+								Register_File[ROB.entries[ROB.head].destReg].status = Global::REGISTER_ALLOCATION::ALLOC_COMMIT;
+								Register_File[ROB.entries[ROB.head].destReg].value = ROB.entries[ROB.head].result;
+
+								//Update Front-End Table
+								if (Front_End_RAT[ROB.entries[ROB.head].destArchReg].reg == ROB.entries[ROB.head].destReg)
+								{
+									Front_End_RAT[ROB.entries[ROB.head].destArchReg].src_bit = Global::SOURCES::REGISTER_FILE;
+								}
+							}
+
+							//update ROB head pointer
+							ROB.head = (ROB.head + 1) % Global::ROB_SIZE;
+						}
+					}
+
 					//run writeback
 					//HALT = writeBack->run(Register_File, Forward_Bus, Back_End_RAT);
 					HALT = writeBack->run(Forward_Bus, ROB, Register_File);
@@ -394,58 +446,56 @@ int _tmain(int argc, char* argv[])
 							Stalled_Stages[Global::STALLED_STAGE::FETCH] = true;
 						}
 
-						//update ROB
-						if (ROB.head != ROB.tail)
-						{
-							if (ROB.entries[ROB.head].alloc == Global::ROB_ALLOCATION::COMPLETE)
-							{
-								int old_reg = 0;
-								switch (ROB.entries[ROB.head].type)
-								{
-									case Global::INSTRUCTION_TYPE::BRANCH_TYPE:
-										if (ROB.entries[ROB.head].destArchReg == Global::ARCH_REGISTERS::X)
-										{
-											//free up reg
-											old_reg = Back_End_RAT[Global::ARCH_REGISTERS::X].reg;
-											Register_File[old_reg].status = Global::REGISTER_ALLOCATION::REG_UNALLOCATED;
-
-											//update back end RAT
-											Back_End_RAT[Global::ARCH_REGISTERS::X].reg = ROB.entries[ROB.head].destReg;
-										}
-										break;
-									case Global::INSTRUCTION_TYPE::LOAD_TYPE:
-									case Global::INSTRUCTION_TYPE::REG_TO_REG_TYPE:
-										//free up reg
-										old_reg = Back_End_RAT[ROB.entries[ROB.head].destArchReg].reg;
-										Register_File[old_reg].status = Global::REGISTER_ALLOCATION::REG_UNALLOCATED;
-
-										//update back end RAT
-										Back_End_RAT[ROB.entries[ROB.head].destArchReg].reg = ROB.entries[ROB.head].destReg;
-										break;
-									case Global::INSTRUCTION_TYPE::STORE_TYPE:
-										break;
-									default:
-										break;
-								}
-
-								if (ROB.entries[ROB.head].type != Global::INSTRUCTION_TYPE::STORE_TYPE)
-								{
-									//Mark register file as committed
-									Register_File[ROB.entries[ROB.head].destReg].status = Global::REGISTER_ALLOCATION::ALLOC_COMMIT;
-									Register_File[ROB.entries[ROB.head].destReg].value = ROB.entries[ROB.head].result;
-
-									//Update Front-End Table
-									if (Front_End_RAT[ROB.entries[ROB.head].destArchReg].reg == ROB.entries[ROB.head].destReg)
-									{
-										Front_End_RAT[ROB.entries[ROB.head].destArchReg].src_bit = Global::SOURCES::REGISTER_FILE;
-									}
-								}
-
-								//update ROB head pointer
-								ROB.head = (ROB.head + 1) % Global::ROB_SIZE;
-							}
-						}
 #pragma endregion //EXECUTE_PIPELINE
+
+#pragma region DEBUG_OUTPUT
+						if (DEBUG_OUTPUT)
+						{
+							if (!Stalled_Stages[Global::STALLED_STAGE::FETCH])
+								fetch->display();
+							else
+								Global::Output("-- Fetch Stalled -- ");
+
+							if (!Stalled_Stages[Global::STALLED_STAGE::DECODE_RF])
+								decode->display();
+							else
+								Global::Output("-- Decode/Rename1 Stalled -- " + decode->getInstruction());
+
+							if (!Stalled_Stages[Global::STALLED_STAGE::DISPATCH])
+								dispatch->display();
+							else
+								Global::Output("-- Rename2/Dispatch Stalled -- " + dispatch->getInstruction());
+
+							if (!Stalled_Stages[Global::STALLED_STAGE::IQ])
+								iq->display();
+							else
+								Global::Output("-- Issue Queue Stalled -- ");
+
+							if (issued_instructions.size() > 0)
+							{
+								Global::Output("Issued Instructions - ");
+								for (int x = 0; x < issued_instructions.size(); x++)
+									Global::Output("  " + issued_instructions[x].untouched_instruction);
+							}
+
+							if (!Stalled_Stages[Global::STALLED_STAGE::ALU1])
+								alu1->display();
+							else
+								Global::Output("-- ALU1 Stalled -- " + alu1->getInstruction());
+
+							if (!Stalled_Stages[Global::STALLED_STAGE::ALU2])
+								alu2->display();
+							else
+								Global::Output("-- ALU2 Stalled -- " + alu2->getInstruction());
+
+							if (!Stalled_Stages[Global::STALLED_STAGE::BRANCH])
+								branch->display();
+							else
+								Global::Output("-- Branch Stalled -- " + branch->getInstruction());
+
+							writeBack->display();
+						}
+#pragma endregion DEBUG_OUTPUT
 
 						//*************************
 						//set up for the next cycle
@@ -571,55 +621,6 @@ int _tmain(int argc, char* argv[])
 						{
 							pipelineHasData = false;
 						}
-
-#pragma region DEBUG_OUTPUT
-						if (DEBUG_OUTPUT)
-						{
-							if (!Stalled_Stages[Global::STALLED_STAGE::FETCH])
-								fetch->display();
-							else
-								Global::Output("-- Fetch Stalled -- ");
-
-							if (!Stalled_Stages[Global::STALLED_STAGE::DECODE_RF])
-								decode->display();
-							else
-								Global::Output("-- Decode/Rename1 Stalled -- " + decode->getInstruction());
-
-							if (!Stalled_Stages[Global::STALLED_STAGE::DISPATCH])
-								dispatch->display();
-							else
-								Global::Output("-- Rename2/Dispatch Stalled -- " + dispatch->getInstruction());
-
-							if (!Stalled_Stages[Global::STALLED_STAGE::IQ])
-								iq->display();
-							else
-								Global::Output("-- Issue Queue Stalled -- ");
-
-							if (issued_instructions.size() > 0)
-							{
-								Global::Output("Issued Instructions - ");
-								for (int x = 0; x < issued_instructions.size(); x++)
-									Global::Output("  " + issued_instructions[x].untouched_instruction);
-							}
-
-							if (!Stalled_Stages[Global::STALLED_STAGE::ALU1])
-								alu1->display();
-							else
-								Global::Output("-- ALU1 Stalled -- " + alu1->getInstruction());
-
-							if (!Stalled_Stages[Global::STALLED_STAGE::ALU2])
-								alu2->display();
-							else
-								Global::Output("-- ALU2 Stalled -- " + alu2->getInstruction());
-
-							if (!Stalled_Stages[Global::STALLED_STAGE::BRANCH])
-								branch->display();
-							else
-								Global::Output("-- Branch Stalled -- " + branch->getInstruction());
-
-							writeBack->display();
-						}
-#pragma endregion DEBUG_OUTPUT
 					}
 					else
 					{
@@ -795,13 +796,13 @@ void initialize_pipeline()
 #pragma region DISPLAY FUNCTIONS
 void displayRegisterFile()
 {
-	Global::Output("");
-	Global::Output("-- Unified Register File --");
+	Global::OutputURF("");
+	Global::OutputURF("-- Unified Register File --");
 	for (int x = 0; x < urf_size; x++)
 	{
-		Global::Output("Register[U" + to_string(x) + "]:");
-		Global::Output("  status: " + Global::toString(Register_File[x].status));
-		Global::Output("  value : " + to_string(Register_File[x].value));
+		Global::OutputURF("Register[U" + to_string(x) + "]:");
+		Global::OutputURF("  status: " + Global::toString(Register_File[x].status));
+		Global::OutputURF("  value : " + to_string(Register_File[x].value));
 	}
 }
 
@@ -848,12 +849,12 @@ void displayRRAT()
 
 void displayMemory()
 {
-	Global::Output("");
-	Global::Output("-- Memory Locations --");
+	Global::OutputMem("");
+	Global::OutputMem("-- Memory Locations --");
 
 	for (int x = 0; x < 100; x++)
 	{
-		Global::Output("Memory[" + to_string(x) + "] = " + to_string(Memory_Array[x]));
+		Global::OutputMem("Memory[" + to_string(x) + "] = " + to_string(Memory_Array[x]));
 	}
 }
 
@@ -983,5 +984,10 @@ void user_interface() //char * input_file, char * output_file)
 		outfile_name = trim(outfile_name);
 	}
 
-	Global::setOutFiles(outfile_name + ".txt", outfile_name + +"_ROB.txt", outfile_name + "_FRAT.txt", outfile_name + "_BRAT.txt");
+	Global::setOutFiles(outfile_name + ".txt", 
+					    outfile_name + +"_ROB.txt", 
+						outfile_name + "_FRAT.txt", 
+						outfile_name + "_BRAT.txt",
+						outfile_name + "_URF.txt",
+						outfile_name + "_MEM.txt");
 }

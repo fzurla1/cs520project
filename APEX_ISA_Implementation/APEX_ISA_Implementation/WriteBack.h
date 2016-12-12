@@ -44,7 +44,7 @@ public:
 	void display();
 
 private:
-	Global::apexStruct snapshot_before;
+	vector<Global::apexStruct> snapshot_before;
 	vector<Global::apexStruct> myStructVector;
 };
 

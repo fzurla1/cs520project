@@ -68,7 +68,7 @@ public:
 		FROM_ALU2,
 		FROM_BRANCH,
 		FROM_MULTIPLY,
-		FROM_MEMORY,
+		FROM_LS2,
 		FROM_WRITEBACK1,
 		FROM_WRITEBACK2,
 		FROM_WRITEBACK3,
@@ -349,7 +349,8 @@ public:
 	/// <summary>
 	/// Set output file for debug and display information
 	/// </summary>
-	static void setOutFiles(string filename, string filename_ROB, string filename_FRAT, string filename_BRAT);
+	static void setOutFiles(string filename, string filename_ROB, string filename_FRAT,
+		string filename_BRAT, string filename_URF, string filename_mem);
 
 	/// <summary>
 	/// Get output file
@@ -370,6 +371,10 @@ public:
 	/// Get RRAT output file
 	/// </summary>
 	static string getOutFileBRAT();
+
+	static string getOutFileURF();
+
+	static string getOutFileMem();
 
 	/// <summary>
 	/// If file is good and open
@@ -400,6 +405,10 @@ public:
 	/// Back-End RAT information to output file
 	/// </summary>
 	static void OutputBRAT(string s1);
+
+	static void OutputURF(string s1);
+
+	static void OutputMem(string s1);
 
 	/// <summary>
 	/// Output OPCODE enum to string

@@ -21,17 +21,30 @@ string output_file_name_FRAT;
 ofstream fout_BRAT;
 string output_file_name_BRAT;
 
-void Global::setOutFiles(string filename, string filename_ROB, string filename_FRAT, string filename_BRAT)
+//URF output
+ofstream fout_URF;
+string output_file_name_URF;
+
+//Memory output
+ofstream fout_MEM;
+string output_file_name_MEM;
+
+void Global::setOutFiles(string filename, string filename_ROB, string filename_FRAT, 
+						 string filename_BRAT, string filename_URF, string filename_mem)
 {
 	output_file_name = filename;
 	output_file_name_ROB = filename_ROB;
 	output_file_name_FRAT = filename_FRAT;
 	output_file_name_BRAT = filename_BRAT;
+	output_file_name_URF = filename_URF;
+	output_file_name_MEM = filename_mem;
 	
 	fout.open(filename);
 	fout_ROB.open(filename_ROB, ios_base::out | ios::trunc);
 	fout_FRAT.open(filename_FRAT, ios_base::out | ios::trunc);
 	fout_BRAT.open(filename_BRAT, ios_base::out | ios::trunc);
+	fout_URF.open(filename_URF, ios_base::out | ios::trunc);
+	fout_MEM.open(filename_mem, ios_base::out | ios::trunc);
 
 	if (!fout)
 	{
@@ -68,6 +81,24 @@ void Global::setOutFiles(string filename, string filename_ROB, string filename_F
 	{
 		cout << "File " + filename_BRAT + " opened successfully." << endl;
 	}
+
+	if (!fout_URF)
+	{
+		cout << "Failed to open file: " + filename_URF << endl;
+	}
+	else
+	{
+		cout << "File " + filename_URF + " opened successfully." << endl;
+	}
+
+	if (!fout_MEM)
+	{
+		cout << "Failed to open file: " + filename_mem << endl;
+	}
+	else
+	{
+		cout << "File " + filename_mem + " opened successfully." << endl;
+	}
 }
 
 string Global::getOutFile()
@@ -88,6 +119,16 @@ string Global::getOutFileFRAT()
 string Global::getOutFileBRAT()
 {
 	return output_file_name_BRAT;
+}
+
+string Global::getOutFileURF()
+{
+	return output_file_name_URF;
+}
+
+string Global::getOutFileMem()
+{
+	return output_file_name_MEM;
 }
 
 bool Global::fileIsGood()
@@ -136,6 +177,22 @@ void Global::OutputBRAT(string s1)
 		cout << s1 << endl;
 
 	fout_BRAT << s1 << endl;
+}
+
+void Global::OutputURF(string s1)
+{
+	if (DEBUG)
+		cout << s1 << endl;
+
+	fout_URF << s1 << endl;
+}
+
+void Global::OutputMem(string s1)
+{
+	if (DEBUG)
+		cout << s1 << endl;
+
+	fout_MEM << s1 << endl;
 }
 
 //OpCodes
@@ -320,8 +377,8 @@ string Global::toString(FORWARD_TYPE frwd)
 	case FORWARD_TYPE::FROM_MULTIPLY:
 		out = "From Multiply";
 		break;
-	case FORWARD_TYPE::FROM_MEMORY:
-		out = "From Memory";
+	case FORWARD_TYPE::FROM_LS2:
+		out = "From LOAD/STORE 2";
 		break;
 	case FORWARD_TYPE::FROM_WRITEBACK1:
 	case FORWARD_TYPE::FROM_WRITEBACK2:
