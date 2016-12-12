@@ -82,6 +82,21 @@ bool IssueQueue::stalledStage(Global::apexStruct current, bool(&Stalled_Stages)[
 	return false;
 }
 
+void IssueQueue::flushFromBranch(std::vector<Global::apexStruct> &IQ, int branchPC)
+{
+	if (IQ.size > 0)
+	{
+		for (int i = IQ.size() - 1; i >= 0; i--)
+		{
+			Global::apexStruct current = IQ[i];
+			if (current.pc_value > branchPC)
+			{
+				IQ.erase(IQ.begin() + i);
+			}
+		}
+	}
+}
+
 std::vector<Global::apexStruct> IssueQueue::run(Global::Forwarding_Info(&Forward_Bus)[Global::FORWARD_TYPE::FINAL_FORWARD_TYPE_TOTAL],
 	bool(&Stalled_Stages)[Global::STALLED_STAGE::FINAL_STALLED_STAGE_TOTAL])
 {
@@ -132,26 +147,31 @@ std::vector<Global::apexStruct> IssueQueue::run(Global::Forwarding_Info(&Forward
 				if (Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].reg_info.tag == current.instruction.src1.tag)
 				{
 					current.instruction.src1.value = Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].reg_info.value;
+					current.instruction.src1.status = Global::STATUS::VALID;
 				}
 				//check from memory
 				else if (Forward_Bus[Global::FORWARD_TYPE::FROM_MEMORY].reg_info.tag == current.instruction.src1.tag)
 				{
 					current.instruction.src1.value = Forward_Bus[Global::FORWARD_TYPE::FROM_MEMORY].reg_info.value;
+					current.instruction.src1.status = Global::STATUS::VALID;
 				}
 				//check from writeback
 				else if (Forward_Bus[Global::FORWARD_TYPE::FROM_WRITEBACK].reg_info.tag == current.instruction.src1.tag)
 				{
 					current.instruction.src1.value = Forward_Bus[Global::FORWARD_TYPE::FROM_WRITEBACK].reg_info.value;
+					current.instruction.src1.status = Global::STATUS::VALID;
 				}
 				//check from multiply
 				else if (Forward_Bus[Global::FORWARD_TYPE::FROM_MULTIPLY].reg_info.tag == current.instruction.src1.tag)
 				{
 					current.instruction.src1.value = Forward_Bus[Global::FORWARD_TYPE::FROM_MULTIPLY].reg_info.value;
+					current.instruction.src1.status = Global::STATUS::VALID;
 				}
 				//check from LS
 				else if (Forward_Bus[Global::FORWARD_TYPE::FROM_LS2].reg_info.tag == current.instruction.src1.tag)
 				{
 					current.instruction.src1.value = Forward_Bus[Global::FORWARD_TYPE::FROM_LS2].reg_info.value;
+					current.instruction.src1.status = Global::STATUS::VALID;
 				}
 			}
 			//look for src2 from forward bus
@@ -161,26 +181,31 @@ std::vector<Global::apexStruct> IssueQueue::run(Global::Forwarding_Info(&Forward
 				if (Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].reg_info.tag == current.instruction.src2.tag)
 				{
 					current.instruction.src2.value = Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].reg_info.value;
+					current.instruction.src2.status = Global::STATUS::VALID;
 				}
 				//check from memory
 				else if (Forward_Bus[Global::FORWARD_TYPE::FROM_MEMORY].reg_info.tag == current.instruction.src2.tag)
 				{
 					current.instruction.src2.value = Forward_Bus[Global::FORWARD_TYPE::FROM_MEMORY].reg_info.value;
+					current.instruction.src2.status = Global::STATUS::VALID;
 				}
 				//check from writeback
 				else if (Forward_Bus[Global::FORWARD_TYPE::FROM_WRITEBACK].reg_info.tag == current.instruction.src2.tag)
 				{
 					current.instruction.src2.value = Forward_Bus[Global::FORWARD_TYPE::FROM_WRITEBACK].reg_info.value;
+					current.instruction.src2.status = Global::STATUS::VALID;
 				}
 				//check from multiply
 				else if (Forward_Bus[Global::FORWARD_TYPE::FROM_MULTIPLY].reg_info.tag == current.instruction.src2.tag)
 				{
 					current.instruction.src2.value = Forward_Bus[Global::FORWARD_TYPE::FROM_MULTIPLY].reg_info.value;
+					current.instruction.src2.status = Global::STATUS::VALID;
 				}
 				//check from LS
 				else if (Forward_Bus[Global::FORWARD_TYPE::FROM_LS2].reg_info.tag == current.instruction.src2.tag)
 				{
 					current.instruction.src2.value = Forward_Bus[Global::FORWARD_TYPE::FROM_LS2].reg_info.value;
+					current.instruction.src2.status = Global::STATUS::VALID;
 				}
 			}
 
@@ -190,6 +215,10 @@ std::vector<Global::apexStruct> IssueQueue::run(Global::Forwarding_Info(&Forward
 				output.push_back(current);
 				removeIQEntry(IQ, i);
 			}
+		}
+		if (Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].updatePC)
+		{
+			flushFromBranch(IQ, Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].pc_value);
 		}
 	}
 
