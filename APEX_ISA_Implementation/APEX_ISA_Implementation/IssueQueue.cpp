@@ -13,7 +13,7 @@ IssueQueue::~IssueQueue()
 
 void IssueQueue::addIQEntry(std::vector<Global::apexStruct> &IQ, Global::apexStruct entry)
 {
-	IQ.push_back(entry);
+	IQ.insert(IQ.begin(),entry);
 }
 
 void IssueQueue::removeIQEntry(std::vector<Global::apexStruct> &IQ, int index)
@@ -95,7 +95,7 @@ std::vector<Global::apexStruct> IssueQueue::run(Global::Forwarding_Info(&Forward
 	output.clear();
 
 	//loop through IQ to find instructions ready for dispatch, put up to 3 in output (only 1 per FU)
-	for (int i = 0; i < IQ.size(); i++)
+	for (int i = IQ.size()-1; i <= 0; i--)
 	{
 		if (output.size() >= 3)
 		{
@@ -136,15 +136,17 @@ std::vector<Global::apexStruct> IssueQueue::run(Global::Forwarding_Info(&Forward
 				current.instruction.src1.value = Forward_Bus[Global::FORWARD_TYPE::FROM_MEMORY].reg_info.value;
 			}
 			//check from writeback
-			//THIS SHOULD BE LOAD STORE
 			else if (Forward_Bus[Global::FORWARD_TYPE::FROM_WRITEBACK].reg_info.tag == current.instruction.src1.tag)
 			{
 				current.instruction.src1.value = Forward_Bus[Global::FORWARD_TYPE::FROM_WRITEBACK].reg_info.value;
 			}
 			//check from multiply
-			//NEED MUL
-
-
+			else if (Forward_Bus[Global::FORWARD_TYPE::FROM_MULTIPLY].reg_info.tag == current.instruction.src1.tag)
+			{
+				current.instruction.src1.value = Forward_Bus[Global::FORWARD_TYPE::FROM_MULTIPLY].reg_info.value;
+			}
+			//check from LS
+			//NEED LS
 		}
 		//look for src2 from forward bus
 		else if (current.instruction.src2.status == Global::STATUS::INVALID)
@@ -160,13 +162,17 @@ std::vector<Global::apexStruct> IssueQueue::run(Global::Forwarding_Info(&Forward
 				current.instruction.src2.value = Forward_Bus[Global::FORWARD_TYPE::FROM_MEMORY].reg_info.value;
 			}
 			//check from writeback
-			//THIS SHOULD BE LOAD/STORE
 			else if (Forward_Bus[Global::FORWARD_TYPE::FROM_WRITEBACK].reg_info.tag == current.instruction.src2.tag)
 			{
 				current.instruction.src2.value = Forward_Bus[Global::FORWARD_TYPE::FROM_WRITEBACK].reg_info.value;
 			}
 			//check from multiply
-			//NEED MUL
+			else if (Forward_Bus[Global::FORWARD_TYPE::FROM_MULTIPLY].reg_info.tag == current.instruction.src2.tag)
+			{
+				current.instruction.src2.value = Forward_Bus[Global::FORWARD_TYPE::FROM_MULTIPLY].reg_info.value;
+			}
+			//check from LS
+			//NEED LS
 		}
 
 		//after searching for src1/2, issue instruction if both sources valid
