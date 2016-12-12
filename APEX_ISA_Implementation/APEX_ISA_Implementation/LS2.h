@@ -11,7 +11,7 @@ public:
 	Global::apexStruct run(
 		Global::Forwarding_Info(&Forward_Bus)[Global::FINAL_FORWARD_TYPE_TOTAL],
 		bool(&Stalled_Stages)[Global::FINAL_STALLED_STAGE_TOTAL],
-		int(&Memory_Array)[Global::MEMORY_SIZE]);
+		int(&Memory_Array)[Global::MEMORY_SIZE], Global::Reorder_Buffer(&ROB));
 
 	/// <summary>
 	///	This function will:

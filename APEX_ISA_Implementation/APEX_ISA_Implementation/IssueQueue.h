@@ -1,4 +1,5 @@
-#pragma once
+#ifndef ISSUE_QUEUE_H
+#define ISSUE_QUEUE_H
 
 #include <vector>
 
@@ -39,3 +40,4 @@ private:
 	Global::apexStruct snapshotBefore;
 	Global::apexStruct snapshotAfter;
 };
+#endif //ISSUE_QUEUE_H

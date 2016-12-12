@@ -151,7 +151,10 @@ std::vector<Global::apexStruct> IssueQueue::run(Global::Forwarding_Info(&Forward
 					current.instruction.src1.value = Forward_Bus[Global::FORWARD_TYPE::FROM_MULTIPLY].reg_info.value;
 				}
 				//check from LS
-				//NEED LS
+				else if (Forward_Bus[Global::FORWARD_TYPE::FROM_LS2].reg_info.tag == current.instruction.src1.tag)
+				{
+					current.instruction.src1.value = Forward_Bus[Global::FORWARD_TYPE::FROM_LS2].reg_info.value;
+				}
 			}
 			//look for src2 from forward bus
 			else if (current.instruction.src2.status == Global::STATUS::INVALID)
@@ -177,7 +180,10 @@ std::vector<Global::apexStruct> IssueQueue::run(Global::Forwarding_Info(&Forward
 					current.instruction.src2.value = Forward_Bus[Global::FORWARD_TYPE::FROM_MULTIPLY].reg_info.value;
 				}
 				//check from LS
-				//NEED LS
+				else if (Forward_Bus[Global::FORWARD_TYPE::FROM_LS2].reg_info.tag == current.instruction.src2.tag)
+				{
+					current.instruction.src2.value = Forward_Bus[Global::FORWARD_TYPE::FROM_LS2].reg_info.value;
+				}
 			}
 
 			//after searching for src1/2, issue instruction if both sources valid
