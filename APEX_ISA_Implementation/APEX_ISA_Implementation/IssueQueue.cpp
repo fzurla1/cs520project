@@ -59,15 +59,13 @@ bool IssueQueue::stalledStage(Global::apexStruct current, bool(&Stalled_Stages)[
 		}
 	case Global::OPCODE::MUL:
 	case Global::OPCODE::MULL:
-		//NEED TO ADD MUL TO STALLED_STAGES
 		if (Stalled_Stages[Global::STALLED_STAGE::MULTIPLY])
 		{
 			return true;
 		}
 	case Global::OPCODE::LOAD:
 	case Global::OPCODE::STORE:
-		//NEED TO ADD LOAD/STORE TO STALLED_STAGES
-		if (Stalled_Stages[Global::STALLED_STAGE::LS])
+		if (Stalled_Stages[Global::STALLED_STAGE::LS1])
 		{
 			return true;
 		}
