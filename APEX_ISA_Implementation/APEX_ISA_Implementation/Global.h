@@ -85,10 +85,9 @@ public:
 		ALU1,
 		ALU2,
 		BRANCH,
-		DELAY,
 		MULTIPLY,
-		LS,
-		MEMORY,
+		LS1,
+		LS2,
 		WRITEBACK,
 		FINAL_STALLED_STAGE_TOTAL
 	};

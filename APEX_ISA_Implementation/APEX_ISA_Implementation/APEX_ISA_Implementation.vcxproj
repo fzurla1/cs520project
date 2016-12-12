@@ -84,11 +84,12 @@
     <ClInclude Include="APEX_ISA_Implementation.h" />
     <ClInclude Include="Branch.h" />
     <ClInclude Include="Decode.h" />
-    <ClInclude Include="Delay.h" />
     <ClInclude Include="Dispatch.h" />
     <ClInclude Include="Fetch.h" />
     <ClInclude Include="Global.h" />
     <ClInclude Include="IssueQueue.h" />
+    <ClInclude Include="LS1.h" />
+    <ClInclude Include="LS2.h" />
     <ClInclude Include="Multiply.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="stdafx.h" />
@@ -101,11 +102,12 @@
     <ClCompile Include="APEX_ISA_Implementation.cpp" />
     <ClCompile Include="Branch.cpp" />
     <ClCompile Include="Decode.cpp" />
-    <ClCompile Include="Delay.cpp" />
     <ClCompile Include="Dispatch.cpp" />
     <ClCompile Include="Fetch.cpp" />
     <ClCompile Include="Global.cpp" />
     <ClCompile Include="IssueQueue.cpp" />
+    <ClCompile Include="LS1.cpp" />
+    <ClCompile Include="LS2.cpp" />
     <ClCompile Include="Multiply.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

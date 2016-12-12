@@ -28,6 +28,8 @@
 #include "ALU2.h"
 #include "Multiply.h"
 #include "Branch.h"
+#include "LS1.h"
+#include "LS2.h"
 #include "WriteBack.h"
 
 #define DEBUG_INPUT 1
@@ -85,6 +87,8 @@ ALU1 * alu1;
 ALU2 * alu2;
 Multiply * multiply;
 Branch * branch;
+LS1 * ls1;
+LS2 * ls2;
 WriteBack * writeBack;
 
 Global::apexStruct pipeline_struct_fetch;
@@ -143,6 +147,8 @@ int _tmain(int argc, char* argv[])
 	alu2 = new ALU2();
 	multiply = new Multiply();
 	branch = new Branch();
+	ls1 = new LS1();
+	ls2 = new LS2();
 	writeBack = new WriteBack();
 	char * input_file_name = NULL;
 	char * output_file_name = NULL;
@@ -338,7 +344,7 @@ int _tmain(int argc, char* argv[])
 									Back_End_RAT[Global::ARCH_REGISTERS::X].reg = ROB.entries[ROB.head].destReg;
 								}
 								break;
-							case Global::INSTRUCTION_TYPE::LOAD_TYPE:
+							
 							case Global::INSTRUCTION_TYPE::REG_TO_REG_TYPE:
 								//free up reg
 								old_reg = Back_End_RAT[ROB.entries[ROB.head].destArchReg].reg;
@@ -346,8 +352,23 @@ int _tmain(int argc, char* argv[])
 
 								//update back end RAT
 								Back_End_RAT[ROB.entries[ROB.head].destArchReg].reg = ROB.entries[ROB.head].destReg;
+
+								
 								break;
+							case Global::INSTRUCTION_TYPE::LOAD_TYPE:
 							case Global::INSTRUCTION_TYPE::STORE_TYPE:
+								ls2->run(Forward_Bus, Stalled_Stages, Memory_Array, ROB);
+								Stalled_Stages[Global::STALLED_STAGE::LS2] = false;
+
+								if (ROB.entries[ROB.head].type == Global::INSTRUCTION_TYPE::LOAD_TYPE)
+								{
+									//free up reg
+									old_reg = Back_End_RAT[ROB.entries[ROB.head].destArchReg].reg;
+									Register_File[old_reg].status = Global::REGISTER_ALLOCATION::REG_UNALLOCATED;
+
+									//update back end RAT
+									Back_End_RAT[ROB.entries[ROB.head].destArchReg].reg = ROB.entries[ROB.head].destReg;
+								}
 								break;
 							default:
 								break;
@@ -364,6 +385,7 @@ int _tmain(int argc, char* argv[])
 								{
 									Front_End_RAT[ROB.entries[ROB.head].destArchReg].src_bit = Global::SOURCES::REGISTER_FILE;
 								}
+								
 							}
 
 							//update ROB head pointer
@@ -377,36 +399,6 @@ int _tmain(int argc, char* argv[])
 
 					if (!HALT)
 					{
-						/*
-						//as long as DELAY is not stalled, run branch
-						if (!Stalled_Stages[Global::STALLED_STAGE::DELAY])
-						{
-							pipeline_struct_branch = branch->run(PC, Forward_Bus, Stalled_Stages, Register_File[Global::REGISTERS::UX]);
-						}
-						//or stall branch
-						else
-						{
-							Stalled_Stages[Global::STALLED_STAGE::BRANCH] = true;
-						}
-
-						//flush decode if we have to update the PC
-						//fetch already takes care of this internally, no need to 
-						//call it separately
-						if (Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].updatePC)
-						{
-							decode->setPipelineStruct(garbage_struct);
-							Global::Output("....");
-							Global::Output("Flushing Fetch!");
-							Global::Output("Flushing Decode/RF");
-							if (!Stalled_Stages[Global::STALLED_STAGE::ALU1])
-							{
-								alu1->setPipelineStruct(garbage_struct);
-								Global::Output("Flushing ALU1");
-							}
-							Global::Output("...."); 
-						}
-						*/
-
 						//Run Multiply
 						pipeline_struct_multiply = multiply->run(Forward_Bus, ROB, Stalled_Stages);
 
@@ -415,6 +407,8 @@ int _tmain(int argc, char* argv[])
 
 						//Run ALU1
 						pipeline_struct_alu1 = alu1->run(Forward_Bus, Stalled_Stages);
+
+						pipeline_struct_ls1 = ls1->run(Forward_Bus, Stalled_Stages, Memory_Array);
 
 						//look into IQ
 						pipeline_structs_iq = iq->run(Forward_Bus, Stalled_Stages);
@@ -504,6 +498,7 @@ int _tmain(int argc, char* argv[])
 						writeBack->setPipelineStruct(pipeline_struct_alu2);
 						writeBack->setPipelineStruct(pipeline_struct_multiply);
 						writeBack->setPipelineStruct(pipeline_struct_ls2);
+						writeBack->setPipelineStruct(pipeline_struct_branch);
 
 						//as long as we are not stalled, pass data
 						if (!Stalled_Stages[Global::STALLED_STAGE::ALU1]
@@ -525,12 +520,11 @@ int _tmain(int argc, char* argv[])
 						{
 							multiply->setPipelineStruct(garbage_struct);
 						}
-						/*
-						if (Stalled_Stages[Global::STALLED_STAGE::LS] == false)
+
+						if (Stalled_Stages[Global::STALLED_STAGE::LS2] == false)
 						{
-							ls->setPipelineStruct(garbage_struct);
+							ls2->setPipelineStruct(pipeline_struct_ls1);
 						}
-						*/
 
 						for (int x = 0; x < pipeline_structs_iq.size(); x++)
 						{
@@ -561,13 +555,19 @@ int _tmain(int argc, char* argv[])
 									break;
 								case Global::OPCODE::MUL:
 								case Global::OPCODE::MULL:
-									multiply->setPipelineStruct(pipeline_structs_iq[x]);
-									issued_instructions.push_back(pipeline_structs_iq[x]);
+									if (Stalled_Stages[Global::STALLED_STAGE::MULTIPLY] == false)
+									{
+										multiply->setPipelineStruct(pipeline_structs_iq[x]);
+										issued_instructions.push_back(pipeline_structs_iq[x]);
+									}
 									break;
 								case Global::OPCODE::LOAD:
 								case Global::OPCODE::STORE:
-									//ls->setPipelineStruct(pipeline_structs_iq[x]);
-									//issued_instructions.push_back(pipeline_structs_iq[x]);
+									if (Stalled_Stages[Global::STALLED_STAGE::LS1] == false)
+									{
+										ls1->setPipelineStruct(pipeline_structs_iq[x]);
+										issued_instructions.push_back(pipeline_structs_iq[x]);
+									}
 									break;
 								default:
 									break;
@@ -783,6 +783,8 @@ void initialize_pipeline()
 	alu1->setPipelineStruct(garbage_struct);
 	alu2->setPipelineStruct(garbage_struct);
 	branch->setPipelineStruct(garbage_struct);
+	ls1->setPipelineStruct(garbage_struct);
+	ls2->setPipelineStruct(garbage_struct);
 	writeBack->setPipelineStruct(garbage_struct);
 	cout << "Resetting Pipeline Stages Complete" << endl;
 	cout << "Resetting PC" << endl

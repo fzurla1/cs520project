@@ -51,9 +51,6 @@
     <ClInclude Include="Branch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Delay.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Multiply.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -95,9 +92,6 @@
     <ClCompile Include="Branch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Delay.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Global.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -110,10 +104,10 @@
     <ClCompile Include="IssueQueue.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="LS2.cpp">
+    <ClCompile Include="LS1.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="LS1.cpp">
+    <ClCompile Include="LS2.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

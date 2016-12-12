@@ -28,25 +28,25 @@ Global::apexStruct LS1::run(Global::Forwarding_Info(&Forward_Bus)[Global::FINAL_
 {
 	Global::apexStruct output_struct = myStruct;
 	snapshot_before = myStruct;
-	if (Stalled_Stages[Global::STALLED_STAGE::LS2] == true){
-		Stalled_Stages[Global::STALLED_STAGE::LS1] == true;
+	if (Stalled_Stages[Global::STALLED_STAGE::LS2] == false)
+	{
+		if (myStruct.pc_value != INT_MAX)
+		{
+			//Get memory location
+			if (output_struct.instruction.op_code == Global::OPCODE::LOAD)
+			{
+				output_struct.instruction.memory_location = output_struct.instruction.src1.value + output_struct.instruction.literal_value;
+			}
+			else if (output_struct.instruction.op_code == Global::OPCODE::STORE)
+			{
+				output_struct.instruction.memory_location = output_struct.instruction.src2.value + output_struct.instruction.literal_value;
+			}
+		}
+		Stalled_Stages[Global::STALLED_STAGE::LS2] = true;
 	}
 	else
 	{
-		Stalled_Stages[Global::STALLED_STAGE::LS1] = false;
-	}
-
-	if (myStruct.pc_value != INT_MAX)
-	{
-		//Get memory location
-		if (output_struct.instruction.op_code == Global::OPCODE::LOAD)
-		{
-			output_struct.instruction.memory_location = output_struct.instruction.src1.value + output_struct.instruction.literal_value;
-		}
-		else if (output_struct.instruction.op_code == Global::OPCODE::STORE)
-		{
-			output_struct.instruction.memory_location = output_struct.instruction.src2.value + output_struct.instruction.literal_value;
-		}
+		Stalled_Stages[Global::STALLED_STAGE::LS1] = true;
 	}
 
 	snapshot_after = output_struct;

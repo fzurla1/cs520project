@@ -479,11 +479,11 @@ string Global::toString(STALLED_STAGE stage)
 		case STALLED_STAGE::BRANCH:
 			out = "BRANCH";
 			break;
-		case STALLED_STAGE::DELAY:
-			out = "DELAY";
+		case STALLED_STAGE::LS1:
+			out = "LOAD/STORE 1";
 			break;
-		case STALLED_STAGE::MEMORY:
-			out = "MEMORY";
+		case STALLED_STAGE::LS2:
+			out = "LOAD/STORE 2";
 			break;
 		case STALLED_STAGE::WRITEBACK:
 			out = "WRITEBACK";

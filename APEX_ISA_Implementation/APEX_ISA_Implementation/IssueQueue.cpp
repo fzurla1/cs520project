@@ -11,6 +11,21 @@ IssueQueue::~IssueQueue()
 {
 }
 
+void IssueQueue::flushFromBranch(std::vector<Global::apexStruct> &IQ, int branchPC)
+{
+	if (IQ.size() > 0)
+	{
+		for (int i = IQ.size() - 1; i >= 0; i--)
+		{
+			Global::apexStruct current = IQ[i];
+			if (current.pc_value > branchPC)
+			{
+				IQ.erase(IQ.begin() + i);
+			}
+		}
+	}
+
+}
 void IssueQueue::addIQEntry(std::vector<Global::apexStruct> &IQ, Global::apexStruct entry)
 {
 	IQ.insert(IQ.begin(),entry);
@@ -57,6 +72,7 @@ bool IssueQueue::stalledStage(Global::apexStruct current, bool(&Stalled_Stages)[
 		{
 			return true;
 		}
+		break;
 	case Global::OPCODE::MUL:
 	case Global::OPCODE::MULL:
 		//NEED TO ADD MUL TO STALLED_STAGES
@@ -64,13 +80,15 @@ bool IssueQueue::stalledStage(Global::apexStruct current, bool(&Stalled_Stages)[
 		{
 			return true;
 		}
+		break;
 	case Global::OPCODE::LOAD:
 	case Global::OPCODE::STORE:
 		//NEED TO ADD LOAD/STORE TO STALLED_STAGES
-		if (Stalled_Stages[Global::STALLED_STAGE::LS])
+		if (Stalled_Stages[Global::STALLED_STAGE::LS1])
 		{
 			return true;
 		}
+		break;
 	case Global::OPCODE::BZ:
 	case Global::OPCODE::BNZ:
 	case Global::OPCODE::BAL:
@@ -80,6 +98,9 @@ bool IssueQueue::stalledStage(Global::apexStruct current, bool(&Stalled_Stages)[
 		{
 			return true;
 		}
+		break;
+	default:
+		break;
 	}
 	return false;
 }
@@ -87,6 +108,12 @@ bool IssueQueue::stalledStage(Global::apexStruct current, bool(&Stalled_Stages)[
 std::vector<Global::apexStruct> IssueQueue::run(Global::Forwarding_Info(&Forward_Bus)[Global::FORWARD_TYPE::FINAL_FORWARD_TYPE_TOTAL],
 	bool(&Stalled_Stages)[Global::STALLED_STAGE::FINAL_STALLED_STAGE_TOTAL])
 {
+	//check for branch taken
+	if (Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].updatePC)
+	{
+		flushFromBranch(IQ, Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].pc_value);
+	}
+
 	//check if IQ is full and set flag if so
 	if (IQ.size() >= 12)
 	{
