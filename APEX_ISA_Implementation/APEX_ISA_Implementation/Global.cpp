@@ -323,7 +323,10 @@ string Global::toString(FORWARD_TYPE frwd)
 	case FORWARD_TYPE::FROM_MEMORY:
 		out = "From Memory";
 		break;
-	case FORWARD_TYPE::FROM_WRITEBACK:
+	case FORWARD_TYPE::FROM_WRITEBACK1:
+	case FORWARD_TYPE::FROM_WRITEBACK2:
+	case FORWARD_TYPE::FROM_WRITEBACK3:
+	case FORWARD_TYPE::FROM_WRITEBACK4:
 		out = "From Writeback";
 		break;
 	default:

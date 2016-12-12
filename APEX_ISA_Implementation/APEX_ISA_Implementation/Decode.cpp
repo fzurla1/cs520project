@@ -25,8 +25,20 @@ Global::apexStruct Decode::run(
 	Global::Reorder_Buffer(&ROB),
 	Global::Front_End_Rename_Entry(&Front_End_RAT)[Global::ARCH_REGISTERS::FINAL_ARCH_REGISTERS_ITEM])
 {
-	Global::apexStruct output_struct = myStruct;
+	Global::apexStruct output_struct;
+
+	//if a branch has occured
+	//if my PC is > than the branch, meaning that this instruction is later in the instruction
+	//set, clear out my instruction
+	if ((Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].updatePC)
+		&& (Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].pc_value < myStruct.pc_value))
+	{
+		myStruct.clear();
+		return output_struct;
+	}
+	output_struct = myStruct;
 	snapshot_before = myStruct;
+
 	//break down raw instruction string
 	std::istringstream iss(myStruct.untouched_instruction);
 	string  s_opcode = "",
@@ -238,104 +250,6 @@ Global::apexStruct Decode::run(
 				output_struct.instruction.src2.archreg = Global::ARCH_REGISTERS(arch_src2);
 				output_struct.instruction.src2.rob_loc = -1;
 
-				//FOR SRC1
-				//look to FE RAT for where data is stored
-				if ((Front_End_RAT[arch_src1].src_bit == Global::SOURCES::REGISTER_FILE)
-					&& (Register_File[Front_End_RAT[arch_src1].reg].status == Global::REGISTER_ALLOCATION::ALLOC_COMMIT))
-				{
-					output_struct.instruction.src1.value = Register_File[output_struct.instruction.src1.tag].value;
-				}
-
-				//check ROB and forwarding buses
-				//if tag matches what we are looking for, and that instruction is the most recent to update 
-				//the register, then grab that value, otherwise, stall.
-				else
-				{
-					//get ROB entry location
-					output_struct.instruction.src1.rob_loc = Front_End_RAT[arch_src1].reg;
-
-					//check ROB
-					//if ROB entry is complete, get out data
-					//get ROB entry # from FE RAT ROB location entry based on arch register from src1 input
-					if (ROB.entries[Front_End_RAT[arch_src1].rob_loc].alloc == Global::ROB_ALLOCATION::COMPLETE)
-					{
-						output_struct.instruction.src1.value = ROB.entries[Front_End_RAT[arch_src1].rob_loc].result;
-					}
-					//if the entry is not complete, but it is executing or waiting, check forwarding bus
-					else
-					{
-						//check from ALU2
-						if (Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].reg_info.tag == output_struct.instruction.src1.tag)
-						{
-							output_struct.instruction.src1.value = Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].reg_info.value;
-						}
-						//check from memory
-						else if (Forward_Bus[Global::FORWARD_TYPE::FROM_MULTIPLY].reg_info.tag == output_struct.instruction.src1.tag)
-						{
-							output_struct.instruction.src1.value = Forward_Bus[Global::FORWARD_TYPE::FROM_MULTIPLY].reg_info.value;
-						}
-						//check from writeback
-						else if (Forward_Bus[Global::FORWARD_TYPE::FROM_WRITEBACK].reg_info.tag == output_struct.instruction.src1.tag)
-						{
-							output_struct.instruction.src1.value = Forward_Bus[Global::FORWARD_TYPE::FROM_WRITEBACK].reg_info.value;
-						}
-						else
-						{
-							output_struct.instruction.src1.status = Global::STATUS::INVALID;
-						}
-					}
-				}
-
-				//src2
-				//look to reg file for valid data
-				//FOR SRC1
-				//look to FE RAT for where data is stored
-				if ((Front_End_RAT[arch_src2].src_bit == Global::SOURCES::REGISTER_FILE)
-					&& (Register_File[Front_End_RAT[arch_src2].reg].status == Global::REGISTER_ALLOCATION::ALLOC_COMMIT))
-				{
-					output_struct.instruction.src2.value = Register_File[output_struct.instruction.src2.tag].value;
-				}
-
-				//check ROB and forwarding buses
-				//if tag matches what we are looking for, and that instruction is the most recent to update 
-				//the register, then grab that value, otherwise, stall.
-				else
-				{
-					//get ROB entry location
-					output_struct.instruction.src2.rob_loc = Front_End_RAT[arch_src2].reg;
-
-					//check ROB
-					//if ROB entry is complete, get out data
-					//get ROB entry # from FE RAT ROB location entry based on arch register from src1 input
-					if (ROB.entries[Front_End_RAT[arch_src2].rob_loc].alloc == Global::ROB_ALLOCATION::COMPLETE)
-					{
-						output_struct.instruction.src2.value = ROB.entries[Front_End_RAT[arch_src2].rob_loc].result;
-						output_struct.instruction.src2.status = Global::STATUS::VALID;
-					}
-					//if the entry is not complete, but it is executing or waiting, check forwarding bus
-					else
-					{
-						//check from ALU2
-						if (Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].reg_info.tag == output_struct.instruction.src2.tag)
-						{
-							output_struct.instruction.src2.value = Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].reg_info.value;
-						}
-						//check from memory
-						else if (Forward_Bus[Global::FORWARD_TYPE::FROM_MULTIPLY].reg_info.tag == output_struct.instruction.src2.tag)
-						{
-							output_struct.instruction.src2.value = Forward_Bus[Global::FORWARD_TYPE::FROM_MULTIPLY].reg_info.value;
-						}
-						//check from writeback
-						else if (Forward_Bus[Global::FORWARD_TYPE::FROM_WRITEBACK].reg_info.tag == output_struct.instruction.src2.tag)
-						{
-							output_struct.instruction.src2.value = Forward_Bus[Global::FORWARD_TYPE::FROM_WRITEBACK].reg_info.value;
-						}
-						else
-						{
-							output_struct.instruction.src2.status = Global::STATUS::INVALID;
-						}
-					}
-				}
 				destination = ALU;
 				output_struct.type = Global::INSTRUCTION_TYPE::REG_TO_REG_TYPE;
 				break;
@@ -372,53 +286,6 @@ Global::apexStruct Decode::run(
 				//set up literal
 				output_struct.instruction.literal_value = atoi(s_literal.c_str());
 
-				//FOR SRC1
-				//look to FE RAT for where data is stored
-				if ((Front_End_RAT[arch_src1].src_bit == Global::SOURCES::REGISTER_FILE)
-					&& (Register_File[Front_End_RAT[arch_src1].reg].status == Global::REGISTER_ALLOCATION::ALLOC_COMMIT))
-				{
-					output_struct.instruction.src1.value = Register_File[output_struct.instruction.src1.tag].value;
-				}
-
-				//check ROB and forwarding buses
-				//if tag matches what we are looking for, and that instruction is the most recent to update 
-				//the register, then grab that value, otherwise, stall.
-				else
-				{
-					//get ROB entry location
-					output_struct.instruction.src1.rob_loc = Front_End_RAT[arch_src1].reg;
-
-					//check ROB
-					//if ROB entry is complete, get out data
-					//get ROB entry # from FE RAT ROB location entry based on arch register from src1 input
-					if (ROB.entries[Front_End_RAT[arch_src1].rob_loc].alloc == Global::ROB_ALLOCATION::COMPLETE)
-					{
-						output_struct.instruction.src1.value = ROB.entries[Front_End_RAT[arch_src1].rob_loc].result;
-					}
-					//if the entry is not complete, but it is executing or waiting, check forwarding bus
-					else
-					{
-						//check from ALU2
-						if (Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].reg_info.tag == output_struct.instruction.src1.tag)
-						{
-							output_struct.instruction.src1.value = Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].reg_info.value;
-						}
-						//check from memory
-						else if (Forward_Bus[Global::FORWARD_TYPE::FROM_MULTIPLY].reg_info.tag == output_struct.instruction.src1.tag)
-						{
-							output_struct.instruction.src1.value = Forward_Bus[Global::FORWARD_TYPE::FROM_MULTIPLY].reg_info.value;
-						}
-						//check from writeback
-						else if (Forward_Bus[Global::FORWARD_TYPE::FROM_WRITEBACK].reg_info.tag == output_struct.instruction.src1.tag)
-						{
-							output_struct.instruction.src1.value = Forward_Bus[Global::FORWARD_TYPE::FROM_WRITEBACK].reg_info.value;
-						}
-						else
-						{
-							output_struct.instruction.src1.status = Global::STATUS::INVALID;
-						}
-					}
-				}
 				destination = ALU;
 				if (output_struct.instruction.op_code != Global::OPCODE::LOAD)
 				{
@@ -455,105 +322,6 @@ Global::apexStruct Decode::run(
 				output_struct.instruction.src2.archreg = Global::ARCH_REGISTERS(arch_src2);
 
 				output_struct.instruction.literal_value = atoi(s_literal.c_str());
-
-				//FOR SRC1
-				//look to FE RAT for where data is stored
-				if ((Front_End_RAT[arch_src1].src_bit == Global::SOURCES::REGISTER_FILE)
-					&& (Register_File[Front_End_RAT[arch_src1].reg].status == Global::REGISTER_ALLOCATION::ALLOC_COMMIT))
-				{
-					output_struct.instruction.src1.value = Register_File[output_struct.instruction.src1.tag].value;
-				}
-
-				//check ROB and forwarding buses
-				//if tag matches what we are looking for, and that instruction is the most recent to update 
-				//the register, then grab that value, otherwise, stall.
-				else
-				{
-					//get ROB entry location
-					output_struct.instruction.src1.rob_loc = Front_End_RAT[arch_src1].reg;
-
-					//check ROB
-					//if ROB entry is complete, get out data
-					//get ROB entry # from FE RAT ROB location entry based on arch register from src1 input
-					if (ROB.entries[Front_End_RAT[arch_src1].rob_loc].alloc == Global::ROB_ALLOCATION::COMPLETE)
-					{
-						output_struct.instruction.src1.value = ROB.entries[Front_End_RAT[arch_src1].rob_loc].result;
-					}
-					//if the entry is not complete, but it is executing or waiting, check forwarding bus
-					else
-					{
-						//check from ALU2
-						if (Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].reg_info.tag == output_struct.instruction.src1.tag)
-						{
-							output_struct.instruction.src1.value = Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].reg_info.value;
-						}
-						//check from memory
-						else if (Forward_Bus[Global::FORWARD_TYPE::FROM_MULTIPLY].reg_info.tag == output_struct.instruction.src1.tag)
-						{
-							output_struct.instruction.src1.value = Forward_Bus[Global::FORWARD_TYPE::FROM_MULTIPLY].reg_info.value;
-						}
-						//check from writeback
-						else if (Forward_Bus[Global::FORWARD_TYPE::FROM_WRITEBACK].reg_info.tag == output_struct.instruction.src1.tag)
-						{
-							output_struct.instruction.src1.value = Forward_Bus[Global::FORWARD_TYPE::FROM_WRITEBACK].reg_info.value;
-						}
-						else
-						{
-							output_struct.instruction.src1.status = Global::STATUS::INVALID;
-						}
-					}
-				}
-
-				//src2
-				//look to reg file for valid data
-				//FOR SRC1
-				//look to FE RAT for where data is stored
-				if ((Front_End_RAT[arch_src2].src_bit == Global::SOURCES::REGISTER_FILE)
-					&& (Register_File[Front_End_RAT[arch_src2].reg].status == Global::REGISTER_ALLOCATION::ALLOC_COMMIT))
-				{
-					output_struct.instruction.src2.value = Register_File[output_struct.instruction.src2.tag].value;
-				}
-
-				//check ROB and forwarding buses
-				//if tag matches what we are looking for, and that instruction is the most recent to update 
-				//the register, then grab that value, otherwise, stall.
-				else
-				{
-					//get ROB entry location
-					output_struct.instruction.src2.rob_loc = Front_End_RAT[arch_src2].reg;
-
-					//check ROB
-					//if ROB entry is complete, get out data
-					//get ROB entry # from FE RAT ROB location entry based on arch register from src1 input
-					if (ROB.entries[Front_End_RAT[arch_src2].rob_loc].alloc == Global::ROB_ALLOCATION::COMPLETE)
-					{
-						output_struct.instruction.src2.value = ROB.entries[Front_End_RAT[arch_src2].rob_loc].result;
-						output_struct.instruction.src2.status = Global::STATUS::VALID;
-					}
-					//if the entry is not complete, but it is executing or waiting, check forwarding bus
-					else
-					{
-						//check from ALU2
-						if (Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].reg_info.tag == output_struct.instruction.src2.tag)
-						{
-							output_struct.instruction.src2.value = Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].reg_info.value;
-						}
-						//check from memory
-						else if (Forward_Bus[Global::FORWARD_TYPE::FROM_MULTIPLY].reg_info.tag == output_struct.instruction.src2.tag)
-						{
-							output_struct.instruction.src2.value = Forward_Bus[Global::FORWARD_TYPE::FROM_MULTIPLY].reg_info.value;
-						}
-						//check from writeback
-						else if (Forward_Bus[Global::FORWARD_TYPE::FROM_WRITEBACK].reg_info.tag == output_struct.instruction.src2.tag)
-						{
-							output_struct.instruction.src2.value = Forward_Bus[Global::FORWARD_TYPE::FROM_WRITEBACK].reg_info.value;
-						}
-						else
-						{
-							output_struct.instruction.src2.status = Global::STATUS::INVALID;
-						}
-					}
-				}
 
 				destination = ALU;
 				output_struct.type = Global::INSTRUCTION_TYPE::STORE_TYPE;
@@ -651,9 +419,24 @@ Global::apexStruct Decode::run(
 							output_struct.instruction.src1.value = Forward_Bus[Global::FORWARD_TYPE::FROM_MULTIPLY].reg_info.value;
 						}
 						//check from writeback
-						else if (Forward_Bus[Global::FORWARD_TYPE::FROM_WRITEBACK].reg_info.tag == output_struct.instruction.src1.tag)
+						else if (Forward_Bus[Global::FORWARD_TYPE::FROM_WRITEBACK1].reg_info.tag == output_struct.instruction.src1.tag)
 						{
-							output_struct.instruction.src1.value = Forward_Bus[Global::FORWARD_TYPE::FROM_WRITEBACK].reg_info.value;
+							output_struct.instruction.src1.value = Forward_Bus[Global::FORWARD_TYPE::FROM_WRITEBACK1].reg_info.value;
+						}
+						//check from writeback
+						else if (Forward_Bus[Global::FORWARD_TYPE::FROM_WRITEBACK2].reg_info.tag == output_struct.instruction.src1.tag)
+						{
+							output_struct.instruction.src1.value = Forward_Bus[Global::FORWARD_TYPE::FROM_WRITEBACK2].reg_info.value;
+						}
+						//check from writeback
+						else if (Forward_Bus[Global::FORWARD_TYPE::FROM_WRITEBACK3].reg_info.tag == output_struct.instruction.src1.tag)
+						{
+							output_struct.instruction.src1.value = Forward_Bus[Global::FORWARD_TYPE::FROM_WRITEBACK3].reg_info.value;
+						}
+						//check from writeback
+						else if (Forward_Bus[Global::FORWARD_TYPE::FROM_WRITEBACK4].reg_info.tag == output_struct.instruction.src1.tag)
+						{
+							output_struct.instruction.src1.value = Forward_Bus[Global::FORWARD_TYPE::FROM_WRITEBACK4].reg_info.value;
 						}
 						else
 						{
@@ -666,9 +449,148 @@ Global::apexStruct Decode::run(
 
 				destination = BRANCH;
 				output_struct.type = Global::INSTRUCTION_TYPE::BRANCH_TYPE;
+				break;
 			default:
 				break;
 
+		}
+		//set source 1 info
+		switch (output_struct.instruction.op_code)
+		{
+			case Global::OPCODE::ADD:
+			case Global::OPCODE::ADDL:
+			case Global::OPCODE::AND:
+			case Global::OPCODE::ANDL:
+			case Global::OPCODE::EX_OR:
+			case Global::OPCODE::EX_ORL:
+			case Global::OPCODE::MUL:
+			case Global::OPCODE::MULL:
+			case Global::OPCODE::OR:
+			case Global::OPCODE::ORL:
+			case Global::OPCODE::SUB:
+			case Global::OPCODE::SUBL:
+			case Global::OPCODE::STORE:
+			case Global::OPCODE::LOAD:
+				//FOR SRC1
+				//if the entry is not complete, but it is executing or waiting, check forwarding bus
+				//check from ALU2
+				if (Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].reg_info.tag == output_struct.instruction.src1.tag)
+				{
+					output_struct.instruction.src1.value = Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].reg_info.value;
+				}
+				//check from memory
+				else if (Forward_Bus[Global::FORWARD_TYPE::FROM_MULTIPLY].reg_info.tag == output_struct.instruction.src1.tag)
+				{
+					output_struct.instruction.src1.value = Forward_Bus[Global::FORWARD_TYPE::FROM_MULTIPLY].reg_info.value;
+				}
+				//check from writeback
+				else if (Forward_Bus[Global::FORWARD_TYPE::FROM_WRITEBACK1].reg_info.tag == output_struct.instruction.src1.tag)
+				{
+					output_struct.instruction.src1.value = Forward_Bus[Global::FORWARD_TYPE::FROM_WRITEBACK1].reg_info.value;
+				}
+				//check from writeback
+				else if (Forward_Bus[Global::FORWARD_TYPE::FROM_WRITEBACK2].reg_info.tag == output_struct.instruction.src1.tag)
+				{
+					output_struct.instruction.src1.value = Forward_Bus[Global::FORWARD_TYPE::FROM_WRITEBACK2].reg_info.value;
+				}
+				//check from writeback
+				else if (Forward_Bus[Global::FORWARD_TYPE::FROM_WRITEBACK3].reg_info.tag == output_struct.instruction.src1.tag)
+				{
+					output_struct.instruction.src1.value = Forward_Bus[Global::FORWARD_TYPE::FROM_WRITEBACK3].reg_info.value;
+				}
+				//check from writeback
+				else if (Forward_Bus[Global::FORWARD_TYPE::FROM_WRITEBACK4].reg_info.tag == output_struct.instruction.src1.tag)
+				{
+					output_struct.instruction.src1.value = Forward_Bus[Global::FORWARD_TYPE::FROM_WRITEBACK4].reg_info.value;
+				}
+				//check ROB and forwarding buses
+				//if tag matches what we are looking for, and that instruction is the most recent to update 
+				//the register, then grab that value, otherwise, stall.
+				else if (ROB.entries[Front_End_RAT[arch_src1].rob_loc].alloc == Global::ROB_ALLOCATION::COMPLETE)
+				{
+					//get ROB entry location
+					output_struct.instruction.src1.rob_loc = Front_End_RAT[arch_src1].reg;
+					output_struct.instruction.src1.value = ROB.entries[Front_End_RAT[arch_src1].rob_loc].result;
+				}
+				//look to FE RAT for where data is stored
+				else if ((Front_End_RAT[arch_src1].src_bit == Global::SOURCES::REGISTER_FILE)
+					&& (Register_File[Front_End_RAT[arch_src1].reg].status == Global::REGISTER_ALLOCATION::ALLOC_COMMIT))
+				{
+					output_struct.instruction.src1.value = Register_File[output_struct.instruction.src1.tag].value;
+				}
+				else
+				{
+					output_struct.instruction.src1.status = Global::STATUS::INVALID;
+				}
+				break;
+			default:
+				break;
+		}
+
+		//set source 2 info
+		switch (output_struct.instruction.op_code)
+		{
+			case Global::OPCODE::ADD:
+			case Global::OPCODE::AND:
+			case Global::OPCODE::EX_OR:
+			case Global::OPCODE::MUL:
+			case Global::OPCODE::OR:
+			case Global::OPCODE::SUB:
+			case Global::OPCODE::STORE:
+				//FOR SRC2
+				//if the entry is not complete, but it is executing or waiting, check forwarding bus
+				//check from ALU2
+				if (Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].reg_info.tag == output_struct.instruction.src2.tag)
+				{
+					output_struct.instruction.src2.value = Forward_Bus[Global::FORWARD_TYPE::FROM_ALU2].reg_info.value;
+				}
+				//check from memory
+				else if (Forward_Bus[Global::FORWARD_TYPE::FROM_MULTIPLY].reg_info.tag == output_struct.instruction.src2.tag)
+				{
+					output_struct.instruction.src2.value = Forward_Bus[Global::FORWARD_TYPE::FROM_MULTIPLY].reg_info.value;
+				}
+				//check from writeback
+				else if (Forward_Bus[Global::FORWARD_TYPE::FROM_WRITEBACK1].reg_info.tag == output_struct.instruction.src2.tag)
+				{
+					output_struct.instruction.src2.value = Forward_Bus[Global::FORWARD_TYPE::FROM_WRITEBACK1].reg_info.value;
+				}
+				//check from writeback
+				else if (Forward_Bus[Global::FORWARD_TYPE::FROM_WRITEBACK2].reg_info.tag == output_struct.instruction.src2.tag)
+				{
+					output_struct.instruction.src2.value = Forward_Bus[Global::FORWARD_TYPE::FROM_WRITEBACK2].reg_info.value;
+				}
+				//check from writeback
+				else if (Forward_Bus[Global::FORWARD_TYPE::FROM_WRITEBACK3].reg_info.tag == output_struct.instruction.src2.tag)
+				{
+					output_struct.instruction.src2.value = Forward_Bus[Global::FORWARD_TYPE::FROM_WRITEBACK3].reg_info.value;
+				}
+				//check from writeback
+				else if (Forward_Bus[Global::FORWARD_TYPE::FROM_WRITEBACK4].reg_info.tag == output_struct.instruction.src2.tag)
+				{
+					output_struct.instruction.src2.value = Forward_Bus[Global::FORWARD_TYPE::FROM_WRITEBACK4].reg_info.value;
+				}
+				//check ROB and forwarding buses
+				//if tag matches what we are looking for, and that instruction is the most recent to update 
+				//the register, then grab that value, otherwise, stall.
+				else if (ROB.entries[Front_End_RAT[arch_src2].rob_loc].alloc == Global::ROB_ALLOCATION::COMPLETE)
+				{
+					//get ROB entry location
+					output_struct.instruction.src2.rob_loc = Front_End_RAT[arch_src1].reg;
+					output_struct.instruction.src2.value = ROB.entries[Front_End_RAT[arch_src1].rob_loc].result;
+				}
+				//look to FE RAT for where data is stored
+				else if ((Front_End_RAT[arch_src2].src_bit == Global::SOURCES::REGISTER_FILE)
+					&& (Register_File[Front_End_RAT[arch_src2].reg].status == Global::REGISTER_ALLOCATION::ALLOC_COMMIT))
+				{
+					output_struct.instruction.src2.value = Register_File[output_struct.instruction.src2.tag].value;
+				}
+				else
+				{
+					output_struct.instruction.src2.status = Global::STATUS::INVALID;
+				}
+				break;
+			default:
+				break;
 		}
 
 		if (output_struct.instruction.op_code == Global::OPCODE::MOVC)

@@ -18,8 +18,9 @@ bool WriteBack::run(
 {
 	bool HALT = false;
 	Global::apexStruct garbage_struct;
+	int size = myStructVector.size();
 
-	for (int x = (myStructVector.size() - 1); x >= 0; x--)
+	for (int x = (size - 1); x >= 0; x--)
 	{
 		//if a branch has occured
 		if (Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].updatePC == true)
@@ -33,22 +34,17 @@ bool WriteBack::run(
 		}
 	}
 
-	for (int x = (myStructVector.size() -1); x >= 0; x--)
+	for (int x = (size -1); x >= 0; x--)
 	{
 		//make sure we have valid data
 		if (myStructVector[x].pc_value != INT_MAX)
 		{
-			Forward_Bus[Global::FORWARD_TYPE::FROM_WRITEBACK].pc_value = myStructVector[x].pc_value;
-			Forward_Bus[Global::FORWARD_TYPE::FROM_WRITEBACK].reg_info.tag = myStructVector[x].instruction.dest.tag;
-			Forward_Bus[Global::FORWARD_TYPE::FROM_WRITEBACK].reg_info.value = myStructVector[x].instruction.dest.value;
+			Forward_Bus[Global::FORWARD_TYPE(x + 4)].pc_value = myStructVector[x].pc_value;
+			Forward_Bus[Global::FORWARD_TYPE(x + 4)].reg_info.tag = myStructVector[x].instruction.dest.tag;
+			Forward_Bus[Global::FORWARD_TYPE(x + 4)].reg_info.value = myStructVector[x].instruction.dest.value;
 
 			Register_File[myStructVector[x].instruction.dest.tag].status = Global::REGISTER_ALLOCATION::ALLOC_COMMIT;
 			Register_File[myStructVector[x].instruction.dest.tag].value = myStructVector[x].instruction.dest.value;
-
-			//Update ROB
-			ROB.entries[myStructVector[x].instruction.dest.rob_loc].alloc = Global::ROB_ALLOCATION::COMPLETE;
-			ROB.entries[myStructVector[x].instruction.dest.rob_loc].flags = myStructVector[x].instruction.flag;
-			ROB.entries[myStructVector[x].instruction.dest.rob_loc].result = myStructVector[x].instruction.dest.value;
 
 			if (myStructVector[x].instruction.op_code == Global::OPCODE::HALT)
 			{
@@ -63,7 +59,8 @@ bool WriteBack::run(
 
 void WriteBack::setPipelineStruct(Global::apexStruct input_struct)
 {
-	if (myStructVector.size() < Global::MAX_WRITEBACK_SIZE)
+	if ((myStructVector.size() < Global::MAX_WRITEBACK_SIZE)
+		&& ( input_struct.pc_value != INT_MAX))
 	{
 		myStructVector.push_back(input_struct);
 	}
@@ -97,18 +94,20 @@ string* WriteBack::getInstruction()
 void WriteBack::display()
 {
 	bool has_instruction = false;
-
-	Global::Output("WRITEBACK  - ");
-
-	for (int x = (myStructVector.size() - 1); x >= 0; x--)
+	if (myStructVector.size() > 0)
 	{
-		//make sure we have valid data
-		if (myStructVector[x].pc_value != INT_MAX)
+		Global::Output("WRITEBACK  - ");
+
+		for (int x = (myStructVector.size() - 1); x >= 0; x--)
 		{
-			Global::Output("   INSTRUCTION " + to_string(x) + " - " + myStructVector[x].untouched_instruction);
+			//make sure we have valid data
+			if (myStructVector[x].pc_value != INT_MAX)
+			{
+				Global::Output("   INSTRUCTION " + to_string(x) + " - " + myStructVector[x].untouched_instruction);
+			}
 		}
 	}
-	if ( !has_instruction)
+	if (!has_instruction)
 	{
 		Global::Output("Writeback STAGE --> No Instruction in Stage");
 	}

@@ -28,8 +28,6 @@
 #include "ALU2.h"
 #include "Multiply.h"
 #include "Branch.h"
-#include "Delay.h"
-#include "Memory.h"
 #include "WriteBack.h"
 
 #define DEBUG_INPUT 1
@@ -321,54 +319,6 @@ int _tmain(int argc, char* argv[])
 					 *  EXECUTE STAGES   *
 					 *********************/
 
-					//update ROB
-					if (ROB.head != ROB.tail)
-					{
-						if (ROB.entries[ROB.head].alloc == Global::ROB_ALLOCATION::COMPLETE)
-						{
-							int old_reg = 0;
-							switch (ROB.entries[ROB.head].type)
-							{
-								case Global::INSTRUCTION_TYPE::BRANCH_TYPE:
-									if (ROB.entries[ROB.head].destArchReg == Global::ARCH_REGISTERS::X)
-									{
-										//free up reg
-										old_reg = Back_End_RAT[Global::ARCH_REGISTERS::X].reg;
-										Register_File[old_reg].status = Global::REGISTER_ALLOCATION::REG_UNALLOCATED;
-
-										//update back end RAT
-										Back_End_RAT[Global::ARCH_REGISTERS::X].reg = ROB.entries[ROB.head].destReg;
-
-										//Mark register file as committed
-										Register_File[ROB.entries[ROB.head].destReg].status = Global::REGISTER_ALLOCATION::ALLOC_COMMIT;
-										Register_File[ROB.entries[ROB.head].destReg].value = ROB.entries[ROB.head].result;
-									}
-									break;
-								case Global::INSTRUCTION_TYPE::LOAD_TYPE:
-								case Global::INSTRUCTION_TYPE::REG_TO_REG_TYPE:
-									//free up reg
-									old_reg = Back_End_RAT[ROB.entries[ROB.head].destArchReg].reg;
-									Register_File[old_reg].status = Global::REGISTER_ALLOCATION::REG_UNALLOCATED;
-
-									//update back end RAT
-									Back_End_RAT[ROB.entries[ROB.head].destArchReg].reg = ROB.entries[ROB.head].destReg;
-
-									//Mark register file as committed
-									Register_File[ROB.entries[ROB.head].destReg].status = Global::REGISTER_ALLOCATION::ALLOC_COMMIT;
-									Register_File[ROB.entries[ROB.head].destReg].value = ROB.entries[ROB.head].result;
-									break;
-								case Global::INSTRUCTION_TYPE::STORE_TYPE:
-									Memory_Array[ROB.entries[ROB.head].memory_loc / 4] = ROB.entries[ROB.head].result;
-									break;
-								default:
-									break;
-							}
-
-							//update ROB head pointer
-							ROB.head = (ROB.head + 1) % Global::ROB_SIZE;
-						}
-					}
-
 					//run writeback
 					//HALT = writeBack->run(Register_File, Forward_Bus, Back_End_RAT);
 					HALT = writeBack->run(Forward_Bus, ROB, Register_File);
@@ -376,20 +326,6 @@ int _tmain(int argc, char* argv[])
 					if (!HALT)
 					{
 						/*
-						//run memory, since wb cannot stall
-						pipeline_struct_memory = memory->run(Forward_Bus, Stalled_Stages, Memory_Array);
-
-						//as long as memeory is not stalled, run Delay
-						if (!Stalled_Stages[Global::STALLED_STAGE::MEMORY])
-						{
-							pipeline_struct_delay = delay->run(Stalled_Stages);
-						}
-						//or stall delay
-						else
-						{
-							Stalled_Stages[Global::STALLED_STAGE::DELAY] = true;
-						}
-
 						//as long as DELAY is not stalled, run branch
 						if (!Stalled_Stages[Global::STALLED_STAGE::DELAY])
 						{
@@ -456,6 +392,58 @@ int _tmain(int argc, char* argv[])
 						else
 						{
 							Stalled_Stages[Global::STALLED_STAGE::FETCH] = true;
+						}
+
+						//update ROB
+						if (ROB.head != ROB.tail)
+						{
+							if (ROB.entries[ROB.head].alloc == Global::ROB_ALLOCATION::COMPLETE)
+							{
+								int old_reg = 0;
+								switch (ROB.entries[ROB.head].type)
+								{
+									case Global::INSTRUCTION_TYPE::BRANCH_TYPE:
+										if (ROB.entries[ROB.head].destArchReg == Global::ARCH_REGISTERS::X)
+										{
+											//free up reg
+											old_reg = Back_End_RAT[Global::ARCH_REGISTERS::X].reg;
+											Register_File[old_reg].status = Global::REGISTER_ALLOCATION::REG_UNALLOCATED;
+
+											//update back end RAT
+											Back_End_RAT[Global::ARCH_REGISTERS::X].reg = ROB.entries[ROB.head].destReg;
+										}
+										break;
+									case Global::INSTRUCTION_TYPE::LOAD_TYPE:
+									case Global::INSTRUCTION_TYPE::REG_TO_REG_TYPE:
+										//free up reg
+										old_reg = Back_End_RAT[ROB.entries[ROB.head].destArchReg].reg;
+										Register_File[old_reg].status = Global::REGISTER_ALLOCATION::REG_UNALLOCATED;
+
+										//update back end RAT
+										Back_End_RAT[ROB.entries[ROB.head].destArchReg].reg = ROB.entries[ROB.head].destReg;
+										break;
+									case Global::INSTRUCTION_TYPE::STORE_TYPE:
+										break;
+									default:
+										break;
+								}
+
+								if (ROB.entries[ROB.head].type != Global::INSTRUCTION_TYPE::STORE_TYPE)
+								{
+									//Mark register file as committed
+									Register_File[ROB.entries[ROB.head].destReg].status = Global::REGISTER_ALLOCATION::ALLOC_COMMIT;
+									Register_File[ROB.entries[ROB.head].destReg].value = ROB.entries[ROB.head].result;
+
+									//Update Front-End Table
+									if (Front_End_RAT[ROB.entries[ROB.head].destArchReg].reg == ROB.entries[ROB.head].destReg)
+									{
+										Front_End_RAT[ROB.entries[ROB.head].destArchReg].src_bit = Global::SOURCES::REGISTER_FILE;
+									}
+								}
+
+								//update ROB head pointer
+								ROB.head = (ROB.head + 1) % Global::ROB_SIZE;
+							}
 						}
 #pragma endregion //EXECUTE_PIPELINE
 
@@ -566,16 +554,6 @@ int _tmain(int argc, char* argv[])
 						else if (!Stalled_Stages[Global::STALLED_STAGE::IQ] || HALT)
 						{
 							decode->setPipelineStruct(garbage_struct);
-						}
-
-
-						//flush decode if we have to update the PC
-						//fetch already takes care of this internally, no need to 
-						//call it separately
-						if (Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].updatePC)
-						{
-							alu1->setPipelineStruct(garbage_struct);
-							branch->setPipelineStruct(garbage_struct);
 						}
 
 						//see if we have any valid data to be
@@ -889,8 +867,6 @@ void displayStalledStages()
 	Global::Output("ALU1		    : " + to_string(Stalled_Stages[Global::STALLED_STAGE::ALU1]));
 	Global::Output("ALU2		    : " + to_string(Stalled_Stages[Global::STALLED_STAGE::ALU2]));
 	Global::Output("BRANCH		: " + to_string(Stalled_Stages[Global::STALLED_STAGE::BRANCH]));
-	Global::Output("DELAY		: " + to_string(Stalled_Stages[Global::STALLED_STAGE::DELAY]));
-	Global::Output("MEMORY		: " + to_string(Stalled_Stages[Global::STALLED_STAGE::MEMORY]));
 	Global::Output("WRITEBACK	: " + to_string(Stalled_Stages[Global::STALLED_STAGE::WRITEBACK]));
 	Global::Output("");
 }

@@ -19,7 +19,19 @@ ALU1::~ALU1()
 Global::apexStruct ALU1::run( Global::Forwarding_Info(&Forward_Bus)[Global::FINAL_FORWARD_TYPE_TOTAL],
 	bool(&Stalled_Stages)[Global::FINAL_STALLED_STAGE_TOTAL])
 {
-	Global::apexStruct output_struct = myStruct;
+	Global::apexStruct output_struct;
+
+	//if a branch has occured
+	//if my PC is > than the branch, meaning that this instruction is later in the instruction
+	//set, clear out my instruction
+	if ((Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].updatePC)
+		&& (Forward_Bus[Global::FORWARD_TYPE::FROM_BRANCH].pc_value < myStruct.pc_value))
+	{
+		myStruct.clear();
+		return output_struct;
+	}
+
+	output_struct = myStruct;
 	snapshot_before = myStruct;
 
 	//make sure we have valid data
