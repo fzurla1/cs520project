@@ -21,13 +21,16 @@ void IssueQueue::removeIQEntry(std::vector<Global::apexStruct> &IQ, int index)
 	IQ.erase(IQ.begin() + index);
 }
 
-bool IssueQueue::differentOpCode(Global::apexStruct current, std::vector<Global::apexStruct> output)
+bool IssueQueue::sameOpCode(Global::apexStruct current, std::vector<Global::apexStruct> output)
 {
-	for (int i = 0; i < output.size(); i++)
+	if (output.size() > 0)
 	{
-		if (current.instruction.op_code != output[i].instruction.op_code)
+		for (int i = 0; i < output.size(); i++)
 		{
-			return true;
+			if (current.instruction.op_code == output[i].instruction.op_code)
+			{
+				return true;
+			}
 		}
 	}
 	return false;
@@ -107,7 +110,7 @@ std::vector<Global::apexStruct> IssueQueue::run(Global::Forwarding_Info(&Forward
 			Global::apexStruct current = IQ[i];
 
 			//skip to next IQ entry if the opcode exists in output already
-			if (!differentOpCode(current, output))
+			if (sameOpCode(current, output))
 			{
 				continue;
 			}

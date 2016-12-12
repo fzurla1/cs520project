@@ -25,7 +25,7 @@ public:
 
 	void removeIQEntry(std::vector<Global::apexStruct> &IQ, int index);
 
-	bool differentOpCode(Global::apexStruct current, std::vector<Global::apexStruct> output);
+	bool sameOpCode(Global::apexStruct current, std::vector<Global::apexStruct> output);
 
 	bool stalledStage(Global::apexStruct current, bool(&Stalled_Stages)[Global::STALLED_STAGE::FINAL_STALLED_STAGE_TOTAL]);
 
